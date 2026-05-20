@@ -23,15 +23,16 @@ router.post('/', authMiddleware, async (req, res) => {
   const cfg = runner[language];
   if (!cfg) return res.status(400).json({ error: 'Language not supported natively yet' });
 
-  // Create a temporary file
-  const tmpDir = os.tmpdir();
+  // Create a temporary file inside project root so ts-node/modules are resolved correctly
+  const tmpDir = path.join(__dirname, '..', '..', '.tmp');
   const filename = `code_${Date.now()}_${Math.random().toString(36).slice(2)}${cfg.ext}`;
   const filepath = path.join(tmpDir, filename);
 
   try {
+    await fs.mkdir(tmpDir, { recursive: true });
     await fs.writeFile(filepath, code);
     
-    exec(`${cfg.cmd} ${filepath}`, { timeout: 5000 }, (error, stdout, stderr) => {
+    exec(`${cfg.cmd} "${filepath}"`, { timeout: 5000 }, (error, stdout, stderr) => {
       // Clean up the temp file
       fs.unlink(filepath).catch(() => {});
 

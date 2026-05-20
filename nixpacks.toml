@@ -1,2 +1,2 @@
 [phases.setup]
-nixPkgs = ["...", "python3", "go"]
+nixPkgs = ["nodejs", "python3", "go"]

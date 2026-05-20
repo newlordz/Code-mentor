@@ -148,6 +148,7 @@ pre code.hljs{font-family:var(--mono);font-size:13px;padding:1.25rem 1.5rem;back
 .topic-item:not(.unlocked):not(.done):not(.active) .topic-num::after{content:'🔒';font-size:14px}
 .topic-item:not(.unlocked):not(.done):not(.active) .topic-num{font-size:0}
 .topic-item.done::after{content:'';position:absolute;top:42px;left:50%;width:2px;height:calc(2.5rem + 5px);background:var(--accent);transform:translateX(-50%);z-index:1}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 5px var(--bg), 0 0 15px rgba(0,245,212,0.3);transform:scale(1.12)}50%{box-shadow:0 0 0 8px var(--bg), 0 0 30px rgba(0,245,212,0.6);transform:scale(1.18)}}
 .sidebar-footer{padding:1rem 1.25rem;border-top:1px solid var(--border);font-size:11px;color:var(--text2);font-family:var(--mono)}
 
 /* ─── MAIN CONTENT ─────────────────────────────────────── */
