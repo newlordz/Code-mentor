@@ -2404,6 +2404,11 @@ async function runCode() {
       body: JSON.stringify({ language: exeLang, code: code })
     });
     
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Server returned ${res.status}: ${text.slice(0, 50)}`);
+    }
+
     const data = await res.json();
     if (data.error) {
       out.className = 'pg-output error';
@@ -2422,8 +2427,8 @@ async function runCode() {
     }
   } catch(e) {
     out.className = 'pg-output error';
-    out.textContent = 'Network error: Could not connect to backend server execution engine.';
-    status.textContent = 'Network Error';
+    out.textContent = 'Execution engine error: ' + e.message + '\\n(If you just deployed, wait 2-3 minutes for the build to finish!)';
+    status.textContent = 'Error';
     status.style.color = 'var(--red)';
   } finally {
     btn.innerHTML = '▶ Run Code';
