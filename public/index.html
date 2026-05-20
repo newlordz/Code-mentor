@@ -276,8 +276,18 @@ pre code.hljs{font-family:var(--mono);font-size:13px;padding:1.25rem 1.5rem;back
 .pill.purple{background:var(--purple-dim);color:var(--purple);border-color:var(--purple-border)}
 .tooltip{position:relative}
 
+/* ─── PLAYGROUND ───────────────────────────────────────── */
+.pg-container{display:flex;flex-direction:column;height:calc(100vh - var(--topbar-h) - 100px);gap:15px;animation:fadeIn 0.3s ease}
+.pg-header{display:flex;justify-content:space-between;align-items:center}
+.pg-title{font-family:var(--head);font-size:1.25rem;font-weight:700;color:var(--text)}
+.pg-editor-wrap{flex:1;border:1px solid var(--border2);border-radius:var(--r2);background:rgba(8,12,24,0.7);overflow:hidden;display:flex;flex-direction:column}
+.pg-editor{flex:1;background:transparent;color:var(--accent);padding:1.25rem;font-family:var(--mono);font-size:13.5px;line-height:1.5;resize:none;border:none;outline:none}
+.pg-output-wrap{height:35%;border:1px solid var(--border2);border-radius:var(--r2);background:rgba(4,5,9,0.8);overflow:hidden;display:flex;flex-direction:column;min-height:150px}
+.pg-output-header{background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border2);padding:8px 16px;font-size:11px;font-family:var(--mono);color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;display:flex;justify-content:space-between;align-items:center}
+.pg-output{flex:1;padding:1.25rem;font-family:var(--mono);font-size:13px;color:var(--text);overflow-y:auto;white-space:pre-wrap;margin:0}
+.pg-output.error{color:var(--red)}
+
 /* Hide hljs line-number gutters from our pre blocks */
-.hljs-ln-numbers{display:none}
 </style>
 </head>
 <body>
@@ -358,9 +368,28 @@ pre code.hljs{font-family:var(--mono);font-size:13px;padding:1.25rem 1.5rem;back
         <div class="content-tabs">
           <button class="tab-btn active" onclick="switchTab('lesson')">📖 Lesson</button>
           <button class="tab-btn" onclick="switchTab('resources')">🔗 Resources</button>
+          <button class="tab-btn" onclick="switchTab('playground')">💻 Playground</button>
         </div>
         <div class="tab-content active" id="tab-lesson"></div>
         <div class="tab-content" id="tab-resources"></div>
+        <div class="tab-content" id="tab-playground" style="padding: 1.5rem 2.5rem;">
+          <div class="pg-container">
+            <div class="pg-header">
+              <div class="pg-title">Live Code Editor</div>
+              <button class="btn-primary" onclick="runCode()" id="btn-run-code">▶ Run Code</button>
+            </div>
+            <div class="pg-editor-wrap">
+              <textarea id="pg-editor" class="pg-editor" spellcheck="false"></textarea>
+            </div>
+            <div class="pg-output-wrap">
+              <div class="pg-output-header">
+                <span>Output Console</span>
+                <span id="pg-status" style="color:var(--text2)">Ready</span>
+              </div>
+              <pre id="pg-output" class="pg-output">Ready to execute.</pre>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2291,23 +2320,122 @@ function showTopicView() {
   `;
   // Set tab state
   document.querySelectorAll('.tab-btn').forEach((b,i)=>{
-    b.classList.toggle('active', i===(state.activeTab==='lesson'?0:1));
+    b.classList.toggle('active', i===(state.activeTab==='lesson'?0:state.activeTab==='resources'?1:2));
   });
   document.querySelectorAll('.tab-content').forEach((c,i)=>{
-    c.classList.toggle('active', i===(state.activeTab==='lesson'?0:1));
+    c.classList.toggle('active', i===(state.activeTab==='lesson'?0:state.activeTab==='resources'?1:2));
   });
   // Highlight code
   document.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+  // Load playground template
+  loadPlaygroundTemplate();
 }
 
 function switchTab(name) {
   state.activeTab = name;
   document.querySelectorAll('.tab-btn').forEach((b,i)=>{
-    b.classList.toggle('active', (name==='lesson'&&i===0)||(name==='resources'&&i===1));
+    b.classList.toggle('active', (name==='lesson'&&i===0)||(name==='resources'&&i===1)||(name==='playground'&&i===2));
   });
   document.querySelectorAll('.tab-content').forEach((c,i)=>{
-    c.classList.toggle('active', (name==='lesson'&&i===0)||(name==='resources'&&i===1));
+    c.classList.toggle('active', (name==='lesson'&&i===0)||(name==='resources'&&i===1)||(name==='playground'&&i===2));
   });
+}
+
+// ── Playground & Piston API ──
+function loadPlaygroundTemplate() {
+  const templates = {
+    python: 'print("Hello World from Python!")\\n\\n# Write your code here\\n',
+    javascript: 'console.log("Hello World from JavaScript!");\\n\\n// Write your code here\\n',
+    typescript: 'const greeting: string = "Hello World from TypeScript!";\\nconsole.log(greeting);\\n',
+    go: 'package main\\n\\nimport "fmt"\\n\\nfunc main() {\\n\\tfmt.Println("Hello World from Go!")\\n}\\n',
+    rust: 'fn main() {\\n    println!("Hello World from Rust!");\\n}\\n'
+  };
+  const editor = document.getElementById('pg-editor');
+  if (editor && state.lang && templates[state.lang]) {
+    if (!editor.value || Object.values(templates).includes(editor.value)) {
+      editor.value = templates[state.lang];
+      document.getElementById('pg-output').textContent = 'Ready to execute.';
+      document.getElementById('pg-status').textContent = 'Ready';
+      document.getElementById('pg-output').className = 'pg-output';
+    }
+  }
+}
+
+// Need to attach event listener after DOM loads. We can do it on the textarea inline, or globally on boot.
+// Since the textarea is in the HTML, we can attach it directly here.
+document.addEventListener('DOMContentLoaded', () => {
+  const editor = document.getElementById('pg-editor');
+  if (editor) {
+    editor.addEventListener('keydown', function(e) {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 4;
+      }
+    });
+  }
+});
+
+async function runCode() {
+  const btn = document.getElementById('btn-run-code');
+  const out = document.getElementById('pg-output');
+  const status = document.getElementById('pg-status');
+  const code = document.getElementById('pg-editor').value;
+  
+  if (!code.trim()) return;
+
+  btn.innerHTML = '⏳ Running...';
+  btn.style.opacity = '0.7';
+  btn.style.pointerEvents = 'none';
+  status.textContent = 'Executing remotely...';
+  status.style.color = 'var(--text2)';
+  out.className = 'pg-output';
+  out.textContent = 'Running...';
+
+  const langMap = { python: 'python', javascript: 'javascript', typescript: 'typescript', go: 'go', rust: 'rust' };
+  const pistonLang = langMap[state.lang] || state.lang;
+
+  try {
+    const res = await fetch('https://emacs.piston.rs/api/v2/execute', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        language: pistonLang,
+        version: '*',
+        files: [{ content: code }]
+      })
+    });
+    
+    const data = await res.json();
+    if (data.run) {
+      if (data.run.stderr) {
+        out.className = 'pg-output error';
+        out.textContent = data.run.stderr;
+        status.textContent = 'Error';
+        status.style.color = 'var(--red)';
+      } else {
+        out.textContent = data.run.stdout || 'No output.';
+        status.textContent = 'Success';
+        status.style.color = 'var(--accent)';
+      }
+    } else {
+      out.className = 'pg-output error';
+      out.textContent = data.message || 'Execution failed.';
+      status.textContent = 'Failed';
+      status.style.color = 'var(--red)';
+    }
+  } catch(e) {
+    out.className = 'pg-output error';
+    out.textContent = 'Network error: Could not reach Piston execution API.\\nMake sure your adblocker is not blocking piston.rs';
+    status.textContent = 'Network Error';
+    status.style.color = 'var(--red)';
+  } finally {
+    btn.innerHTML = '▶ Run Code';
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+  }
 }
 
 function updateProgress() {
