@@ -18,6 +18,7 @@ const pool = new Pool(
 
 // Create tables if they don't exist
 async function initDB() {
+  console.log(`Connecting to database at: ${process.env.DATABASE_URL ? 'External URL (DATABASE_URL)' : (process.env.DB_HOST || 'localhost')}`);
   const client = await pool.connect();
   try {
     await client.query(`
