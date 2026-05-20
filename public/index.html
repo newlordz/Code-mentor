@@ -1,0 +1,2932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeMentor AI — Learn Programming with an AI Tutor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#070913;
+  --bg-panel:rgba(15, 22, 42, 0.45);
+  --bg-panel-hover:rgba(23, 33, 61, 0.6);
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.12);
+  --border3:rgba(255,255,255,0.22);
+  
+  /* Aurora Accents */
+  --accent:#00f5d4;              /* Neon Teal */
+  --accent-dim:rgba(0, 245, 212, 0.08);
+  --accent-border:rgba(0, 245, 212, 0.25);
+  
+  --purple:#a855f7;              /* Neon Purple */
+  --purple-dim:rgba(168, 85, 247, 0.08);
+  --purple-border:rgba(168, 85, 247, 0.25);
+  
+  --amber:#f5a623;
+  --amber-dim:rgba(245, 166, 35, 0.08);
+  
+  --red:#f43f5e;
+  --red-dim:rgba(244, 63, 94, 0.08);
+  
+  --text:#f8fafc;                /* Super crisp light slate */
+  --text2:#94a3b8;               /* Muted elegant slate */
+  --text3:#475569;               /* Slate boundary lines */
+  
+  --font:'DM Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --head:'Syne',sans-serif;
+  
+  --r:10px;
+  --r2:16px;
+  --r3:24px;
+  
+  --sidebar-w:270px;
+  --chat-w:380px;
+  --topbar-h:64px;
+  --panel-blur:blur(18px);
+}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  font-size:15px;
+  line-height:1.6;
+}
+a{color:var(--accent);text-decoration:none;transition:color 0.15s}
+a:hover{color:var(--text);text-decoration:none}
+button{cursor:pointer;font-family:var(--font);border:none;outline:none;background:none;color:inherit}
+input,textarea{font-family:var(--font);outline:none;border:none;color:inherit}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.18)}
+code{font-family:var(--mono)}
+pre{margin:1.25rem 0;border-radius:var(--r2);overflow:hidden;border:1px solid var(--border2);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+pre code.hljs{font-family:var(--mono);font-size:13px;padding:1.25rem 1.5rem;background:rgba(8,12,24,0.75)!important;backdrop-filter:blur(5px)}
+.hljs-comment,.hljs-quote{color:#5c708a;font-style:italic}
+
+/* ─── AURORA DYNAMIC BACKGROUND ────────────────────────── */
+.aurora-bg{position:fixed;inset:0;pointer-events:none;z-index:-2;overflow:hidden;background:radial-gradient(circle at 50% 50%, #0c0f1d 0%, #05060b 100%)}
+.aurora-sphere{position:absolute;border-radius:50%;filter:blur(140px);opacity:0.12;mix-blend-mode:screen;animation:drift 30s infinite alternate ease-in-out}
+.sphere-1{width:50vw;height:50vw;background:radial-gradient(circle, var(--accent) 0%, transparent 80%);top:-15vw;left:-10vw}
+.sphere-2{width:55vw;height:55vw;background:radial-gradient(circle, var(--purple) 0%, transparent 80%);bottom:-20vw;right:-10vw;animation-delay:-7s;animation-duration:35s}
+.sphere-3{width:40vw;height:40vw;background:radial-gradient(circle, var(--red) 0%, transparent 80%);top:25vh;left:40vw;opacity:0.06;animation-delay:-15s;animation-duration:25s}
+@keyframes drift{
+  0%{transform:translate(0,0) rotate(0deg) scale(1)}
+  50%{transform:translate(6vw,6vh) rotate(180deg) scale(1.15)}
+  100%{transform:translate(-4vw,-4vh) rotate(360deg) scale(0.9)}
+}
+
+/* ─── LANDING ──────────────────────────────────────────── */
+#landing{min-height:100vh;display:flex;flex-direction:column;position:relative;z-index:1}
+.land-nav{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 3rem;border-bottom:1px solid var(--border);backdrop-filter:blur(10px)}
+.logo{font-family:var(--head);font-size:1.35rem;font-weight:800;letter-spacing:-0.03em;color:var(--text);display:flex;align-items:center;gap:6px}
+.logo span{background:linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.land-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem 3rem;text-align:center;position:relative}
+.hero-glow{position:absolute;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(0,245,212,0.04) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-55%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,245,212,0.05);border:1px solid var(--accent-border);color:var(--accent);border-radius:99px;padding:6px 16px;font-size:12px;font-weight:600;letter-spacing:0.04em;margin-bottom:1.75rem;font-family:var(--mono);box-shadow:0 0 20px rgba(0,245,212,0.05)}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.3;transform:scale(0.8)}}
+.hero-title{font-family:var(--head);font-size:clamp(2.75rem,7vw,4.75rem);font-weight:800;line-height:1.05;letter-spacing:-0.03em;max-width:850px;margin-bottom:1.5rem;background:linear-gradient(to bottom, #ffffff 60%, rgba(255,255,255,0.7) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-title .hl{background:linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:1.15rem;color:var(--text2);max-width:560px;line-height:1.75;margin-bottom:3.5rem}
+.lang-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;width:100%;max-width:960px;padding:0 1.5rem}
+.lang-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--r2);padding:1.75rem 1.25rem;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.8,0.25,1);position:relative;overflow:hidden;backdrop-filter:var(--panel-blur);-webkit-backdrop-filter:var(--panel-blur)}
+.lang-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;border-radius:var(--r2);background:linear-gradient(135deg, rgba(0,245,212,0.05), rgba(168,85,247,0.05))}
+.lang-card:hover{border-color:var(--accent-border);transform:translateY(-6px);box-shadow:0 12px 30px -10px rgba(0,245,212,0.15), 0 0 20px -2px rgba(0,245,212,0.05)}
+.lang-card:hover::before{opacity:1}
+.lang-icon{font-size:2.5rem;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.25));transition:transform 0.3s}
+.lang-card:hover .lang-icon{transform:scale(1.1)}
+.lang-name{font-family:var(--head);font-weight:700;font-size:1rem;color:var(--text)}
+.lang-topics{font-size:11px;color:var(--text2);font-family:var(--mono);background:rgba(255,255,255,0.04);padding:2px 8px;border-radius:99px;border:1px solid var(--border)}
+.land-footer{text-align:center;padding:2.5rem;color:var(--text3);font-size:13px;border-top:1px solid var(--border);font-family:var(--mono)}
+
+/* ─── APP SHELL ─────────────────────────────────────────── */
+#app{display:none;height:100vh;flex-direction:column;position:relative;z-index:2}
+.topbar{height:var(--topbar-h);background:rgba(7,9,19,0.55);backdrop-filter:var(--panel-blur);-webkit-backdrop-filter:var(--panel-blur);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:0;flex-shrink:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+.topbar-logo{font-family:var(--head);font-size:1.15rem;font-weight:800;color:var(--text);padding:0 0.75rem;display:flex;align-items:center;gap:6px;letter-spacing:-0.02em}
+.topbar-logo span{background:linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-divider{width:1px;height:22px;background:var(--border2);margin:0 0.75rem}
+.lang-switcher{display:flex;align-items:center;gap:6px;padding:0 0.85rem;height:38px;border-radius:var(--r);background:rgba(255,255,255,0.03);border:1px solid var(--border);cursor:pointer;font-size:13px;color:var(--text2);transition:all 0.2s}
+.lang-switcher:hover{border-color:var(--border3);background:rgba(255,255,255,0.06);color:var(--text)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.progress-ring{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text2)}
+.progress-bar-wrap{width:100px;height:5px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
+.progress-bar{height:100%;background:linear-gradient(90deg, var(--accent) 0%, var(--purple) 100%);border-radius:99px;transition:width 0.5s cubic-bezier(0.4, 0, 0.2, 1);box-shadow:0 0 10px rgba(0,245,212,0.3)}
+.btn-chat{background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);border-radius:var(--r);padding:8px 16px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;transition:all 0.2s;box-shadow:0 4px 12px rgba(0,245,212,0.05)}
+.btn-chat:hover{background:rgba(0,245,212,0.18);border-color:rgba(0,245,212,0.45);transform:translateY(-1px);box-shadow:0 6px 15px rgba(0,245,212,0.1)}
+.btn-chat svg{width:15px;height:15px;transition:transform 0.2s}
+.btn-chat:hover svg{transform:scale(1.1)}
+
+.app-body{flex:1;display:flex;overflow:hidden}
+
+/* ─── SIDEBAR ─────────────────────────────────────────── */
+#sidebar{width:var(--sidebar-w);background:rgba(6,8,15,0.4);backdrop-filter:var(--panel-blur);-webkit-backdrop-filter:var(--panel-blur);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.sidebar-lang{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid var(--border)}
+.sidebar-lang-name{font-family:var(--head);font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:10px}
+.sidebar-lang-sub{font-size:12px;color:var(--text2);margin-top:4px}
+.topic-list{flex:1;overflow-y:auto;padding:0.75rem 0}
+.topic-item{display:flex;align-items:center;gap:12px;padding:11px 1.25rem;cursor:pointer;border-left:3px solid transparent;transition:all 0.2s;position:relative;color:var(--text2)}
+.topic-item:hover{background:rgba(255,255,255,0.02);color:var(--text)}
+.topic-item.active{background:rgba(0,245,212,0.04);border-left-color:var(--accent);color:var(--accent)}
+.topic-item.active .topic-num{background:var(--accent);color:#000;border-color:var(--accent);box-shadow:0 0 10px rgba(0,245,212,0.3)}
+.topic-item.done .topic-num{background:rgba(0,245,212,0.12);color:var(--accent);border-color:var(--accent-border)}
+.topic-num{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-family:var(--mono);color:var(--text2);flex-shrink:0;transition:all 0.25s}
+.topic-title{font-size:13.5px;font-weight:600;line-height:1.35;flex:1}
+.topic-check{width:14px;height:14px;color:var(--accent);flex-shrink:0}
+.sidebar-footer{padding:1rem 1.25rem;border-top:1px solid var(--border);font-size:11px;color:var(--text2);font-family:var(--mono)}
+
+/* ─── MAIN CONTENT ─────────────────────────────────────── */
+#main{flex:1;overflow-y:auto;display:flex;flex-direction:column;background:transparent}
+.content-tabs{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border);background:rgba(6,8,15,0.25);backdrop-filter:blur(8px);padding:0 2.5rem;flex-shrink:0;position:sticky;top:0;z-index:10}
+.tab-btn{padding:1.15rem 1.5rem;font-size:13.5px;font-weight:600;color:var(--text2);background:none;border-bottom:2px solid transparent;transition:all 0.2s;margin-bottom:-1px;letter-spacing:0.02em}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);text-shadow:0 0 10px rgba(0,245,212,0.1)}
+.tab-btn:hover:not(.active){color:var(--text)}
+.tab-content{display:none;flex:1;padding:2.5rem;max-width:900px;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.tab-content.active{display:block}
+.lesson-header{margin-bottom:2.25rem}
+.lesson-header h1{font-family:var(--head);font-size:2.25rem;font-weight:800;letter-spacing:-0.03em;line-height:1.15;margin-bottom:0.75rem;background:linear-gradient(to right, #ffffff, var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.lesson-meta{display:flex;align-items:center;gap:1.25rem;font-size:13px;color:var(--text2)}
+.lesson-badge{background:rgba(255,255,255,0.03);border:1px solid var(--border2);color:var(--text2);border-radius:99px;padding:3px 12px;font-family:var(--mono);font-size:11px}
+.lesson-body h2{font-family:var(--head);font-size:1.4rem;font-weight:700;margin:2.5rem 0 0.85rem;color:var(--text);letter-spacing:-0.01em}
+.lesson-body h3{font-family:var(--head);font-size:1.1rem;font-weight:700;margin:1.75rem 0 0.6rem;color:var(--text2)}
+.lesson-body p{margin-bottom:1.25rem;color:var(--text2);line-height:1.8}
+.lesson-body p strong{color:var(--text);font-weight:600}
+.lesson-body ul,.lesson-body ol{margin:0.75rem 0 1.25rem 1.75rem;color:var(--text2)}
+.lesson-body li{margin-bottom:0.5rem;line-height:1.7}
+.lesson-body .inline-code{background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:5px;padding:2px 6px;font-family:var(--mono);font-size:12.5px;color:var(--accent)}
+.key-concept{background:rgba(0,245,212,0.03);border:1px solid var(--accent-border);border-left:4px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:1.25rem 1.5rem;margin:1.5rem 0;box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+.key-concept strong{color:var(--accent);font-family:var(--mono);font-size:12px;display:block;margin-bottom:6px;letter-spacing:0.08em}
+.lesson-actions{display:flex;gap:12px;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border)}
+.btn-primary{background:linear-gradient(135deg, var(--accent) 0%, #00bbf9 100%);color:#010409;border-radius:var(--r);padding:12px 24px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;transition:all 0.25s;box-shadow:0 4px 15px rgba(0,245,212,0.2)}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,245,212,0.3)}
+.btn-secondary{background:rgba(255,255,255,0.03);color:var(--text);border:1px solid var(--border2);border-radius:var(--r);padding:12px 24px;font-size:14px;font-weight:600;transition:all 0.2s}
+.btn-secondary:hover{border-color:var(--border3);background:rgba(255,255,255,0.07);transform:translateY(-1px)}
+
+/* Resources */
+.resources-grid{display:grid;gap:12px}
+.resource-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem 1.5rem;display:flex;align-items:flex-start;gap:14px;transition:all 0.25s cubic-bezier(0.25,0.8,0.25,1);cursor:pointer;backdrop-filter:var(--panel-blur);-webkit-backdrop-filter:var(--panel-blur)}
+.resource-card:hover{border-color:var(--purple-border);background:rgba(28,36,58,0.4);transform:translateY(-2px) translateX(2px);box-shadow:0 8px 24px rgba(168,85,247,0.08)}
+.res-icon{width:40px;height:40px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;box-shadow:0 4px 10px rgba(0,0,0,0.15)}
+.res-icon.docs{background:var(--purple-dim);border:1px solid var(--purple-border)}
+.res-icon.video{background:var(--red-dim);border:1px solid rgba(244,63,94,0.25)}
+.res-icon.article{background:var(--accent-dim);border:1px solid var(--accent-border)}
+.res-icon.practice{background:var(--amber-dim);border:1px solid rgba(245,166,35,0.25)}
+.res-title{font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:4px}
+.res-desc{font-size:12.5px;color:var(--text2);line-height:1.55}
+.res-type{font-size:10px;font-family:var(--mono);color:var(--text2);margin-top:6px;text-transform:uppercase;letter-spacing:0.08em;background:rgba(255,255,255,0.03);padding:1px 6px;border-radius:4px;display:inline-block;border:1px solid var(--border)}
+.resources-section-title{font-family:var(--head);font-size:1.1rem;font-weight:700;margin-bottom:1.25rem;color:var(--text)}
+
+/* ─── QUIZ MODAL ──────────────────────────────────────── */
+#quiz-modal{position:fixed;inset:0;background:rgba(4,5,9,0.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+#quiz-modal.open{display:flex}
+.quiz-box{background:rgba(18,24,38,0.85);backdrop-filter:var(--panel-blur);-webkit-backdrop-filter:var(--panel-blur);border:1px solid var(--border2);border-radius:var(--r3);width:100%;max-width:620px;overflow:hidden;box-shadow:0 24px 64px -12px rgba(0,0,0,0.6);animation:slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.quiz-header{padding:1.75rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.quiz-title{font-family:var(--head);font-size:1.2rem;font-weight:800}
+.quiz-close{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--r);width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;font-size:1rem;transition:all 0.2s}
+.quiz-close:hover{border-color:var(--border3);color:var(--text);background:rgba(255,255,255,0.08)}
+.quiz-progress-bar{height:4px;background:rgba(255,255,255,0.03)}
+.quiz-progress-fill{height:100%;background:linear-gradient(90deg, var(--accent) 0%, var(--purple) 100%);transition:width 0.4s cubic-bezier(0.4, 0, 0.2, 1);box-shadow:0 0 8px var(--accent)}
+.quiz-body{padding:2rem}
+.quiz-q-num{font-size:11px;font-family:var(--mono);color:var(--accent);margin-bottom:0.85rem;letter-spacing:0.08em;font-weight:600}
+.quiz-question{font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:1.75rem;line-height:1.55}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-option{background:rgba(255,255,255,0.02);border:1px solid var(--border2);border-radius:var(--r);padding:14px 18px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.2s;font-size:14.5px;color:var(--text)}
+.quiz-option:hover:not(.answered){border-color:var(--border3);background:rgba(255,255,255,0.05);transform:translateX(2px)}
+.quiz-option.selected:not(.answered){border-color:var(--purple);background:var(--purple-dim)}
+.quiz-option.correct{border-color:var(--accent)!important;background:var(--accent-dim)!important;color:var(--accent)!important;box-shadow:0 0 15px rgba(0,245,212,0.05)}
+.quiz-option.wrong{border-color:var(--red)!important;background:var(--red-dim)!important;color:var(--red)!important;box-shadow:0 0 15px rgba(244,63,94,0.05)}
+.opt-letter{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-family:var(--mono);font-weight:700;flex-shrink:0;transition:inherit}
+.quiz-option.correct .opt-letter{background:var(--accent);border-color:var(--accent);color:#010409}
+.quiz-option.wrong .opt-letter{background:var(--red);border-color:var(--red);color:#fff}
+.quiz-feedback{margin-top:1.25rem;padding:1rem 1.25rem;border-radius:var(--r);font-size:13.5px;font-weight:500;display:none;animation:fadeIn 0.25s ease}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct{background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent)}
+.quiz-feedback.wrong{background:var(--red-dim);border:1px solid rgba(244,63,94,0.25);color:var(--red)}
+.quiz-footer{padding:1.25rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.quiz-score{font-size:13px;color:var(--text2);font-family:var(--mono)}
+.btn-next{background:var(--accent);color:#010409;border-radius:var(--r);padding:10px 24px;font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:6px;transition:all 0.2s;opacity:0.3;pointer-events:none}
+.btn-next.ready{opacity:1;pointer-events:auto;box-shadow:0 4px 12px rgba(0,245,212,0.2)}
+.btn-next.ready:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.quiz-result{text-align:center;padding:2.5rem 2rem}
+.result-score{font-family:var(--head);font-size:3.75rem;font-weight:800;margin-bottom:0.5rem;letter-spacing:-0.03em}
+.result-score.great{color:var(--accent);text-shadow:0 0 20px rgba(0,245,212,0.15)}
+.result-score.ok{color:var(--amber);text-shadow:0 0 20px rgba(245,166,35,0.15)}
+.result-score.low{color:var(--red);text-shadow:0 0 20px rgba(244,63,94,0.15)}
+.result-msg{font-size:1.05rem;color:var(--text2);margin-bottom:2rem}
+.result-actions{display:flex;gap:10px;justify-content:center}
+
+/* ─── CHAT PANEL ─────────────────────────────────────── */
+#chat-panel{width:var(--chat-w);background:rgba(8,10,16,0.6);backdrop-filter:var(--panel-blur);-webkit-backdrop-filter:var(--panel-blur);border-left:1px solid var(--border);display:none;flex-direction:column;flex-shrink:0;box-shadow:-10px 0 30px rgba(0,0,0,0.15)}
+#chat-panel.open{display:flex}
+.chat-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.ai-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent) 0%,var(--purple) 100%);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;box-shadow:0 4px 10px rgba(0,245,212,0.15)}
+.chat-header-info .name{font-size:14px;font-weight:700;color:var(--text)}
+.chat-header-info .status{font-size:11px;color:var(--accent);display:flex;align-items:center;gap:5px;font-weight:500}
+.chat-header-info .status::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.chat-close{margin-left:auto;background:rgba(255,255,255,0.03);color:var(--text2);font-size:1.1rem;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--border);transition:all 0.2s}
+.chat-close:hover{background:rgba(255,255,255,0.08);color:var(--text);border-color:var(--border3)}
+.chat-context{padding:0.75rem 1.25rem;background:rgba(0,245,212,0.04);border-bottom:1px solid var(--accent-border);font-size:11px;color:var(--accent);font-family:var(--mono);font-weight:500;letter-spacing:0.02em}
+.chat-messages{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:14px}
+.chat-msg{display:flex;flex-direction:column;gap:5px;animation:msgIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.chat-msg.user .bubble{background:linear-gradient(135deg, var(--accent) 0%, #00bbf9 100%);color:#010409;border-radius:16px 16px 4px 16px;align-self:flex-end;max-width:85%;padding:10px 16px;font-size:13.5px;line-height:1.55;font-weight:600;box-shadow:0 4px 15px rgba(0,245,212,0.15)}
+.chat-msg.ai .bubble{background:rgba(20,26,42,0.55);border:1px solid var(--border2);color:var(--text);border-radius:16px 16px 16px 4px;align-self:flex-start;max-width:92%;padding:12px 16px;font-size:13.5px;line-height:1.6;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+.chat-msg.ai .bubble code{font-family:var(--mono);font-size:12px;background:rgba(255,255,255,0.05);padding:2px 6px;border-radius:4px;color:var(--accent);border:1px solid var(--border)}
+.chat-msg.ai .bubble pre{margin:10px 0 5px;background:rgba(8,12,24,0.7)!important;border-radius:10px;padding:12px;overflow-x:auto;border:1px solid var(--border2)}
+.chat-msg.ai .bubble pre code{background:none;padding:0;font-size:12px;border:none}
+.chat-typing .bubble{padding:14px 18px}
+.typing-dots{display:flex;gap:5px;align-items:center}
+.typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:dot 1.4s infinite;box-shadow:0 0 4px var(--accent)}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes dot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.chat-input-area{padding:1rem;border-top:1px solid var(--border);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
+.chat-input{flex:1;background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:14px;padding:11px 14px;font-size:13px;color:var(--text);resize:none;line-height:1.5;max-height:100px;min-height:42px;transition:all 0.2s}
+.chat-input::placeholder{color:var(--text3)}
+.chat-input:focus{border-color:var(--accent-border);background:rgba(255,255,255,0.05);box-shadow:0 0 12px rgba(0,245,212,0.03)}
+.chat-send{width:42px;height:42px;background:linear-gradient(135deg, var(--accent) 0%, #00bbf9 100%);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;box-shadow:0 4px 12px rgba(0,245,212,0.2)}
+.chat-send:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 6px 15px rgba(0,245,212,0.3)}
+.chat-send svg{width:16px;height:16px;color:#010409;fill:currentColor}
+.chat-suggestions{padding:0 1rem 0.75rem;display:flex;flex-wrap:wrap;gap:6px}
+.chat-suggestion{background:rgba(255,255,255,0.02);border:1px solid var(--border2);border-radius:99px;padding:5px 12px;font-size:11px;color:var(--text2);cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.chat-suggestion:hover{border-color:var(--accent-border);color:var(--accent);background:var(--accent-dim);transform:translateY(-1px)}
+
+/* ─── LOCAL AI BADGE ─────────────────────────────────── */
+.ai-local-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(0,245,212,0.08),rgba(168,85,247,0.08));border:1px solid rgba(168,85,247,0.3);border-radius:99px;padding:3px 10px;font-size:10px;color:var(--purple);font-family:var(--mono);font-weight:700;letter-spacing:0.05em;white-space:nowrap}
+.ai-local-badge::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);animation:statusPulse 2s infinite;flex-shrink:0}
+.ai-status-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);flex-shrink:0;animation:statusPulse 2.5s infinite}
+@keyframes statusPulse{0%,100%{opacity:1;box-shadow:0 0 6px var(--accent)}50%{opacity:0.4;box-shadow:0 0 2px var(--accent)}}
+
+/* ─── WELCOME SCREEN ─────────────────────────────────── */
+.welcome-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:4rem;color:var(--text2)}
+.welcome-screen h2{font-family:var(--head);font-size:1.65rem;font-weight:800;color:var(--text);margin-bottom:0.5rem;letter-spacing:-0.02em}
+
+/* ─── MISC ───────────────────────────────────────────── */
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:4px 12px;font-size:11px;font-family:var(--mono);font-weight:600;border:1px solid transparent;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
+.pill.green{background:var(--accent-dim);color:var(--accent);border-color:var(--accent-border)}
+.pill.purple{background:var(--purple-dim);color:var(--purple);border-color:var(--purple-border)}
+.tooltip{position:relative}
+
+/* Hide hljs line-number gutters from our pre blocks */
+.hljs-ln-numbers{display:none}
+</style>
+</head>
+<body>
+
+<div class="aurora-bg">
+  <div class="aurora-sphere sphere-1"></div>
+  <div class="aurora-sphere sphere-2"></div>
+  <div class="aurora-sphere sphere-3"></div>
+</div>
+
+<!-- ═══ LANDING PAGE ═══════════════════════════════════════════ -->
+<div id="landing">
+  <nav class="land-nav">
+    <div class="logo">code<span>mentor</span>.ai</div>
+    <div style="font-size:13px;color:var(--text2)">Pick a language. Start learning.</div>
+  </nav>
+  <div class="land-hero">
+    <div class="hero-glow"></div>
+    <div class="hero-badge">✦ AI-Powered Learning</div>
+    <h1 class="hero-title">Learn to code with your personal <span class="hl">AI tutor</span></h1>
+    <p class="hero-sub">Structured lessons, curated resources, and a live AI tutor that explains anything — tailored to the language you're learning.</p>
+    <div class="lang-grid" id="lang-grid"></div>
+  </div>
+  <div class="land-footer">codementor.ai — Powered by Claude AI &nbsp;·&nbsp; 5 languages &nbsp;·&nbsp; 6 topics each &nbsp;·&nbsp; Quizzes after every lesson</div>
+</div>
+
+<!-- ═══ APP SHELL ════════════════════════════════════════════════ -->
+<div id="app">
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-logo" style="cursor:pointer" onclick="goHome()">code<span>mentor</span>.ai</div>
+    <div class="topbar-divider"></div>
+    <div class="lang-switcher" onclick="goHome()">
+      <span id="tb-lang-icon"></span>
+      <span id="tb-lang-name" style="font-size:13px;font-weight:600;color:var(--text)"></span>
+      <span style="color:var(--text3);font-size:11px;margin-left:4px">▾ switch</span>
+    </div>
+    <div class="topbar-right">
+      <div class="progress-ring">
+        <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+        <span id="progress-label" style="font-size:11px;font-family:var(--mono)">0/6</span>
+      </div>
+      <button class="btn-chat" onclick="toggleChat()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        AI Tutor
+      </button>
+      <!-- Student avatar + logout -->
+      <div id="student-chip" style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:99px;padding:5px 12px 5px 6px;cursor:default">
+        <div id="student-avatar" style="width:26px;height:26px;border-radius:50%;background:#00f5d4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#010409;flex-shrink:0"></div>
+        <span id="student-name" style="font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap"></span>
+      </div>
+      <button onclick="logout()" style="background:rgba(244,63,94,0.06);border:1px solid rgba(244,63,94,0.2);color:#f43f5e;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(244,63,94,0.14)'" onmouseout="this.style.background='rgba(244,63,94,0.06)'">Logout</button>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <div class="sidebar-lang">
+        <div class="sidebar-lang-name">
+          <span id="sidebar-lang-icon" style="font-size:1.4rem"></span>
+          <span id="sidebar-lang-name"></span>
+        </div>
+        <div class="sidebar-lang-sub" id="sidebar-lang-sub"></div>
+      </div>
+      <div class="topic-list" id="topic-list"></div>
+      <div class="sidebar-footer" id="sidebar-footer">0 of 6 topics done</div>
+    </div>
+
+    <!-- Main content -->
+    <div id="main">
+      <div id="welcome-screen" class="welcome-screen" style="height:100%">
+        <div style="font-size:3rem;margin-bottom:1rem">👈</div>
+        <h2>Select a topic to begin</h2>
+        <p style="font-size:14px;color:var(--text3);margin-top:4px">Choose from the sidebar to start learning</p>
+      </div>
+      <div id="topic-view" style="display:none;flex-direction:column;height:100%">
+        <div class="content-tabs">
+          <button class="tab-btn active" onclick="switchTab('lesson')">📖 Lesson</button>
+          <button class="tab-btn" onclick="switchTab('resources')">🔗 Resources</button>
+        </div>
+        <div class="tab-content active" id="tab-lesson"></div>
+        <div class="tab-content" id="tab-resources"></div>
+      </div>
+    </div>
+
+    <!-- Chat Panel -->
+    <div id="chat-panel">
+      <div class="chat-header">
+        <div class="ai-avatar">🤖</div>
+        <div class="chat-header-info">
+          <div class="name">AI Tutor</div>
+          <div class="status">
+            <span class="ai-status-dot"></span>
+            <span>Local AI · Offline</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+          <div class="ai-local-badge" id="quiz-mode-badge" style="display:none">🎯 Quiz Mode</div>
+          <div class="ai-local-badge">Trained</div>
+          <button class="chat-close" onclick="toggleChat()">✕</button>
+        </div>
+      </div>
+      <div class="chat-context" id="chat-context">Select a topic to start a focused session</div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-msg ai">
+          <div class="bubble">Hi! I'm your AI tutor — trained on every lesson, code example, and quiz in this course. No internet needed. 🚀<br><br>Select a topic from the sidebar and ask me anything!</div>
+        </div>
+      </div>
+      <div class="chat-suggestions" id="chat-suggestions"></div>
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chat-input" placeholder="Ask me anything..." rows="1" onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="chat-send" onclick="sendChat()">
+          <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ QUIZ MODAL ════════════════════════════════════════════ -->
+<div id="quiz-modal">
+  <div class="quiz-box">
+    <div class="quiz-header">
+      <div class="quiz-title" id="quiz-title">Topic Quiz</div>
+      <button class="quiz-close" onclick="closeQuiz()">✕</button>
+    </div>
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-prog-fill" style="width:0%"></div></div>
+    <div id="quiz-inner"></div>
+    <div class="quiz-footer" id="quiz-footer">
+      <div class="quiz-score" id="quiz-score">Question 1 of 5</div>
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+// ══════════════════════════════════════════════════════════════
+// CURRICULUM DATA
+// ══════════════════════════════════════════════════════════════
+const C = {
+  python:{
+    name:"Python",icon:"🐍",tagline:"Readable, powerful, beginner-friendly",color:"#3b82f6",
+    topics:[
+      {id:"setup",title:"Intro & Setup",duration:"10 min",
+       content:`<div class="lesson-header"><h1>Getting Started with Python</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 10 min read</span></div></div><div class="lesson-body">
+<p>Python is a high-level, <strong>interpreted programming language</strong> known for its clean syntax that reads almost like English. Created by Guido van Rossum in 1991, it's now one of the most popular languages in the world — used in web development, data science, AI, and automation.</p>
+<h2>Installing Python</h2>
+<p>Download Python from <strong>python.org</strong>. Version 3.x is what you want (3.10+ recommended). Python comes with a REPL (Read-Eval-Print Loop) you can open by typing <span class="inline-code">python3</span> in your terminal.</p>
+<h2>Your First Program</h2>
+<p>Create a file called <span class="inline-code">hello.py</span> and run it with <span class="inline-code">python3 hello.py</span>:</p>
+<pre><code class="language-python"># hello.py — your first Python program
+print("Hello, World!")
+
+name = input("What's your name? ")
+print(f"Nice to meet you, {name}!")
+
+# Python uses indentation instead of braces
+for i in range(3):
+    print(f"  Loop iteration {i + 1}")</code></pre>
+<h2>The Python REPL</h2>
+<p>The interactive shell lets you experiment instantly. Type <span class="inline-code">python3</span> in your terminal:</p>
+<pre><code class="language-python">>>> 2 + 2
+4
+>>> "hello".upper()
+'HELLO'
+>>> [1, 2, 3] * 2
+[1, 2, 3, 1, 2, 3]</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Python uses indentation (4 spaces by convention) to define code blocks. There are no curly braces. Getting indentation wrong will cause an <span class="inline-code">IndentationError</span>.</div>
+<h2>Package Manager: pip</h2>
+<p>Python's package manager <span class="inline-code">pip</span> lets you install third-party libraries. For example: <span class="inline-code">pip install requests</span> installs the popular HTTP library.</p></div>`,
+       resources:[
+         {t:"Python Official Docs",d:"The authoritative reference for all Python built-ins and modules",url:"https://docs.python.org/3/",type:"docs"},
+         {t:"Python.org Beginner's Guide",d:"Official guide for people new to programming",url:"https://wiki.python.org/moin/BeginnersGuide",type:"article"},
+         {t:"Real Python — Getting Started",d:"Practical tutorials for Python beginners with real-world examples",url:"https://realpython.com/python-first-steps/",type:"article"},
+         {t:"CS50P — Harvard Python Course",d:"Free Harvard course on Python programming (YouTube + edX)",url:"https://cs50.harvard.edu/python/",type:"video"},
+       ],
+       quiz:[
+         {q:"Which command runs a Python file named 'app.py' in the terminal?",opts:["run app.py","python3 app.py","execute app.py","start app.py"],ans:1},
+         {q:"What does REPL stand for?",opts:["Run, Execute, Print, Loop","Read-Eval-Print Loop","Read, Execute, Process, Launch","Runtime Execution and Print Loop"],ans:1},
+         {q:"How does Python define code blocks?",opts:["Curly braces { }","BEGIN/END keywords","Indentation (spaces/tabs)","Parentheses ( )"],ans:2},
+         {q:"Which Python version should you use for new projects?",opts:["Python 2.x","Python 1.x","Python 3.x","Any version works"],ans:2},
+         {q:"What tool do you use to install third-party Python libraries?",opts:["npm","brew","apt","pip"],ans:3},
+       ]},
+      {id:"variables",title:"Variables & Data Types",duration:"15 min",
+       content:`<div class="lesson-header"><h1>Variables & Data Types</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 15 min read</span></div></div><div class="lesson-body">
+<p>In Python, <strong>variables are created simply by assigning a value</strong> — no type declarations needed. Python infers the type automatically, making it a dynamically typed language.</p>
+<h2>Core Data Types</h2>
+<pre><code class="language-python"># Integer — whole numbers
+age = 25
+year = 2024
+
+# Float — decimal numbers
+pi = 3.14159
+temperature = -7.5
+
+# String — text (single or double quotes)
+name = "Alice"
+greeting = 'Hello, World!'
+
+# Boolean — True or False (capitalized!)
+is_active = True
+has_error = False
+
+# NoneType — represents absence of value
+result = None
+
+# Check a type with type()
+print(type(age))        # <class 'int'>
+print(type(name))       # <class 'str'>
+print(type(is_active))  # <class 'bool'></code></pre>
+<h2>String Operations</h2>
+<pre><code class="language-python">s = "Python"
+
+# f-strings (Python 3.6+) — the modern way to format
+lang = "Python"
+version = 3.12
+print(f"I'm learning {lang} {version}!")   # I'm learning Python 3.12!
+
+# Useful string methods
+print(s.upper())          # PYTHON
+print(s.lower())          # python
+print(s.replace("P","J")) # Jython
+print(len(s))             # 6
+print(s[0])               # P  (zero-indexed)
+print(s[-1])              # n  (last character)</code></pre>
+<h2>Type Conversion</h2>
+<pre><code class="language-python">num_str = "42"
+num_int = int(num_str)    # string → int
+num_float = float("3.14") # string → float
+back_str = str(100)       # int → string
+
+print(num_int + 8)   # 50 (arithmetic)
+print(back_str + "!") # "100!" (concatenation)</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Python is <strong>dynamically typed</strong> — you can reassign a variable to a completely different type. <span class="inline-code">x = 5</span> then <span class="inline-code">x = "hello"</span> is valid. Use <span class="inline-code">type()</span> to inspect a variable's current type.</div></div>`,
+       resources:[
+         {t:"Python Docs: Built-in Types",d:"Complete reference for int, float, str, bool, list, and more",url:"https://docs.python.org/3/library/stdtypes.html",type:"docs"},
+         {t:"Real Python: Variables & Types",d:"Deep dive into Python's type system and variable scoping",url:"https://realpython.com/python-variables/",type:"article"},
+         {t:"W3Schools Python Data Types",d:"Quick interactive reference with examples you can run in browser",url:"https://www.w3schools.com/python/python_datatypes.asp",type:"article"},
+         {t:"Python f-strings Guide",d:"Everything you need to know about modern Python string formatting",url:"https://realpython.com/python-f-strings/",type:"article"},
+       ],
+       quiz:[
+         {q:"What does `type(3.14)` return in Python?",opts:["<class 'int'>","<class 'float'>","<class 'number'>","<class 'decimal'>"],ans:1},
+         {q:"How do you write a boolean True value in Python?",opts:["true","TRUE","True","1 (only)"],ans:2},
+         {q:"Which of these is a valid f-string?",opts:['f"value is {x}"','f(x, "value")','format("value {x}")','"{x}".format()'],ans:0},
+         {q:"What value does `None` represent in Python?",opts:["The number 0","An empty string","False","The absence of a value"],ans:3},
+         {q:"What function converts a string '42' to an integer?",opts:["str('42')","float('42')","int('42')","num('42')"],ans:2},
+       ]},
+      {id:"control",title:"Control Flow",duration:"15 min",
+       content:`<div class="lesson-header"><h1>Control Flow</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 15 min read</span></div></div><div class="lesson-body">
+<p>Control flow determines <strong>which code runs and in what order</strong>. Python gives you if/elif/else for branching, and for/while loops for repetition.</p>
+<h2>If / Elif / Else</h2>
+<pre><code class="language-python">score = 78
+
+if score >= 90:
+    grade = "A"
+elif score >= 80:
+    grade = "B"
+elif score >= 70:
+    grade = "C"
+else:
+    grade = "F"
+
+print(f"Your grade: {grade}")   # Your grade: C
+
+# One-liner (ternary style)
+status = "pass" if score >= 60 else "fail"</code></pre>
+<h2>For Loops</h2>
+<pre><code class="language-python"># Iterate over a range
+for i in range(5):        # 0, 1, 2, 3, 4
+    print(i)
+
+# Iterate over a list
+fruits = ["apple", "banana", "cherry"]
+for fruit in fruits:
+    print(f"I like {fruit}")
+
+# enumerate gives (index, value)
+for i, fruit in enumerate(fruits):
+    print(f"{i}: {fruit}")
+
+# List comprehension — compact loops
+squares = [x**2 for x in range(10)]  # [0, 1, 4, 9, 16 ...]</code></pre>
+<h2>While Loops</h2>
+<pre><code class="language-python">count = 0
+while count < 5:
+    print(count)
+    count += 1
+
+# break exits the loop, continue skips to next
+for n in range(10):
+    if n == 3:
+        continue   # skip 3
+    if n == 7:
+        break      # stop at 7
+    print(n)</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong><span class="inline-code">range(start, stop, step)</span> generates numbers. <span class="inline-code">range(0, 10, 2)</span> gives 0, 2, 4, 6, 8. The stop value is always exclusive.</div></div>`,
+       resources:[
+         {t:"Python Docs: Control Flow",d:"Official documentation with complete syntax and examples",url:"https://docs.python.org/3/tutorial/controlflow.html",type:"docs"},
+         {t:"Real Python: Loops",d:"Comprehensive guide to Python for and while loops",url:"https://realpython.com/python-for-loop/",type:"article"},
+         {t:"Python Comprehensions Guide",d:"Master list, dict, and set comprehensions",url:"https://realpython.com/list-comprehension-python/",type:"article"},
+         {t:"freeCodeCamp: Python Conditionals",d:"Free interactive exercises on Python control flow",url:"https://www.freecodecamp.org/news/python-if-else-statement-conditional-logic/",type:"practice"},
+       ],
+       quiz:[
+         {q:"What is the output of `range(2, 8, 2)`?",opts:["2, 4, 6, 8","2, 4, 6","0, 2, 4, 6, 8","2, 3, 4, 5, 6, 7"],ans:1},
+         {q:"Which keyword skips the rest of a loop iteration and moves to the next?",opts:["break","pass","skip","continue"],ans:3},
+         {q:"What does `enumerate(['a','b','c'])` produce?",opts:["Index numbers only","Values only","(index, value) pairs","A reversed list"],ans:2},
+         {q:"What is the one-line syntax `x if condition else y` called?",opts:["Lambda","Ternary expression","Switch statement","Walrus operator"],ans:1},
+         {q:"Which of these is a valid list comprehension?",opts:["[x^2 for x in range(5)]","(x**2 for x in range(5))","[x**2 for x in range(5)]","list(x**2 for x in range 5)"],ans:2},
+       ]},
+      {id:"functions",title:"Functions",duration:"20 min",
+       content:`<div class="lesson-header"><h1>Functions</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 20 min read</span></div></div><div class="lesson-body">
+<p>Functions let you <strong>encapsulate reusable logic</strong> under a name. They're defined with <span class="inline-code">def</span> and can accept parameters and return values.</p>
+<h2>Defining & Calling</h2>
+<pre><code class="language-python">def greet(name):
+    return f"Hello, {name}!"
+
+print(greet("Alice"))    # Hello, Alice!
+print(greet("Bob"))      # Hello, Bob!</code></pre>
+<h2>Default & Keyword Arguments</h2>
+<pre><code class="language-python">def power(base, exponent=2):    # default exponent is 2
+    return base ** exponent
+
+print(power(3))       # 9  (3^2)
+print(power(3, 3))    # 27 (3^3)
+print(power(exponent=3, base=2))  # 8 — keyword args</code></pre>
+<h2>*args and **kwargs</h2>
+<pre><code class="language-python">def add_all(*args):           # variable positional args
+    return sum(args)
+
+print(add_all(1, 2, 3, 4))   # 10
+
+def show_info(**kwargs):      # variable keyword args
+    for key, val in kwargs.items():
+        print(f"  {key}: {val}")
+
+show_info(name="Alice", age=30, city="Accra")</code></pre>
+<h2>Lambda Functions</h2>
+<pre><code class="language-python"># Short anonymous functions
+square = lambda x: x ** 2
+print(square(5))   # 25
+
+# Common with sorted, filter, map
+nums = [3, 1, 4, 1, 5, 9]
+sorted_nums = sorted(nums, key=lambda x: -x)  # descending</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Python functions are <strong>first-class objects</strong> — you can pass them as arguments, return them from other functions, and store them in variables. This enables functional programming patterns.</div></div>`,
+       resources:[
+         {t:"Python Docs: Defining Functions",d:"Official Python tutorial on functions and scope",url:"https://docs.python.org/3/tutorial/controlflow.html#defining-functions",type:"docs"},
+         {t:"Real Python: Functions",d:"In-depth guide including decorators and closures",url:"https://realpython.com/defining-your-own-python-function/",type:"article"},
+         {t:"Python Lambda Functions",d:"When and how to use lambda in Python effectively",url:"https://realpython.com/python-lambda/",type:"article"},
+         {t:"Exercism Python Track",d:"Practice Python functions with mentor feedback",url:"https://exercism.org/tracks/python",type:"practice"},
+       ],
+       quiz:[
+         {q:"What keyword defines a function in Python?",opts:["function","fn","def","func"],ans:2},
+         {q:"What does `*args` allow you to do?",opts:["Pass keyword arguments","Pass a variable number of positional arguments","Define default values","Return multiple values"],ans:1},
+         {q:"What is a lambda function?",opts:["A class method","An anonymous single-expression function","A built-in function","A recursive function"],ans:1},
+         {q:"Which of these defines a default parameter correctly?",opts:["def f(x = 5):","def f(x := 5):","def f(x default 5):","def f(x | 5):"],ans:0},
+         {q:"What does `**kwargs` capture?",opts:["Positional arguments","Keyword arguments as a dict","A list of values","Required parameters"],ans:1},
+       ]},
+      {id:"datastructs",title:"Data Structures",duration:"20 min",
+       content:`<div class="lesson-header"><h1>Data Structures</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 20 min read</span></div></div><div class="lesson-body">
+<p>Python has four built-in data structures: <strong>list</strong> (ordered, mutable), <strong>tuple</strong> (ordered, immutable), <strong>dict</strong> (key-value pairs), and <strong>set</strong> (unique, unordered).</p>
+<h2>Lists</h2>
+<pre><code class="language-python">fruits = ["apple", "banana", "cherry"]
+fruits.append("date")        # add to end
+fruits.insert(1, "avocado")  # insert at index
+fruits.remove("banana")      # remove by value
+popped = fruits.pop()        # remove & return last
+
+# Slicing
+print(fruits[1:3])   # ['avocado', 'cherry']
+print(fruits[::-1])  # reversed list</code></pre>
+<h2>Dictionaries</h2>
+<pre><code class="language-python">person = {"name": "Alice", "age": 30, "city": "Accra"}
+
+# Access, add, update
+print(person["name"])          # Alice
+person["email"] = "a@mail.com" # add key
+person["age"] = 31             # update
+
+# Safe access with .get()
+print(person.get("phone", "N/A"))  # N/A (no KeyError)
+
+# Iterate
+for key, val in person.items():
+    print(f"{key}: {val}")</code></pre>
+<h2>Sets & Tuples</h2>
+<pre><code class="language-python"># Set — unique values, no order
+tags = {"python", "code", "python"}  # {"python", "code"}
+tags.add("ai")
+print("python" in tags)   # True (fast lookup)
+
+a = {1, 2, 3};  b = {2, 3, 4}
+print(a & b)    # intersection: {2, 3}
+print(a | b)    # union: {1, 2, 3, 4}
+
+# Tuple — immutable list
+coords = (10.5, 5.2)
+x, y = coords    # unpacking</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Use a <strong>dict</strong> when you need to look up values by a key, a <strong>list</strong> for ordered sequences, a <strong>set</strong> when you need uniqueness or fast membership tests, and a <strong>tuple</strong> for immutable records.</div></div>`,
+       resources:[
+         {t:"Python Docs: Data Structures",d:"The official tutorial chapter on lists, dicts, and sets",url:"https://docs.python.org/3/tutorial/datastructures.html",type:"docs"},
+         {t:"Real Python: Dictionaries",d:"Comprehensive guide to Python's most versatile data structure",url:"https://realpython.com/python-dicts/",type:"article"},
+         {t:"Python Sets Tutorial",d:"When and how to use sets for fast lookups and operations",url:"https://realpython.com/python-sets/",type:"article"},
+         {t:"Codecademy Python Data Structures",d:"Interactive exercises on Python collections",url:"https://www.codecademy.com/learn/learn-python-3",type:"practice"},
+       ],
+       quiz:[
+         {q:"Which method adds an element to the end of a list?",opts:["list.push()","list.add()","list.append()","list.insert()"],ans:2},
+         {q:"How do you safely access a dict key that might not exist?",opts:["dict.access(key)","dict[key] or None","dict.get(key, default)","dict.fetch(key)"],ans:2},
+         {q:"Which data structure only stores unique values?",opts:["list","tuple","dict","set"],ans:3},
+         {q:"What does `fruits[1:4]` do?",opts:["Gets items at indices 1, 2, 3","Gets items at indices 1, 2, 3, 4","Gets 4 items starting at index 1","Gets items from end"],ans:0},
+         {q:"Tuples are different from lists because they are:",opts:["Faster to iterate","Unordered","Immutable (cannot be changed)","Only for numbers"],ans:2},
+       ]},
+      {id:"oop",title:"OOP & Classes",duration:"25 min",
+       content:`<div class="lesson-header"><h1>Object-Oriented Programming</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 25 min read</span></div></div><div class="lesson-body">
+<p>OOP lets you model real-world entities as <strong>objects</strong> that bundle data (attributes) and behavior (methods) together. Python's <span class="inline-code">class</span> keyword creates blueprints for objects.</p>
+<h2>Defining a Class</h2>
+<pre><code class="language-python">class Dog:
+    species = "Canis familiaris"  # class attribute
+
+    def __init__(self, name, breed):  # constructor
+        self.name = name    # instance attribute
+        self.breed = breed
+
+    def bark(self):
+        return f"{self.name} says: Woof!"
+
+    def __str__(self):       # string representation
+        return f"Dog({self.name}, {self.breed})"
+
+rex = Dog("Rex", "German Shepherd")
+print(rex.bark())    # Rex says: Woof!
+print(rex)           # Dog(Rex, German Shepherd)</code></pre>
+<h2>Inheritance</h2>
+<pre><code class="language-python">class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        raise NotImplementedError
+
+class Cat(Animal):          # Cat inherits from Animal
+    def speak(self):
+        return f"{self.name} says: Meow!"
+
+class Duck(Animal):
+    def speak(self):
+        return f"{self.name} says: Quack!"
+
+animals = [Cat("Luna"), Duck("Donald")]
+for a in animals:
+    print(a.speak())        # Polymorphism!</code></pre>
+<h2>@property & Encapsulation</h2>
+<pre><code class="language-python">class BankAccount:
+    def __init__(self, balance=0):
+        self._balance = balance     # _prefix = "private"
+
+    @property
+    def balance(self):
+        return self._balance
+
+    def deposit(self, amount):
+        if amount > 0:
+            self._balance += amount</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>The four pillars of OOP: <strong>Encapsulation</strong> (hiding internal state), <strong>Abstraction</strong> (simplifying complexity), <strong>Inheritance</strong> (reusing code via parent classes), and <strong>Polymorphism</strong> (objects of different types sharing an interface).</div></div>`,
+       resources:[
+         {t:"Python Docs: Classes",d:"The official class tutorial with all the technical details",url:"https://docs.python.org/3/tutorial/classes.html",type:"docs"},
+         {t:"Real Python: OOP in Python",d:"Practical, project-based introduction to Python OOP",url:"https://realpython.com/python3-object-oriented-programming/",type:"article"},
+         {t:"Python Magic Methods",d:"Understanding __init__, __str__, __repr__, and more",url:"https://rszalski.github.io/magicmethods/",type:"article"},
+         {t:"OOP Exercises — w3resource",d:"Hands-on practice with 30+ Python OOP exercises",url:"https://www.w3resource.com/python-exercises/class-exercises/",type:"practice"},
+       ],
+       quiz:[
+         {q:"What is `__init__` in a Python class?",opts:["A destructor","A class method","The constructor / initializer","A static method"],ans:2},
+         {q:"What does `self` refer to inside a class method?",opts:["The class itself","The current instance of the class","The parent class","A global variable"],ans:1},
+         {q:"Which OOP concept allows a subclass to use methods from a parent class?",opts:["Polymorphism","Encapsulation","Inheritance","Abstraction"],ans:2},
+         {q:"What does @property do?",opts:["Creates a static method","Makes a method behave like an attribute","Marks a method as private","Overloads an operator"],ans:1},
+         {q:"In `class Cat(Animal):`, what is Animal?",opts:["An interface","The parent / base class","A mixin","A decorator"],ans:1},
+       ]},
+    ]
+  },
+  javascript:{
+    name:"JavaScript",icon:"⚡",tagline:"The language of the web",color:"#f7df1e",
+    topics:[
+      {id:"setup",title:"Intro & Setup",duration:"10 min",
+       content:`<div class="lesson-header"><h1>Getting Started with JavaScript</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 10 min read</span></div></div><div class="lesson-body">
+<p>JavaScript is the <strong>language of the web</strong> — the only language that runs natively in browsers. With Node.js it also runs server-side, making it a full-stack language.</p>
+<h2>Running JS in the Browser</h2>
+<p>Open DevTools (F12) → Console tab. You can type and run JS instantly.</p>
+<pre><code class="language-javascript">console.log("Hello, World!");
+console.log(2 + 2);         // 4
+console.error("Oops!");     // red error message
+console.warn("Careful!");   // yellow warning</code></pre>
+<h2>Running with Node.js</h2>
+<p>Install Node.js from <strong>nodejs.org</strong>, then run <span class="inline-code">node app.js</span>:</p>
+<pre><code class="language-javascript">// app.js
+const name = "World";
+console.log(\`Hello, \${name}!\`);
+
+// Node.js has no browser APIs (no document, window)
+// but has fs, http, path, etc.</code></pre>
+<h2>JavaScript in HTML</h2>
+<pre><code class="language-html">&lt;!-- Inline script --&gt;
+&lt;script&gt;
+  alert("Hello from JS!");
+&lt;/script&gt;
+
+&lt;!-- External file (preferred) --&gt;
+&lt;script src="app.js" defer&gt;&lt;/script&gt;</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Always put <span class="inline-code">&lt;script&gt;</span> tags at the end of <span class="inline-code">&lt;body&gt;</span> or use the <span class="inline-code">defer</span> attribute — this ensures the HTML loads before your JS runs.</div></div>`,
+       resources:[
+         {t:"MDN JavaScript Guide",d:"Mozilla's comprehensive, beginner-friendly JS documentation",url:"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide",type:"docs"},
+         {t:"javascript.info",d:"The modern JavaScript tutorial — free, detailed, beautifully written",url:"https://javascript.info/",type:"article"},
+         {t:"Node.js Official Docs",d:"Getting started with server-side JavaScript",url:"https://nodejs.org/en/docs/",type:"docs"},
+         {t:"freeCodeCamp JS Course",d:"Free interactive JavaScript certification course",url:"https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/",type:"practice"},
+       ],
+       quiz:[
+         {q:"Which global function prints to the browser console?",opts:["print()","log()","console.log()","debug()"],ans:2},
+         {q:"What does `defer` do on a script tag?",opts:["Loads the script from cache","Runs script before HTML parses","Runs script after HTML finishes loading","Prevents script from running"],ans:2},
+         {q:"Which company created JavaScript?",opts:["Google","Microsoft","Netscape","Mozilla"],ans:2},
+         {q:"Which of these is a valid way to run JS outside a browser?",opts:["Python runtime","Deno or Node.js","Java JVM","PHP interpreter"],ans:1},
+         {q:"What is the file extension for JavaScript files?",opts:[".java",".js",".jsx only",".jscript"],ans:1},
+       ]},
+      {id:"variables",title:"Variables & Types",duration:"15 min",
+       content:`<div class="lesson-header"><h1>Variables & Data Types</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 15 min read</span></div></div><div class="lesson-body">
+<p>JavaScript has three ways to declare variables: <span class="inline-code">var</span> (legacy), <span class="inline-code">let</span> (block-scoped, reassignable), and <span class="inline-code">const</span> (block-scoped, not reassignable).</p>
+<h2>let, const, var</h2>
+<pre><code class="language-javascript">const PI = 3.14159;    // cannot be reassigned
+let score = 0;         // can be reassigned
+score = 42;            // ✅ ok
+
+var oldStyle = "avoid var in modern JS";
+
+// const with objects/arrays — the reference is const, not contents
+const user = { name: "Alice" };
+user.name = "Bob";    // ✅ OK — mutating the object is fine
+// user = {};         // ❌ Error — can't reassign the variable</code></pre>
+<h2>Primitive Types</h2>
+<pre><code class="language-javascript">let num = 42;              // Number (int & float unified)
+let decimal = 3.14;
+let bigNum = 9007199254740991n; // BigInt
+
+let text = "Hello";        // String
+let bool = true;           // Boolean
+let nothing = null;        // intentional absence
+let undef = undefined;     // unintentionally absent
+let sym = Symbol("id");    // unique Symbol
+
+// typeof operator
+console.log(typeof 42);        // "number"
+console.log(typeof "hello");   // "string"
+console.log(typeof null);      // "object" (famous JS bug!)</code></pre>
+<h2>Template Literals</h2>
+<pre><code class="language-javascript">const name = "World";
+const greeting = \`Hello, \${name}!\`;    // template literal
+const multiLine = \`
+  Line 1
+  Line 2
+  2 + 2 = \${2 + 2}
+\`;</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Prefer <span class="inline-code">const</span> by default. Only use <span class="inline-code">let</span> when you need to reassign. Avoid <span class="inline-code">var</span> — it's function-scoped and causes subtle bugs.</div></div>`,
+       resources:[
+         {t:"MDN: JavaScript Data Types",d:"Complete reference with examples for all JS types",url:"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures",type:"docs"},
+         {t:"javascript.info: Variables",d:"Deep explanations of let, const, var with gotchas",url:"https://javascript.info/variables",type:"article"},
+         {t:"ES6 Features Overview",d:"Guide to modern JavaScript features including template literals",url:"https://github.com/lukehoban/es6features",type:"article"},
+         {t:"Scrimba JS Basics",d:"Interactive in-browser JavaScript exercises",url:"https://scrimba.com/learn/learnjavascript",type:"practice"},
+       ],
+       quiz:[
+         {q:"Which keyword creates a block-scoped variable that cannot be reassigned?",opts:["var","let","const","static"],ans:2},
+         {q:"What does `typeof null` return (infamous JS quirk)?",opts:['"null"','"undefined"','"object"','"boolean"'],ans:2},
+         {q:"How do you embed an expression inside a template literal?",opts:["#{expr}","${expr}","{{expr}}","[[expr]]"],ans:1},
+         {q:"Which of these is NOT a JavaScript primitive type?",opts:["string","boolean","array","undefined"],ans:2},
+         {q:"What is the main difference between `let` and `var`?",opts:["let is faster","let is block-scoped, var is function-scoped","var cannot be reassigned","let is only for numbers"],ans:1},
+       ]},
+      {id:"control",title:"Control Flow",duration:"15 min",
+       content:`<div class="lesson-header"><h1>Control Flow</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 15 min read</span></div></div><div class="lesson-body">
+<p>JavaScript supports standard control flow: <strong>if/else</strong>, <strong>switch</strong>, <strong>for/while</strong>, and the ternary operator.</p>
+<h2>If / Else & Ternary</h2>
+<pre><code class="language-javascript">const age = 20;
+
+if (age >= 18) {
+    console.log("Adult");
+} else if (age >= 13) {
+    console.log("Teen");
+} else {
+    console.log("Child");
+}
+
+// Ternary
+const status = age >= 18 ? "adult" : "minor";
+
+// Nullish coalescing (??) and optional chaining (?.)
+const username = user?.profile?.name ?? "Guest";</code></pre>
+<h2>For Loops</h2>
+<pre><code class="language-javascript">// Classic for
+for (let i = 0; i < 5; i++) {
+    console.log(i);
+}
+
+// for...of (arrays)
+const colors = ["red", "green", "blue"];
+for (const color of colors) {
+    console.log(color);
+}
+
+// for...in (object keys)
+const obj = { a: 1, b: 2 };
+for (const key in obj) {
+    console.log(key, obj[key]);
+}
+
+// Array methods (modern preference)
+colors.forEach(c => console.log(c));
+const upper = colors.map(c => c.toUpperCase());</code></pre>
+<h2>Switch Statement</h2>
+<pre><code class="language-javascript">const day = "Monday";
+switch (day) {
+    case "Saturday":
+    case "Sunday":
+        console.log("Weekend!"); break;
+    case "Monday":
+        console.log("Start of week"); break;
+    default:
+        console.log("Weekday");
+}</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>In modern JS, prefer <span class="inline-code">for...of</span> for arrays and array methods like <span class="inline-code">.map()</span>, <span class="inline-code">.filter()</span>, <span class="inline-code">.reduce()</span> over classic <span class="inline-code">for</span> loops — they're more expressive and readable.</div></div>`,
+       resources:[
+         {t:"MDN: Control Flow & Error Handling",d:"Official MDN docs on all JS control flow statements",url:"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling",type:"docs"},
+         {t:"javascript.info: Loops",d:"Comprehensive guide to all JavaScript loop types",url:"https://javascript.info/while-for",type:"article"},
+         {t:"Array Methods Cheatsheet",d:"Visual guide to map, filter, reduce, and more",url:"https://dev.to/devmount/a-cheatsheet-of-128-cheatsheets-for-developers-f4m",type:"article"},
+         {t:"LeetCode Easy Problems",d:"Practice control flow with coding challenges",url:"https://leetcode.com/problemset/?difficulty=EASY&page=1",type:"practice"},
+       ],
+       quiz:[
+         {q:"What does the `??` (nullish coalescing) operator do?",opts:["Logical AND","Returns right side if left is null/undefined","Strict equality check","Bitwise OR"],ans:1},
+         {q:"Which loop is best for iterating over array values directly?",opts:["for...in","while","for...of","classic for"],ans:2},
+         {q:"What happens if you omit `break` in a switch case?",opts:["Syntax error","The switch ends","Execution falls through to the next case","Nothing special"],ans:2},
+         {q:"What does `?.` (optional chaining) do?",opts:["Creates a new object","Safely accesses a property that might not exist","Defines optional function params","Chains promises"],ans:1},
+         {q:"What is `[1,2,3].map(x => x * 2)` result?",opts:["[1,2,3]","[2,4,6]","6","undefined"],ans:1},
+       ]},
+      {id:"functions",title:"Functions",duration:"20 min",
+       content:`<div class="lesson-header"><h1>Functions</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 20 min read</span></div></div><div class="lesson-body">
+<p>Functions in JavaScript are first-class objects. They can be declared several ways, passed as arguments, and returned from other functions.</p>
+<h2>Declaration vs Expression vs Arrow</h2>
+<pre><code class="language-javascript">// Function declaration (hoisted)
+function add(a, b) { return a + b; }
+
+// Function expression
+const multiply = function(a, b) { return a * b; };
+
+// Arrow function (modern, concise)
+const square = x => x * x;
+const greet = (name) => \`Hello, \${name}!\`;
+
+// Multi-line arrow function
+const clamp = (val, min, max) => {
+    if (val < min) return min;
+    if (val > max) return max;
+    return val;
+};</code></pre>
+<h2>Default & Rest Parameters</h2>
+<pre><code class="language-javascript">function greet(name = "World") {
+    return \`Hello, \${name}!\`;
+}
+console.log(greet());       // Hello, World!
+console.log(greet("Alice")); // Hello, Alice!
+
+// Rest parameters (...) collect extra args into array
+function sum(...numbers) {
+    return numbers.reduce((acc, n) => acc + n, 0);
+}
+console.log(sum(1, 2, 3, 4)); // 10</code></pre>
+<h2>Higher-Order Functions</h2>
+<pre><code class="language-javascript">const nums = [1, 2, 3, 4, 5, 6];
+
+const evens   = nums.filter(n => n % 2 === 0); // [2,4,6]
+const doubled = nums.map(n => n * 2);           // [2,4,6,8,10,12]
+const total   = nums.reduce((sum, n) => sum + n, 0); // 21</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Arrow functions do <strong>not</strong> have their own <span class="inline-code">this</span> binding — they inherit <span class="inline-code">this</span> from the surrounding scope. This is crucial when using methods inside classes or callbacks.</div></div>`,
+       resources:[
+         {t:"MDN: Functions",d:"Complete guide to all JS function types and closures",url:"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",type:"docs"},
+         {t:"javascript.info: Arrow Functions",d:"Detailed explanation of arrow functions vs regular functions",url:"https://javascript.info/arrow-functions-basics",type:"article"},
+         {t:"Functional JS Patterns",d:"Higher-order functions, map, filter, reduce patterns",url:"https://www.digitalocean.com/community/tutorials/list-processing-with-map-filter-and-reduce",type:"article"},
+         {t:"Codewars JavaScript Katas",d:"Challenging JS puzzles to sharpen your function skills",url:"https://www.codewars.com/kata/search/javascript",type:"practice"},
+       ],
+       quiz:[
+         {q:"Which function syntax is hoisted to the top of its scope?",opts:["Arrow function","const function","Function declaration","Function expression"],ans:2},
+         {q:"What does `const f = x => x * 2` do?",opts:["Declares a class","Creates a function that doubles x","Creates a Promise","Declares a const x"],ans:1},
+         {q:"What does `...numbers` in a function parameter do?",opts:["Spreads an array","Collects extra arguments into an array","Deconstructs an object","Creates a copy"],ans:1},
+         {q:"Which array method creates a NEW array with elements that pass a test?",opts:["map","reduce","filter","forEach"],ans:2},
+         {q:"Arrow functions differ from regular functions because they:",opts:["Are faster","Cannot have parameters","Don't have their own `this` binding","Cannot return values"],ans:2},
+       ]},
+      {id:"datastructs",title:"Data Structures",duration:"20 min",
+       content:`<div class="lesson-header"><h1>Data Structures</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 20 min read</span></div></div><div class="lesson-body">
+<p>JavaScript's primary data structures are <strong>Arrays</strong> (ordered lists) and <strong>Objects</strong> (key-value maps), plus modern <strong>Map</strong> and <strong>Set</strong>.</p>
+<h2>Arrays</h2>
+<pre><code class="language-javascript">const arr = [1, 2, 3, 4, 5];
+
+arr.push(6);           // add to end
+arr.unshift(0);        // add to start
+const last = arr.pop(); // remove & return last
+arr.splice(2, 1);      // remove 1 element at index 2
+
+// Spread & destructuring
+const copy = [...arr];
+const [first, second, ...rest] = arr;</code></pre>
+<h2>Objects</h2>
+<pre><code class="language-javascript">const user = {
+    name: "Alice",
+    age: 30,
+    greet() { return \`Hi, I'm \${this.name}\`; }
+};
+
+// Destructuring
+const { name, age } = user;
+const { name: userName } = user;  // rename
+
+// Spread
+const updated = { ...user, age: 31, city: "Accra" };
+
+// Object methods
+Object.keys(user);    // ["name", "age", "greet"]
+Object.entries(user); // [["name","Alice"], ...]</code></pre>
+<h2>Map & Set</h2>
+<pre><code class="language-javascript">// Map — keys can be any type, preserves order
+const map = new Map();
+map.set("key", "value");
+map.set(42, "number key");
+console.log(map.get("key"));    // "value"
+console.log(map.size);          // 2
+
+// Set — unique values only
+const set = new Set([1, 2, 2, 3, 3]);
+console.log([...set]);  // [1, 2, 3]
+set.has(2);             // true</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Use a <strong>Map</strong> over a plain object when keys aren't strings, when insertion order matters, or when you need a <span class="inline-code">.size</span> property. Use <strong>Set</strong> for fast de-duplication and membership checks.</div></div>`,
+       resources:[
+         {t:"MDN: Arrays",d:"Complete array API reference with all methods",url:"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",type:"docs"},
+         {t:"MDN: Map & Set",d:"Modern JS Map and Set with comparison to plain objects",url:"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",type:"docs"},
+         {t:"javascript.info: Objects",d:"Detailed guide to JS objects, destructuring, and spread",url:"https://javascript.info/object",type:"article"},
+         {t:"Array Methods Visualizer",d:"Interactive visualization of map, filter, reduce",url:"https://arrayvisualizer.com",type:"practice"},
+       ],
+       quiz:[
+         {q:"What does `const [a, ...rest] = [1,2,3,4]` give you?",opts:["a=1, rest=[2,3,4]","a=[1,2,3], rest=4","a=1, rest=4","Error"],ans:0},
+         {q:"Which method removes AND returns the last element of an array?",opts:["shift()","unshift()","pop()","splice()"],ans:2},
+         {q:"What is the difference between Object and Map in JS?",opts:["No difference","Map keys can be any type; Object keys are strings/Symbols","Objects are faster always","Maps can't be iterated"],ans:1},
+         {q:"What does `{...obj, key: newVal}` do?",opts:["Mutates obj","Creates a new object with all of obj's properties plus overrides","Deletes a key","Creates an array"],ans:1},
+         {q:"How do you remove duplicates from an array efficiently?",opts:["arr.unique()","[...new Set(arr)]","arr.filter(unique)","arr.dedupe()"],ans:1},
+       ]},
+      {id:"async",title:"Async JavaScript",duration:"25 min",
+       content:`<div class="lesson-header"><h1>Async JavaScript</h1><div class="lesson-meta"><span class="lesson-badge">Advanced</span><span>⏱ 25 min read</span></div></div><div class="lesson-body">
+<p>JavaScript is <strong>single-threaded</strong> but handles async operations (network, timers, I/O) non-blockingly via the event loop. Modern async JS uses <strong>Promises</strong> and <strong>async/await</strong>.</p>
+<h2>Promises</h2>
+<pre><code class="language-javascript">const fetchData = () => new Promise((resolve, reject) => {
+    setTimeout(() => {
+        const success = true;
+        success ? resolve({ data: "Hello!" }) : reject("Error!");
+    }, 1000);
+});
+
+fetchData()
+    .then(result => console.log(result.data))  // Hello!
+    .catch(err => console.error(err))
+    .finally(() => console.log("Done"));</code></pre>
+<h2>async / await</h2>
+<pre><code class="language-javascript">async function loadUser(id) {
+    try {
+        const res = await fetch(\`https://api.example.com/users/\${id}\`);
+        if (!res.ok) throw new Error(\`HTTP \${res.status}\`);
+        const user = await res.json();
+        return user;
+    } catch (err) {
+        console.error("Failed:", err.message);
+    }
+}
+
+// Parallel requests
+const [user, posts] = await Promise.all([
+    fetch("/api/user"),
+    fetch("/api/posts"),
+]);</code></pre>
+<h2>Event Loop Basics</h2>
+<pre><code class="language-javascript">console.log("1 - sync");
+setTimeout(() => console.log("3 - macro task"), 0);
+Promise.resolve().then(() => console.log("2 - micro task"));
+console.log("4 - sync");
+// Output: 1, 4, 2, 3</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Microtasks (Promises) always run before macrotasks (setTimeout, setInterval) in the event loop. <span class="inline-code">async/await</span> is syntactic sugar over Promises — they produce the same result but are far more readable.</div></div>`,
+       resources:[
+         {t:"MDN: async/await",d:"Complete reference with real-world async patterns",url:"https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Promises",type:"docs"},
+         {t:"javascript.info: Promises",d:"The most thorough Promise tutorial available",url:"https://javascript.info/promise-basics",type:"article"},
+         {t:"Event Loop Visualizer",d:"Interactive animation of the JS event loop",url:"https://www.jsv9000.app/",type:"article"},
+         {t:"async/await Exercises",d:"Practice async JS with real API calls",url:"https://github.com/nickmccurdy/fetch-exercises",type:"practice"},
+       ],
+       quiz:[
+         {q:"What does `async` before a function do?",opts:["Makes it run in a thread","Makes it return a Promise automatically","Prevents it from blocking","Enables import/export"],ans:1},
+         {q:"What does `await` do?",opts:["Stops all JS execution","Pauses the function until the Promise resolves","Creates a new Promise","Runs code after 1 second"],ans:1},
+         {q:"What is `Promise.all([p1, p2])` used for?",opts:["Running promises sequentially","Running promises in parallel and waiting for all","Catching errors","Canceling promises"],ans:1},
+         {q:"In the event loop, which runs first?",opts:["setTimeout callbacks","setInterval callbacks","Promise (.then) microtasks","DOM events"],ans:2},
+         {q:"What does `fetch()` return?",opts:["Raw JSON data","An HTML element","A Promise","A string"],ans:2},
+       ]},
+    ]
+  },
+  typescript:{
+    name:"TypeScript",icon:"🔷",tagline:"JavaScript with superpowers",color:"#3178c6",
+    topics:[
+      {id:"setup",title:"Intro & Setup",duration:"10 min",
+       content:`<div class="lesson-header"><h1>Getting Started with TypeScript</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 10 min read</span></div></div><div class="lesson-body">
+<p>TypeScript is a <strong>statically typed superset of JavaScript</strong> developed by Microsoft. It compiles to plain JS and adds type safety, better tooling, and improved developer experience.</p>
+<h2>Installation & First File</h2>
+<pre><code class="language-bash">npm install -g typescript
+tsc --version
+
+# Compile a TS file
+tsc hello.ts    # produces hello.js
+node hello.js
+
+# Watch mode (auto-recompile on save)
+tsc --watch hello.ts</code></pre>
+<pre><code class="language-typescript">// hello.ts
+const greet = (name: string): string => {
+    return \`Hello, \${name}!\`;
+};
+
+console.log(greet("TypeScript"));
+// greet(42); // ❌ Type error! Argument must be string</code></pre>
+<h2>tsconfig.json</h2>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "strict": true,
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"]
+}</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Enable <span class="inline-code">"strict": true</span> in tsconfig.json. It enables a set of strictness checks that catch the most bugs, including <span class="inline-code">strictNullChecks</span> which prevents null/undefined errors at runtime.</div></div>`,
+       resources:[
+         {t:"TypeScript Official Docs",d:"The authoritative TypeScript handbook and reference",url:"https://www.typescriptlang.org/docs/",type:"docs"},
+         {t:"TypeScript Handbook",d:"The official guide to learning TypeScript from scratch",url:"https://www.typescriptlang.org/docs/handbook/intro.html",type:"article"},
+         {t:"Total TypeScript",d:"Advanced TypeScript patterns by Matt Pocock",url:"https://www.totaltypescript.com/",type:"article"},
+         {t:"TypeScript Exercises",d:"Interactive TypeScript challenges in the browser",url:"https://typescript-exercises.github.io/",type:"practice"},
+       ],
+       quiz:[
+         {q:"TypeScript is a superset of which language?",opts:["Java","C#","JavaScript","Python"],ans:2},
+         {q:"What command compiles a TypeScript file?",opts:["ts compile","npm run ts","tsc filename.ts","typescript run"],ans:2},
+         {q:"What does `strict: true` in tsconfig enable?",opts:["Faster compilation","A set of strictness checks including null checks","Linting rules","Minification"],ans:1},
+         {q:"TypeScript type annotations are:",opts:["Required at runtime","Removed at runtime (compile-time only)","Saved in the JS output","Part of the JS standard"],ans:1},
+         {q:"Which company created and maintains TypeScript?",opts:["Google","Meta","Netflix","Microsoft"],ans:3},
+       ]},
+      {id:"types",title:"Types & Interfaces",duration:"20 min",
+       content:`<div class="lesson-header"><h1>Types & Interfaces</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 20 min read</span></div></div><div class="lesson-body">
+<p>TypeScript's type system lets you describe the shape of data, enabling compile-time error detection and excellent IDE autocomplete.</p>
+<h2>Basic Types</h2>
+<pre><code class="language-typescript">let name: string = "Alice";
+let age: number = 30;
+let active: boolean = true;
+let nothing: null = null;
+let undef: undefined = undefined;
+let anything: any = "avoid this!";  // escape hatch
+
+// Arrays
+let nums: number[] = [1, 2, 3];
+let strs: Array<string> = ["a", "b"];
+
+// Tuples — fixed-length typed arrays
+let coords: [number, number] = [10.5, 5.2];
+
+// Union types
+let id: string | number = "abc123";
+id = 42; // also fine</code></pre>
+<h2>Interfaces & Type Aliases</h2>
+<pre><code class="language-typescript">// Interface — describes an object shape
+interface User {
+    id: number;
+    name: string;
+    email?: string;   // optional property
+    readonly createdAt: Date;  // cannot be changed
+}
+
+// Type alias — more flexible
+type Status = "active" | "inactive" | "pending";
+type Callback = (error: Error | null, data: unknown) => void;
+
+// Extending interfaces
+interface Admin extends User {
+    permissions: string[];
+}</code></pre>
+<h2>Generics</h2>
+<pre><code class="language-typescript">// Generic function — works with any type
+function identity<T>(value: T): T {
+    return value;
+}
+
+identity<string>("hello");  // returns string
+identity<number>(42);       // returns number
+
+// Generic interface
+interface ApiResponse<T> {
+    data: T;
+    status: number;
+    message: string;
+}</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong><span class="inline-code">interface</span> is best for describing object shapes (and can be extended). <span class="inline-code">type</span> is more flexible — it can be a union, intersection, or primitive alias. When in doubt, use <span class="inline-code">interface</span> for objects.</div></div>`,
+       resources:[
+         {t:"TS Handbook: Basic Types",d:"Official docs on all TypeScript basic types",url:"https://www.typescriptlang.org/docs/handbook/2/everyday-types.html",type:"docs"},
+         {t:"TS Handbook: Interfaces",d:"Interface syntax, optional properties, and extending",url:"https://www.typescriptlang.org/docs/handbook/2/objects.html",type:"docs"},
+         {t:"TypeScript Generics Guide",d:"Comprehensive guide to TypeScript generics",url:"https://www.typescriptlang.org/docs/handbook/2/generics.html",type:"article"},
+         {t:"TS Playground",d:"Try TypeScript directly in the browser with instant compilation",url:"https://www.typescriptlang.org/play",type:"practice"},
+       ],
+       quiz:[
+         {q:"How do you mark an interface property as optional?",opts:["property!: type","property?: type","optional property: type","property: type | undefined only"],ans:1},
+         {q:"What does the `readonly` modifier do?",opts:["Makes the property private","Prevents the property from being changed after initialization","Makes it a getter","Requires a value"],ans:1},
+         {q:"What is a union type?",opts:["Two interfaces merged","A value that can be one of several types","A generic constraint","An intersection of types"],ans:1},
+         {q:"What is the purpose of generics (e.g., `<T>`)?",opts:["Creating classes","Making type-safe reusable code","Defining constants","Async operations"],ans:1},
+         {q:"What does `any` type do?",opts:["Accepts only primitives","Enables TypeScript's strictest checks","Disables type checking for that value","Only works in .tsx files"],ans:2},
+       ]},
+      {id:"control",title:"Type Guards & Narrowing",duration:"15 min",
+       content:`<div class="lesson-header"><h1>Type Guards & Narrowing</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 15 min read</span></div></div><div class="lesson-body">
+<p>TypeScript <strong>narrows types</strong> based on runtime checks. Inside an if block that checks <span class="inline-code">typeof x === "string"</span>, TypeScript knows <span class="inline-code">x</span> is a string.</p>
+<h2>typeof & instanceof Guards</h2>
+<pre><code class="language-typescript">function process(value: string | number) {
+    if (typeof value === "string") {
+        return value.toUpperCase();  // TS knows: string
+    } else {
+        return value.toFixed(2);     // TS knows: number
+    }
+}
+
+class Dog { bark() {} }
+class Cat { meow() {} }
+
+function makeSound(pet: Dog | Cat) {
+    if (pet instanceof Dog) {
+        pet.bark();  // TS knows: Dog
+    } else {
+        pet.meow();  // TS knows: Cat
+    }
+}</code></pre>
+<h2>in Operator & Discriminated Unions</h2>
+<pre><code class="language-typescript">type Circle = { kind: "circle"; radius: number };
+type Square = { kind: "square"; side: number };
+type Shape = Circle | Square;
+
+function area(shape: Shape): number {
+    switch (shape.kind) {
+        case "circle": return Math.PI * shape.radius ** 2;
+        case "square": return shape.side ** 2;
+    }
+}</code></pre>
+<h2>Non-null Assertion & Type Casting</h2>
+<pre><code class="language-typescript">const el = document.getElementById("app");
+// el is HTMLElement | null
+
+// Non-null assertion (you're sure it exists)
+const el2 = document.getElementById("app")!;
+
+// Type assertion (casting)
+const input = el as HTMLInputElement;
+input.value = "Hello";</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong><strong>Discriminated unions</strong> (types with a shared literal property like <span class="inline-code">kind</span>) are one of TypeScript's most powerful patterns. They give you exhaustive type checking in switch statements.</div></div>`,
+       resources:[
+         {t:"TS Handbook: Narrowing",d:"Complete guide to TypeScript type narrowing techniques",url:"https://www.typescriptlang.org/docs/handbook/2/narrowing.html",type:"docs"},
+         {t:"Discriminated Unions Guide",d:"Patterns for modeling data with discriminated unions",url:"https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions",type:"article"},
+         {t:"Total TS: Type Guards",d:"Advanced type guard patterns by Matt Pocock",url:"https://www.totaltypescript.com/",type:"article"},
+         {t:"TS Error Exercises",d:"Fix TypeScript type errors in interactive challenges",url:"https://typescript-exercises.github.io/",type:"practice"},
+       ],
+       quiz:[
+         {q:"What is type narrowing?",opts:["Removing types","TypeScript refining a broad type to a more specific one","Converting types","Generic constraints"],ans:1},
+         {q:"Which operator checks if a property exists on an object?",opts:["typeof","instanceof","in","hasOwnProperty"],ans:2},
+         {q:"What does the `!` postfix do in TypeScript?",opts:["Logical NOT","Non-null assertion — tells TS the value is not null","Strict equality","Optional chaining"],ans:1},
+         {q:"What is a discriminated union?",opts:["A union of functions","Types sharing a common literal property for type narrowing","An error type","A generic constraint"],ans:1},
+         {q:"Inside `if (typeof x === 'string')`, TypeScript knows x is:",opts:["any","string | number","string","unknown"],ans:2},
+       ]},
+      {id:"functions",title:"Typed Functions",duration:"15 min",
+       content:`<div class="lesson-header"><h1>Typed Functions</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 15 min read</span></div></div><div class="lesson-body">
+<p>TypeScript lets you type function parameters, return values, overloads, and callbacks precisely.</p>
+<h2>Parameter & Return Types</h2>
+<pre><code class="language-typescript">function add(a: number, b: number): number {
+    return a + b;
+}
+
+// Arrow function with types
+const divide = (a: number, b: number): number | never => {
+    if (b === 0) throw new Error("Division by zero");
+    return a / b;
+};
+
+// void return type
+function log(message: string): void {
+    console.log(message);
+}
+
+// never — function that never returns
+function fail(msg: string): never {
+    throw new Error(msg);
+}</code></pre>
+<h2>Function Types & Callbacks</h2>
+<pre><code class="language-typescript">// Type alias for a function
+type Comparator<T> = (a: T, b: T) => number;
+
+const numSort: Comparator<number> = (a, b) => a - b;
+
+// Optional and default parameters
+function greet(name: string, greeting: string = "Hello"): string {
+    return \`\${greeting}, \${name}!\`;
+}
+
+// Overloads
+function format(x: string): string;
+function format(x: number): string;
+function format(x: string | number): string {
+    return String(x).padStart(8, " ");
+}</code></pre>
+<h2>Generic Functions</h2>
+<pre><code class="language-typescript">function first<T>(arr: T[]): T | undefined {
+    return arr[0];
+}
+
+const num = first([1, 2, 3]);     // number | undefined
+const str = first(["a", "b"]);   // string | undefined</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Use <span class="inline-code">void</span> for functions that return nothing, <span class="inline-code">never</span> for functions that always throw or run forever, and <span class="inline-code">unknown</span> instead of <span class="inline-code">any</span> when the type is genuinely unknown.</div></div>`,
+       resources:[
+         {t:"TS Handbook: Functions",d:"TypeScript function types, overloads, and signatures",url:"https://www.typescriptlang.org/docs/handbook/2/functions.html",type:"docs"},
+         {t:"TypeScript Utility Types",d:"Built-in utility types: Partial, Required, Pick, Omit...",url:"https://www.typescriptlang.org/docs/handbook/utility-types.html",type:"docs"},
+         {t:"Generic Functions Guide",d:"How to write reusable typed functions with generics",url:"https://www.typescriptlang.org/docs/handbook/2/generics.html",type:"article"},
+         {t:"Type Challenges",d:"GitHub repo with 200+ TypeScript type challenges",url:"https://github.com/type-challenges/type-challenges",type:"practice"},
+       ],
+       quiz:[
+         {q:"What return type do you use for a function that never returns?",opts:["void","null","undefined","never"],ans:3},
+         {q:"What is `void` used for in TypeScript?",opts:["Empty arrays","Functions that don't return a value","Null checks","Generic constraints"],ans:1},
+         {q:"Function overloads allow you to:",opts:["Run a function multiple times","Define multiple type signatures for one function","Create recursive functions","Extend a class method"],ans:1},
+         {q:"Generic type parameter `<T>` in `function wrap<T>(val: T): T[]` means:",opts:["T must be a string","T can be any type, inferred from the argument","T is a number","T extends Array"],ans:1},
+         {q:"Which is safer to use instead of `any` for unknown values?",opts:["never","void","unknown","object"],ans:2},
+       ]},
+      {id:"datastructs",title:"Typed Data Structures",duration:"15 min",
+       content:`<div class="lesson-header"><h1>Typed Data Structures</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 15 min read</span></div></div><div class="lesson-body">
+<p>TypeScript provides typed versions of all JavaScript data structures plus utility types for transforming them.</p>
+<h2>Typed Arrays & Tuples</h2>
+<pre><code class="language-typescript">const ids: number[] = [1, 2, 3];
+const mixed: (string | number)[] = ["a", 1, "b", 2];
+
+// Tuple — fixed-length, typed positions
+type Point = [x: number, y: number, label?: string];
+const pt: Point = [10, 20, "origin"];
+const [x, y] = pt;  // destructuring</code></pre>
+<h2>Record & Mapped Types</h2>
+<pre><code class="language-typescript">// Record<Keys, Values>
+const scores: Record<string, number> = {
+    alice: 95,
+    bob: 87,
+};
+
+// Mapped type — transform every property
+type Nullable<T> = { [K in keyof T]: T[K] | null };
+type Optional<T> = { [K in keyof T]?: T[K] };</code></pre>
+<h2>Utility Types</h2>
+<pre><code class="language-typescript">interface User { id: number; name: string; email: string; }
+
+type PartialUser = Partial<User>;       // all optional
+type RequiredUser = Required<User>;     // all required
+type NameOnly = Pick<User, "id"|"name">; // pick subset
+type NoEmail = Omit<User, "email">;     // omit field
+type UserId = User["id"];               // index type → number</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>TypeScript's built-in utility types (<span class="inline-code">Partial</span>, <span class="inline-code">Required</span>, <span class="inline-code">Pick</span>, <span class="inline-code">Omit</span>, <span class="inline-code">Record</span>, <span class="inline-code">Readonly</span>) let you transform existing types rather than rewriting them — reducing duplication.</div></div>`,
+       resources:[
+         {t:"TS Handbook: Utility Types",d:"All built-in TypeScript utility types with examples",url:"https://www.typescriptlang.org/docs/handbook/utility-types.html",type:"docs"},
+         {t:"TS Handbook: Mapped Types",d:"Creating new types by transforming existing ones",url:"https://www.typescriptlang.org/docs/handbook/2/mapped-types.html",type:"docs"},
+         {t:"TypeScript Tuples Guide",d:"When and how to use TypeScript tuples effectively",url:"https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types",type:"article"},
+         {t:"Type Challenges Repo",d:"200+ hands-on TypeScript type system puzzles",url:"https://github.com/type-challenges/type-challenges",type:"practice"},
+       ],
+       quiz:[
+         {q:"What does `Partial<User>` do?",opts:["Removes all properties","Makes all properties optional","Makes all properties required","Creates a partial class"],ans:1},
+         {q:"What is the difference between `Pick` and `Omit`?",opts:["No difference","Pick selects properties; Omit excludes them","Pick is for classes; Omit for interfaces","Pick extends a type; Omit merges"],ans:1},
+         {q:"What is `Record<string, number>` equivalent to?",opts:["{ [key: string]: number }","string[]","Map<string, number>","number[]"],ans:0},
+         {q:"A TypeScript tuple `[string, number]` means:",opts:["An array of strings and numbers","A fixed-length array: first element string, second number","A class with two properties","An object type"],ans:1},
+         {q:"What does `User['id']` (indexed access type) give you?",opts:["The value of id","The type of the id property","An array of ids","A partial type"],ans:1},
+       ]},
+      {id:"classes",title:"Classes & OOP",duration:"20 min",
+       content:`<div class="lesson-header"><h1>Classes & OOP</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 20 min read</span></div></div><div class="lesson-body">
+<p>TypeScript classes add access modifiers, abstract classes, and interface implementation on top of JavaScript classes.</p>
+<h2>Class Syntax & Modifiers</h2>
+<pre><code class="language-typescript">class BankAccount {
+    public readonly id: string;
+    private _balance: number;
+    protected owner: string;
+
+    constructor(owner: string, initial: number = 0) {
+        this.id = crypto.randomUUID();
+        this.owner = owner;
+        this._balance = initial;
+    }
+
+    // Getter
+    get balance(): number { return this._balance; }
+
+    // Method
+    deposit(amount: number): void {
+        if (amount <= 0) throw new Error("Invalid amount");
+        this._balance += amount;
+    }
+}</code></pre>
+<h2>Inheritance & Abstract Classes</h2>
+<pre><code class="language-typescript">abstract class Shape {
+    abstract area(): number;      // must be implemented
+    abstract perimeter(): number;
+
+    describe(): string {
+        return \`Area: \${this.area().toFixed(2)}\`;
+    }
+}
+
+class Circle extends Shape {
+    constructor(private radius: number) { super(); }
+    area() { return Math.PI * this.radius ** 2; }
+    perimeter() { return 2 * Math.PI * this.radius; }
+}</code></pre>
+<h2>Implements Interface</h2>
+<pre><code class="language-typescript">interface Serializable {
+    serialize(): string;
+    deserialize(data: string): this;
+}
+
+class Config implements Serializable {
+    constructor(public settings: Record<string, unknown> = {}) {}
+    serialize() { return JSON.stringify(this.settings); }
+    deserialize(data: string) { this.settings = JSON.parse(data); return this; }
+}</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong><span class="inline-code">public</span> (default), <span class="inline-code">private</span> (only within class), <span class="inline-code">protected</span> (class + subclasses), and <span class="inline-code">readonly</span> (can't reassign after init) — these modifiers make intent explicit and prevent misuse.</div></div>`,
+       resources:[
+         {t:"TS Handbook: Classes",d:"Complete TypeScript class documentation with modifiers",url:"https://www.typescriptlang.org/docs/handbook/2/classes.html",type:"docs"},
+         {t:"Abstract Classes vs Interfaces",d:"When to use each for better TypeScript design",url:"https://www.typescriptlang.org/docs/handbook/2/classes.html#abstract-classes-and-members",type:"article"},
+         {t:"TS Design Patterns",d:"Common design patterns implemented in TypeScript",url:"https://refactoring.guru/design-patterns/typescript",type:"article"},
+         {t:"TypeScript OOP Exercises",d:"Build a TypeScript class hierarchy from scratch",url:"https://typescript-exercises.github.io/",type:"practice"},
+       ],
+       quiz:[
+         {q:"Which access modifier allows access only within the class?",opts:["public","protected","private","readonly"],ans:2},
+         {q:"What does `abstract` mean on a method?",opts:["It's optional","Subclasses must implement it","It's private","It has no body and can't be called directly"],ans:1},
+         {q:"What does `implements` do in a class declaration?",opts:["Inherits methods","Declares that the class fulfills an interface's contract","Overrides a method","Merges two classes"],ans:1},
+         {q:"What is `readonly` used for?",opts:["Making properties private","Preventing reassignment after initialization","Creating computed properties","Declaring static properties"],ans:1},
+         {q:"Short-form `constructor(private name: string)` does what?",opts:["Only declares type","Declares and assigns this.name in one line","Creates a getter","Makes name readonly"],ans:1},
+       ]},
+    ]
+  },
+  rust:{
+    name:"Rust",icon:"🦀",tagline:"Memory safety without garbage collection",color:"#ce422b",
+    topics:[
+      {id:"setup",title:"Intro & Setup",duration:"10 min",
+       content:`<div class="lesson-header"><h1>Getting Started with Rust</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 10 min read</span></div></div><div class="lesson-body">
+<p>Rust is a <strong>systems programming language</strong> focused on safety, speed, and concurrency. It achieves memory safety without a garbage collector through its unique <strong>ownership system</strong>.</p>
+<h2>Installation</h2>
+<pre><code class="language-bash">curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+rustc --version
+cargo --version</code></pre>
+<h2>Hello World</h2>
+<pre><code class="language-rust">// hello.rs
+fn main() {
+    println!("Hello, World!");
+    
+    let name = "Rustacean";
+    println!("Hello, {}!", name);    // format macro
+    println!("Hello, {name}!");      // inline (Rust 1.58+)
+}</code></pre>
+<h2>Cargo — Rust's Build System</h2>
+<pre><code class="language-bash">cargo new my_project    # create project
+cd my_project
+cargo run               # build + run
+cargo build             # just build
+cargo test              # run tests
+cargo add serde         # add dependency</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Rust uses <span class="inline-code">println!</span> with a <span class="inline-code">!</span> because it's a <strong>macro</strong>, not a function. Macros in Rust are expanded at compile time and can accept variable numbers of arguments.</div></div>`,
+       resources:[
+         {t:"The Rust Book (official)",d:"The complete, free official Rust programming book",url:"https://doc.rust-lang.org/book/",type:"docs"},
+         {t:"Rustlings Exercises",d:"Small exercises to learn Rust hands-on",url:"https://rustlings.cool/",type:"practice"},
+         {t:"Rust by Example",d:"Learn Rust through annotated, runnable examples",url:"https://doc.rust-lang.org/rust-by-example/",type:"article"},
+         {t:"Rust Playground",d:"Try Rust in the browser without installing anything",url:"https://play.rust-lang.org/",type:"practice"},
+       ],
+       quiz:[
+         {q:"What tool manages Rust packages and builds?",opts:["npm","pip","cargo","make"],ans:2},
+         {q:"Why does `println!` have an exclamation mark?",opts:["It's loud output","It indicates a macro, not a function","It's required syntax","It marks unsafe code"],ans:1},
+         {q:"What makes Rust unique among systems languages?",opts:["It uses garbage collection","It has memory safety without a GC","It's interpreted","It runs on JVM"],ans:1},
+         {q:"Which command creates a new Rust project with Cargo?",opts:["cargo init","cargo new project_name","rustc new","cargo create"],ans:1},
+         {q:"Which command builds AND runs a Cargo project?",opts:["cargo build","cargo execute","cargo run","rustc run"],ans:2},
+       ]},
+      {id:"variables",title:"Variables & Types",duration:"20 min",
+       content:`<div class="lesson-header"><h1>Variables & Types</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 20 min read</span></div></div><div class="lesson-body">
+<p>Rust variables are <strong>immutable by default</strong>. You must explicitly use <span class="inline-code">mut</span> to make them mutable. This prevents many common bugs.</p>
+<h2>Variables & Mutability</h2>
+<pre><code class="language-rust">fn main() {
+    let x = 5;           // immutable
+    // x = 6;            // ❌ error: cannot assign twice
+
+    let mut count = 0;   // mutable
+    count += 1;          // ✅ ok
+
+    // Shadowing — reuse a name with a new binding
+    let spaces = "   ";
+    let spaces = spaces.len();  // now an integer!
+    
+    // Constants — must have type annotation
+    const MAX_POINTS: u32 = 100_000;
+}</code></pre>
+<h2>Scalar Types</h2>
+<pre><code class="language-rust">let i: i32 = -42;         // signed integer (i8,i16,i32,i64,i128)
+let u: u64 = 1_000_000;   // unsigned integer (u8,u16,u32,u64)
+let f: f64 = 3.14;        // float (f32, f64)
+let b: bool = true;
+let c: char = '🦀';        // 4-byte Unicode scalar
+
+// Type inference — Rust usually figures it out
+let inferred = 42;        // i32 by default
+let inferred_f = 3.14;    // f64 by default</code></pre>
+<h2>Compound Types</h2>
+<pre><code class="language-rust">// Tuple — fixed size, multiple types
+let tup: (i32, f64, bool) = (500, 6.4, true);
+let (x, y, z) = tup;          // destructuring
+let first = tup.0;             // index access
+
+// Array — fixed size, same type
+let arr: [i32; 5] = [1, 2, 3, 4, 5];
+let zeros = [0; 10];           // [0,0,0,0,0,0,0,0,0,0]
+println!("{}", arr[0]);        // 1</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Variables in Rust are <strong>immutable by default</strong>. This is intentional — it forces you to be explicit about what can change, making code easier to reason about and preventing entire classes of bugs.</div></div>`,
+       resources:[
+         {t:"Rust Book: Variables & Mutability",d:"Chapter 3 of The Rust Book on variables",url:"https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html",type:"docs"},
+         {t:"Rust Book: Data Types",d:"All Rust scalar and compound types explained",url:"https://doc.rust-lang.org/book/ch03-02-data-types.html",type:"docs"},
+         {t:"Rust by Example: Primitives",d:"Runnable examples of all Rust primitive types",url:"https://doc.rust-lang.org/rust-by-example/primitives.html",type:"article"},
+         {t:"Rustlings Variables",d:"Hands-on Rustlings exercises on variables",url:"https://rustlings.cool/",type:"practice"},
+       ],
+       quiz:[
+         {q:"In Rust, variables are immutable by default. How do you make one mutable?",opts:["var x","let mut x","mutable x","x: mut"],ans:1},
+         {q:"What is shadowing in Rust?",opts:["Hiding a variable from closures","Reusing a variable name with a new let binding","Making a variable private","Cloning a value"],ans:1},
+         {q:"What is the default integer type in Rust?",opts:["i64","u32","i32","usize"],ans:2},
+         {q:"How do you access the second element of a tuple `t`?",opts:["t[1]","t.get(1)","t.1","t->1"],ans:2},
+         {q:"What does `[0; 5]` create in Rust?",opts:["An array [0,1,2,3,4]","An array of five zeros","A tuple of length 5","A range from 0 to 5"],ans:1},
+       ]},
+      {id:"control",title:"Control Flow & Match",duration:"15 min",
+       content:`<div class="lesson-header"><h1>Control Flow & Match</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 15 min read</span></div></div><div class="lesson-body">
+<p>Rust has familiar control flow plus the powerful <span class="inline-code">match</span> expression — one of its most distinctive features.</p>
+<h2>If / Else</h2>
+<pre><code class="language-rust">let number = 7;
+
+// if is an expression — can return a value
+let description = if number % 2 == 0 { "even" } else { "odd" };
+
+if number < 5 {
+    println!("small");
+} else if number < 10 {
+    println!("medium");
+} else {
+    println!("large");
+}</code></pre>
+<h2>Loops</h2>
+<pre><code class="language-rust">// loop — infinite loop, break to exit
+let mut i = 0;
+let result = loop {
+    i += 1;
+    if i == 10 { break i * 2; }  // return value from loop
+};
+
+// while
+while i < 100 { i += 1; }
+
+// for — most common
+let arr = [10, 20, 30];
+for elem in arr { println!("{}", elem); }
+for n in 0..5 { println!("{}", n); }    // 0,1,2,3,4
+for n in 0..=5 { println!("{}", n); }   // 0,1,2,3,4,5</code></pre>
+<h2>Match Expression</h2>
+<pre><code class="language-rust">let coin = "quarter";
+
+let value = match coin {
+    "penny"   => 1,
+    "nickel"  => 5,
+    "dime"    => 10,
+    "quarter" => 25,
+    _         => 0,    // default arm
+};
+
+// Match with binding
+let num = 7;
+match num {
+    1 | 2 => println!("one or two"),
+    3..=9 => println!("three through nine"),
+    n if n > 100 => println!("{} is huge", n),
+    _ => println!("other"),
+}</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong><span class="inline-code">match</span> in Rust must be <strong>exhaustive</strong> — you must handle every possible case. The <span class="inline-code">_</span> wildcard is the default/catch-all arm. The compiler errors if you miss a case.</div></div>`,
+       resources:[
+         {t:"Rust Book: Control Flow",d:"if, loop, while, for — complete official reference",url:"https://doc.rust-lang.org/book/ch03-05-control-flow.html",type:"docs"},
+         {t:"Rust Book: Match",d:"The match control flow construct and pattern matching",url:"https://doc.rust-lang.org/book/ch06-02-match.html",type:"docs"},
+         {t:"Rust by Example: Match",d:"Runnable match examples with complex patterns",url:"https://doc.rust-lang.org/rust-by-example/flow_control/match.html",type:"article"},
+         {t:"Exercism Rust Track",d:"Practice Rust control flow with real exercises",url:"https://exercism.org/tracks/rust",type:"practice"},
+       ],
+       quiz:[
+         {q:"In Rust, `if` is an expression. What does this mean?",opts:["It runs faster","It can return a value","It must have else","It can have multiple conditions"],ans:1},
+         {q:"What range syntax gives you 0 through 5 inclusive?",opts:["0..5","0..=5","0...5","range(0,5)"],ans:1},
+         {q:"What is the `_` pattern in a match arm?",opts:["Match nothing","Match one specific value","Catch-all default arm","Match a range"],ans:2},
+         {q:"Rust's match expression must be:",opts:["Sorted","Exhaustive (all cases handled)","Used with enums only","Written on one line"],ans:1},
+         {q:"A `loop` block can return a value using:",opts:["return","yield","break value","exit"],ans:2},
+       ]},
+      {id:"functions",title:"Functions & Ownership",duration:"25 min",
+       content:`<div class="lesson-header"><h1>Functions & Ownership</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 25 min read</span></div></div><div class="lesson-body">
+<p>Rust's <strong>ownership system</strong> is its most unique feature — a set of rules the compiler enforces at compile time to guarantee memory safety with no GC.</p>
+<h2>Basic Functions</h2>
+<pre><code class="language-rust">fn add(a: i32, b: i32) -> i32 {
+    a + b    // no semicolon = implicit return
+}
+
+fn greet(name: &str) {  // &str = string slice (borrowed)
+    println!("Hello, {}!", name);
+}</code></pre>
+<h2>Ownership Rules</h2>
+<pre><code class="language-rust">// Each value has exactly ONE owner
+// When the owner goes out of scope, value is dropped
+
+let s1 = String::from("hello");
+let s2 = s1;    // s1 is MOVED to s2
+
+// println!("{}", s1);  // ❌ s1 no longer valid!
+
+// Clone to copy heap data
+let s3 = s2.clone();
+println!("{} {}", s2, s3);  // ✅ both valid</code></pre>
+<h2>Borrowing & References</h2>
+<pre><code class="language-rust">fn calculate_length(s: &String) -> usize {  // borrow
+    s.len()    // don't take ownership
+}
+
+let s = String::from("hello");
+let len = calculate_length(&s);  // pass reference
+println!("'{}' has {} chars", s, len);  // s still valid!
+
+// Mutable references
+fn push_world(s: &mut String) {
+    s.push_str(", world");
+}
+let mut s = String::from("hello");
+push_world(&mut s);</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Rust's <strong>borrow checker</strong> enforces: you can have <em>either</em> one mutable reference OR any number of immutable references to a value — never both at the same time. This prevents data races at compile time.</div></div>`,
+       resources:[
+         {t:"Rust Book: Ownership",d:"Chapter 4 — the most important chapter on Rust ownership",url:"https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html",type:"docs"},
+         {t:"Rust Book: References",d:"Borrowing and reference rules explained clearly",url:"https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html",type:"docs"},
+         {t:"Visualizing Rust's Ownership",d:"Visual explanation of move, copy, and borrowing",url:"https://rufflewind.com/2016-12-30/rust-move-copy-borrow",type:"article"},
+         {t:"Rustlings Ownership",d:"Hands-on exercises for the ownership chapter",url:"https://rustlings.cool/",type:"practice"},
+       ],
+       quiz:[
+         {q:"What happens when you assign `let s2 = s1` for a String in Rust?",opts:["s1 is copied","s1 is moved to s2; s1 is no longer valid","Both are valid","A clone is created"],ans:1},
+         {q:"What does `&` before a type mean in Rust?",opts:["Pointer","Mutable reference","Immutable reference/borrow","Address of"],ans:2},
+         {q:"How many mutable references to a value can exist at one time?",opts:["Unlimited","Two","One","Zero"],ans:2},
+         {q:"What is the borrow checker?",opts:["A runtime GC","A compiler feature enforcing ownership rules","A linting tool","A memory profiler"],ans:1},
+         {q:"Which method creates a deep copy of a String?",opts:["s.copy()","s.clone()","s.dup()","String::new(s)"],ans:1},
+       ]},
+      {id:"datastructs",title:"Data Structures",duration:"20 min",
+       content:`<div class="lesson-header"><h1>Data Structures</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 20 min read</span></div></div><div class="lesson-body">
+<p>Rust's primary data structures are <strong>structs</strong> (named fields), <strong>enums</strong> (sum types), <strong>Vec</strong> (growable array), and <strong>HashMap</strong>.</p>
+<h2>Structs</h2>
+<pre><code class="language-rust">#[derive(Debug)]
+struct Point {
+    x: f64,
+    y: f64,
+}
+
+impl Point {
+    fn new(x: f64, y: f64) -> Self {  // associated function
+        Point { x, y }
+    }
+    fn distance(&self) -> f64 {       // method
+        (self.x.powi(2) + self.y.powi(2)).sqrt()
+    }
+}
+
+let p = Point::new(3.0, 4.0);
+println!("{:?}", p);              // Debug print
+println!("Distance: {}", p.distance());</code></pre>
+<h2>Enums with Data</h2>
+<pre><code class="language-rust">#[derive(Debug)]
+enum Shape {
+    Circle(f64),            // tuple variant
+    Rectangle(f64, f64),
+    Triangle { base: f64, height: f64 },  // struct variant
+}
+
+let s = Shape::Circle(5.0);
+let area = match s {
+    Shape::Circle(r) => std::f64::consts::PI * r * r,
+    Shape::Rectangle(w, h) => w * h,
+    Shape::Triangle { base, height } => 0.5 * base * height,
+};</code></pre>
+<h2>Vec & HashMap</h2>
+<pre><code class="language-rust">use std::collections::HashMap;
+
+let mut v: Vec<i32> = Vec::new();
+v.push(1); v.push(2); v.push(3);
+let sum: i32 = v.iter().sum();
+
+let mut map = HashMap::new();
+map.insert("one", 1);
+map.insert("two", 2);
+println!("{:?}", map.get("one")); // Some(1)</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Rust enums are <strong>algebraic data types</strong> — each variant can hold different data. Combined with <span class="inline-code">match</span>, they're one of Rust's most expressive features for modeling state.</div></div>`,
+       resources:[
+         {t:"Rust Book: Structs",d:"Defining and using structs with impl blocks",url:"https://doc.rust-lang.org/book/ch05-00-structs.html",type:"docs"},
+         {t:"Rust Book: Enums",d:"Enums with data and the Option/Result types",url:"https://doc.rust-lang.org/book/ch06-00-enums.html",type:"docs"},
+         {t:"Rust Collections Docs",d:"HashMap, BTreeMap, HashSet, and more",url:"https://doc.rust-lang.org/std/collections/index.html",type:"docs"},
+         {t:"Rustlings Enums & Structs",d:"Practice exercises for Rust data structures",url:"https://rustlings.cool/",type:"practice"},
+       ],
+       quiz:[
+         {q:"What does `impl` do in Rust?",opts:["Imports a module","Defines methods on a struct/enum","Creates an interface","Extends a type"],ans:1},
+         {q:"Which derive macro enables `println!(\"{:?}\", value)`?",opts:["#[derive(Display)]","#[derive(Debug)]","#[derive(Print)]","#[derive(Show)]"],ans:1},
+         {q:"Rust enums can hold data in each variant. This makes them:",opts:["Slower","Algebraic data types (sum types)","Limited to primitives","Similar to C enums only"],ans:1},
+         {q:"What does `map.get(\"key\")` return in Rust?",opts:["The value directly","Option<&V>","Result<V, Error>","None always"],ans:1},
+         {q:"How do you add an element to a Vec?",opts:["v.add(x)","v.append(x)","v.push(x)","v.insert(x)"],ans:2},
+       ]},
+      {id:"errors",title:"Error Handling",duration:"20 min",
+       content:`<div class="lesson-header"><h1>Error Handling</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 20 min read</span></div></div><div class="lesson-body">
+<p>Rust has no exceptions. Errors are values — either <span class="inline-code">Option&lt;T&gt;</span> for missing values or <span class="inline-code">Result&lt;T, E&gt;</span> for operations that can fail. This makes errors explicit and impossible to ignore.</p>
+<h2>Option</h2>
+<pre><code class="language-rust">// Option<T> = Some(value) | None
+let nums = vec![1, 2, 3];
+let first: Option<&i32> = nums.first();
+
+match first {
+    Some(n) => println!("First: {}", n),
+    None => println!("Empty!"),
+}
+
+// Shortcuts
+let val = first.unwrap();           // panics if None
+let val = first.unwrap_or(&0);      // default if None
+let val = first.expect("must have items");  // panic with message</code></pre>
+<h2>Result</h2>
+<pre><code class="language-rust">use std::num::ParseIntError;
+
+fn parse_age(s: &str) -> Result<u32, ParseIntError> {
+    let n: u32 = s.trim().parse()?;  // ? propagates error
+    Ok(n)
+}
+
+match parse_age("25") {
+    Ok(age)  => println!("Age: {}", age),
+    Err(e)   => println!("Parse error: {}", e),
+}</code></pre>
+<h2>The ? Operator</h2>
+<pre><code class="language-rust">use std::fs;
+use std::io;
+
+fn read_file(path: &str) -> Result<String, io::Error> {
+    let content = fs::read_to_string(path)?;  // return Err early
+    Ok(content.to_uppercase())
+}</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>The <span class="inline-code">?</span> operator is shorthand for: if this Result is <span class="inline-code">Ok</span>, unwrap it; if it's <span class="inline-code">Err</span>, return the error from the current function immediately. It makes error propagation ergonomic.</div></div>`,
+       resources:[
+         {t:"Rust Book: Error Handling",d:"Complete chapter on Result, Option, and ? operator",url:"https://doc.rust-lang.org/book/ch09-00-error-handling.html",type:"docs"},
+         {t:"Rust Book: Option Enum",d:"Using Option for values that might not exist",url:"https://doc.rust-lang.org/book/ch06-01-defining-an-enum.html",type:"docs"},
+         {t:"anyhow Crate",d:"Popular crate for ergonomic error handling in Rust apps",url:"https://docs.rs/anyhow/latest/anyhow/",type:"docs"},
+         {t:"Rust Error Handling Guide",d:"Practical patterns for handling errors in real Rust code",url:"https://nick.groenen.me/posts/rust-error-handling/",type:"article"},
+       ],
+       quiz:[
+         {q:"What are the two variants of `Option<T>`?",opts:["Ok and Err","Some and None","Yes and No","Value and Empty"],ans:1},
+         {q:"What does the `?` operator do in a function returning Result?",opts:["Prints the error","Returns None","Propagates the Err early, or unwraps Ok","Panics on error"],ans:2},
+         {q:"What does `unwrap()` do if the value is None or Err?",opts:["Returns a default","Returns None","Panics","Silently ignores"],ans:2},
+         {q:"Rust uses Result/Option instead of exceptions because:",opts:["Exceptions are slow","Errors become explicit values that must be handled","Rust can't implement exceptions","It's simpler syntax"],ans:1},
+         {q:"What does `unwrap_or(default)` do?",opts:["Panics with default message","Returns the value if Some/Ok, else returns default","Converts None to Err","Chains operations"],ans:1},
+       ]},
+    ]
+  },
+  go:{
+    name:"Go",icon:"🔵",tagline:"Simple, fast, built for scale",color:"#00add8",
+    topics:[
+      {id:"setup",title:"Intro & Setup",duration:"10 min",
+       content:`<div class="lesson-header"><h1>Getting Started with Go</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 10 min read</span></div></div><div class="lesson-body">
+<p>Go (Golang) is a <strong>statically typed, compiled language</strong> designed at Google. It's known for its simplicity, fast compilation, built-in concurrency, and excellent standard library.</p>
+<h2>Installation</h2>
+<pre><code class="language-bash">brew install go     # macOS
+# or download from golang.org
+
+go version          # verify
+go env GOPATH       # workspace location</code></pre>
+<h2>Hello World</h2>
+<pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, World!")
+    fmt.Printf("Hello, %s! You are %d years old.\\n", "Alice", 30)
+}</code></pre>
+<pre><code class="language-bash">go run main.go      # run directly
+go build main.go    # compile to binary
+./main              # execute binary</code></pre>
+<h2>Go Modules</h2>
+<pre><code class="language-bash">go mod init myproject     # create go.mod
+go get github.com/some/pkg  # add dependency
+go mod tidy               # clean up deps</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Every Go file must start with a <span class="inline-code">package</span> declaration. The <span class="inline-code">main</span> package with a <span class="inline-code">main()</span> function is the entry point. Unused imports are a <strong>compile error</strong> in Go.</div></div>`,
+       resources:[
+         {t:"Go Tour (official)",d:"The official interactive Go tutorial in your browser",url:"https://go.dev/tour/",type:"practice"},
+         {t:"Go by Example",d:"Annotated Go programs showing practical patterns",url:"https://gobyexample.com/",type:"article"},
+         {t:"Effective Go",d:"Official guide to writing idiomatic, effective Go code",url:"https://go.dev/doc/effective_go",type:"docs"},
+         {t:"Go Playground",d:"Try Go in the browser without installing anything",url:"https://go.dev/play/",type:"practice"},
+       ],
+       quiz:[
+         {q:"What package must contain the `main()` function?",opts:["package program","package run","package main","package go"],ans:2},
+         {q:"In Go, importing a package you don't use is:",opts:["A warning","Allowed","A compile error","Ignored"],ans:2},
+         {q:"Which function prints formatted text in Go?",opts:["print.Format","fmt.Printf","console.log","System.out.println"],ans:1},
+         {q:"What command runs a Go file without compiling a binary?",opts:["go run","go build","go exec","go start"],ans:0},
+         {q:"What file tracks Go project dependencies?",opts:["package.json","requirements.txt","go.mod","Cargo.toml"],ans:2},
+       ]},
+      {id:"variables",title:"Variables & Types",duration:"15 min",
+       content:`<div class="lesson-header"><h1>Variables & Types</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 15 min read</span></div></div><div class="lesson-body">
+<p>Go is statically typed — every variable has a type. The <span class="inline-code">:=</span> short declaration infers the type, while <span class="inline-code">var</span> allows explicit type annotation.</p>
+<h2>Variable Declaration</h2>
+<pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    // Short declaration (inferred type)
+    name := "Alice"
+    age  := 30
+    pi   := 3.14159
+
+    // Explicit var declaration
+    var score int = 100
+    var active bool = true
+    var greeting string  // zero value: ""
+
+    fmt.Printf("Name: %s, Age: %d\\n", name, age)
+    _ = pi  // blank identifier discards value
+}</code></pre>
+<h2>Basic Types</h2>
+<pre><code class="language-go">// Integers
+var i int     = 42       // platform size (32/64 bit)
+var i8 int8   = 127
+var u uint64  = 1<<32
+
+// Float
+var f32 float32 = 3.14
+var f64 float64 = 3.141592653589793
+
+// String
+s := "Hello, 世界"       // UTF-8 encoded
+bs := []byte(s)           // convert to bytes
+
+// Boolean
+done := false</code></pre>
+<h2>Constants & iota</h2>
+<pre><code class="language-go">const Pi = 3.14159
+const (
+    KB = 1024
+    MB = 1024 * KB
+    GB = 1024 * MB
+)
+
+// iota — auto-incrementing constant generator
+type Weekday int
+const (
+    Sunday Weekday = iota  // 0
+    Monday                 // 1
+    Tuesday                // 2
+)</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Go initializes variables to their <strong>zero value</strong> if you don't assign one: <span class="inline-code">0</span> for numbers, <span class="inline-code">""</span> for strings, <span class="inline-code">false</span> for booleans, <span class="inline-code">nil</span> for pointers/slices/maps. No null pointer surprises.</div></div>`,
+       resources:[
+         {t:"Go Tour: Basics",d:"Interactive tour covering Go variables and types",url:"https://go.dev/tour/basics/1",type:"practice"},
+         {t:"Go Spec: Types",d:"Complete language spec for all Go types",url:"https://go.dev/ref/spec#Types",type:"docs"},
+         {t:"Go by Example: Variables",d:"Concise examples of Go variable declarations",url:"https://gobyexample.com/variables",type:"article"},
+         {t:"Go by Example: Constants",d:"Constants and iota with runnable examples",url:"https://gobyexample.com/constants",type:"article"},
+       ],
+       quiz:[
+         {q:"What does `:=` do in Go?",opts:["Assignment only","Short variable declaration with type inference","Creates a constant","Initializes a slice"],ans:1},
+         {q:"What is Go's zero value for a string?",opts:["null","nil","undefined","\"\" (empty string)"],ans:3},
+         {q:"What is `iota` used for?",opts:["Loop iteration","Auto-incrementing constants in a const block","Integer parsing","Error codes"],ans:1},
+         {q:"The blank identifier `_` is used to:",opts:["Mark private fields","Discard/ignore a value","Create anonymous functions","Mark deprecated code"],ans:1},
+         {q:"What is the default integer type in Go?",opts:["int32","int64","int (platform-specific)","uint"],ans:2},
+       ]},
+      {id:"control",title:"Control Flow",duration:"15 min",
+       content:`<div class="lesson-header"><h1>Control Flow</h1><div class="lesson-meta"><span class="lesson-badge">Beginner</span><span>⏱ 15 min read</span></div></div><div class="lesson-body">
+<p>Go has only <strong>one looping construct</strong> — <span class="inline-code">for</span> — which handles while-loops, infinite loops, and range-based loops. This keeps the language small.</p>
+<h2>If / Else</h2>
+<pre><code class="language-go">score := 85
+
+if score >= 90 {
+    fmt.Println("A")
+} else if score >= 80 {
+    fmt.Println("B")
+} else {
+    fmt.Println("C")
+}
+
+// Init statement in if
+if err := doSomething(); err != nil {
+    fmt.Println("Error:", err)
+    return
+}</code></pre>
+<h2>The for Loop</h2>
+<pre><code class="language-go">// Classic C-style for
+for i := 0; i < 5; i++ {
+    fmt.Println(i)
+}
+
+// While-style
+count := 0
+for count < 10 {
+    count++
+}
+
+// Infinite loop
+for {
+    // break to exit
+    break
+}
+
+// Range — iterates slices, maps, strings
+nums := []int{2, 4, 6, 8}
+for i, v := range nums {
+    fmt.Printf("index %d: %d\\n", i, v)
+}
+
+m := map[string]int{"a": 1, "b": 2}
+for key, val := range m {
+    fmt.Printf("%s = %d\\n", key, val)
+}</code></pre>
+<h2>Switch</h2>
+<pre><code class="language-go">day := "Tuesday"
+switch day {
+case "Saturday", "Sunday":
+    fmt.Println("Weekend")
+case "Monday":
+    fmt.Println("Start of week")
+default:
+    fmt.Println("Weekday")
+}
+// No fallthrough by default (unlike C)</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Go's <span class="inline-code">switch</span> does <strong>not fall through</strong> between cases by default — unlike C/Java. Use the <span class="inline-code">fallthrough</span> keyword explicitly if you need that behavior. Each case automatically breaks.</div></div>`,
+       resources:[
+         {t:"Go Tour: Flow Control",d:"Interactive tutorial on Go's control flow statements",url:"https://go.dev/tour/flowcontrol/1",type:"practice"},
+         {t:"Go by Example: For",d:"All four forms of Go's for loop with examples",url:"https://gobyexample.com/for",type:"article"},
+         {t:"Go by Example: Switch",d:"Go switch statement including type switches",url:"https://gobyexample.com/switch",type:"article"},
+         {t:"Go by Example: Range",d:"Using range with slices, maps, and channels",url:"https://gobyexample.com/range",type:"article"},
+       ],
+       quiz:[
+         {q:"Go has how many looping constructs?",opts:["Three (for, while, do-while)","Two (for, foreach)","One (for, which covers all cases)","Two (for, range)"],ans:2},
+         {q:"How do you write an infinite loop in Go?",opts:["while true {}","loop {}","for true {}","for {}"],ans:3},
+         {q:"What keyword iterates over slices and maps?",opts:["foreach","in","range","each"],ans:2},
+         {q:"In Go's switch, cases fall through by default?",opts:["Yes","No — you need the fallthrough keyword","Only with strings","Only with integers"],ans:1},
+         {q:"What does `for i, v := range slice` give you?",opts:["Only values","Only indices","Both index and value","Length only"],ans:2},
+       ]},
+      {id:"functions",title:"Functions",duration:"20 min",
+       content:`<div class="lesson-header"><h1>Functions</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 20 min read</span></div></div><div class="lesson-body">
+<p>Go functions are first-class. A distinctive feature is <strong>multiple return values</strong>, most commonly used for returning a result and an error together.</p>
+<h2>Basic Functions</h2>
+<pre><code class="language-go">func add(a, b int) int {    // shared type for a and b
+    return a + b
+}
+
+// Multiple return values
+func divide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, fmt.Errorf("cannot divide by zero")
+    }
+    return a / b, nil
+}
+
+result, err := divide(10, 3)
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("%.2f\\n", result)</code></pre>
+<h2>Named Returns & Defer</h2>
+<pre><code class="language-go">// Named return values
+func minMax(arr []int) (min, max int) {
+    min, max = arr[0], arr[0]
+    for _, v := range arr {
+        if v < min { min = v }
+        if v > max { max = v }
+    }
+    return  // naked return
+}
+
+// defer — runs when function exits (great for cleanup)
+func readFile(name string) error {
+    f, err := os.Open(name)
+    if err != nil { return err }
+    defer f.Close()    // guaranteed to run on exit
+    // ... use file
+    return nil
+}</code></pre>
+<h2>Variadic & First-Class Functions</h2>
+<pre><code class="language-go">func sum(nums ...int) int {
+    total := 0
+    for _, n := range nums { total += n }
+    return total
+}
+
+// Function as value
+apply := func(f func(int) int, x int) int {
+    return f(x)
+}
+double := func(x int) int { return x * 2 }
+fmt.Println(apply(double, 5))  // 10</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Go's <strong>multiple return values</strong> combined with the convention of returning <span class="inline-code">(result, error)</span> is one of Go's most important idioms. Always check errors — <span class="inline-code">if err != nil</span> is the most common pattern in Go code.</div></div>`,
+       resources:[
+         {t:"Go Tour: Functions",d:"Interactive tour of Go function features",url:"https://go.dev/tour/basics/4",type:"practice"},
+         {t:"Go by Example: Functions",d:"All Go function types with runnable code",url:"https://gobyexample.com/functions",type:"article"},
+         {t:"Go by Example: Defer",d:"How defer works with LIFO ordering",url:"https://gobyexample.com/defer",type:"article"},
+         {t:"Effective Go: Functions",d:"Idiomatic Go function design guidelines",url:"https://go.dev/doc/effective_go#functions",type:"docs"},
+       ],
+       quiz:[
+         {q:"How many values can a Go function return?",opts:["One","Two","Any number","Zero or one"],ans:2},
+         {q:"What does `defer` do?",opts:["Delays compilation","Runs a statement when the surrounding function exits","Creates an async function","Pauses execution"],ans:1},
+         {q:"What is Go's convention for returning errors?",opts:["throw exception","return error as first value","return (result, error) as last value","use panic"],ans:2},
+         {q:"What does `...int` in `func sum(nums ...int)` mean?",opts:["At least one int","Optional int","Variadic — any number of int arguments","An int slice literal"],ans:2},
+         {q:"What is a naked return in Go?",opts:["Return with no value","Return without the function name","Return using named return variables","Return in an init function"],ans:2},
+       ]},
+      {id:"datastructs",title:"Data Structures",duration:"20 min",
+       content:`<div class="lesson-header"><h1>Data Structures</h1><div class="lesson-meta"><span class="lesson-badge">Intermediate</span><span>⏱ 20 min read</span></div></div><div class="lesson-body">
+<p>Go's main data structures are <strong>arrays</strong> (fixed), <strong>slices</strong> (dynamic), <strong>maps</strong> (hash tables), and <strong>structs</strong> (records).</p>
+<h2>Slices</h2>
+<pre><code class="language-go">// Slice — the most-used data structure
+nums := []int{1, 2, 3, 4, 5}
+nums = append(nums, 6)           // add element
+
+// Make a slice with length and capacity
+s := make([]int, 5, 10)
+
+// Slicing
+sub := nums[1:4]   // [2, 3, 4] — shared backing array!
+cpy := make([]int, len(nums))
+copy(cpy, nums)    // proper independent copy
+
+// 2D slice
+matrix := [][]int{{1,2},{3,4},{5,6}}</code></pre>
+<h2>Maps</h2>
+<pre><code class="language-go">// Map declaration
+m := map[string]int{"alice": 95, "bob": 87}
+
+// Add / update
+m["carol"] = 92
+
+// Safe read — comma-ok idiom
+if val, ok := m["alice"]; ok {
+    fmt.Printf("Alice's score: %d\\n", val)
+}
+
+// Delete
+delete(m, "bob")
+
+// Iterate
+for name, score := range m {
+    fmt.Printf("%s: %d\\n", name, score)
+}</code></pre>
+<h2>Structs</h2>
+<pre><code class="language-go">type Person struct {
+    Name string
+    Age  int
+    Email string
+}
+
+// Methods on structs
+func (p Person) Greet() string {
+    return fmt.Sprintf("Hi, I'm %s!", p.Name)
+}
+
+// Pointer receiver — can modify struct
+func (p *Person) Birthday() {
+    p.Age++
+}
+
+alice := Person{Name: "Alice", Age: 30}
+fmt.Println(alice.Greet())</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>Slices in Go are a <strong>view into an underlying array</strong>. When you slice a slice (<span class="inline-code">s[1:3]</span>), you get a new slice header but the same backing data. Use <span class="inline-code">copy()</span> to make a truly independent copy.</div></div>`,
+       resources:[
+         {t:"Go Blog: Slices",d:"The definitive guide to Go slices internals",url:"https://go.dev/blog/slices-intro",type:"docs"},
+         {t:"Go by Example: Maps",d:"Maps in Go with all operations shown",url:"https://gobyexample.com/maps",type:"article"},
+         {t:"Go by Example: Structs",d:"Struct declaration and method syntax",url:"https://gobyexample.com/structs",type:"article"},
+         {t:"Go by Example: Pointers",d:"Value vs pointer receivers on struct methods",url:"https://gobyexample.com/pointers",type:"article"},
+       ],
+       quiz:[
+         {q:"What is the difference between an array and a slice in Go?",opts:["No difference","Arrays are dynamic, slices are fixed","Slices are dynamic views; arrays have fixed size","Arrays can hold any type"],ans:2},
+         {q:"What does `ok` represent in `val, ok := m[\"key\"]`?",opts:["An error","Whether the key exists in the map","The map length","A boolean value stored"],ans:1},
+         {q:"How do you delete a key from a Go map?",opts:["m.remove(key)","delete(m, key)","m.delete(key)","del m[key]"],ans:1},
+         {q:"A pointer receiver `func (p *Person)` is used when you want to:",opts:["Read the struct","Modify the struct or avoid copying","Create the struct","Make the method public"],ans:1},
+         {q:"What does `make([]int, 5, 10)` create?",opts:["An array of 5","A slice of length 5, capacity 10","A map","A channel of size 5"],ans:1},
+       ]},
+      {id:"goroutines",title:"Goroutines & Channels",duration:"25 min",
+       content:`<div class="lesson-header"><h1>Goroutines & Channels</h1><div class="lesson-meta"><span class="lesson-badge">Advanced</span><span>⏱ 25 min read</span></div></div><div class="lesson-body">
+<p>Go's concurrency model is built on <strong>goroutines</strong> (lightweight threads) and <strong>channels</strong> (typed communication pipes). The mantra: <em>"Don't communicate by sharing memory; share memory by communicating."</em></p>
+<h2>Goroutines</h2>
+<pre><code class="language-go">import (
+    "fmt"
+    "sync"
+)
+
+func sayHello(name string, wg *sync.WaitGroup) {
+    defer wg.Done()
+    fmt.Printf("Hello, %s!\\n", name)
+}
+
+func main() {
+    var wg sync.WaitGroup
+    names := []string{"Alice", "Bob", "Carol"}
+    
+    for _, name := range names {
+        wg.Add(1)
+        go sayHello(name, &wg)  // launch goroutine
+    }
+    wg.Wait()  // wait for all to finish
+}</code></pre>
+<h2>Channels</h2>
+<pre><code class="language-go">// Channel — typed pipe between goroutines
+ch := make(chan int)
+
+go func() {
+    ch <- 42    // send to channel
+}()
+
+val := <-ch     // receive from channel
+fmt.Println(val)  // 42
+
+// Buffered channel — doesn't block until full
+bch := make(chan string, 3)
+bch <- "first"
+bch <- "second"
+fmt.Println(<-bch)  // "first"</code></pre>
+<h2>Select</h2>
+<pre><code class="language-go">// select — wait on multiple channels
+select {
+case msg := <-ch1:
+    fmt.Println("from ch1:", msg)
+case msg := <-ch2:
+    fmt.Println("from ch2:", msg)
+case <-time.After(1 * time.Second):
+    fmt.Println("timeout!")
+}</code></pre>
+<div class="key-concept"><strong>KEY CONCEPT</strong>A goroutine is started with the <span class="inline-code">go</span> keyword and uses only ~2KB of memory (vs ~1MB for OS threads). Go programs can have millions of goroutines — this is how Go handles massive concurrency efficiently.</div></div>`,
+       resources:[
+         {t:"Go Tour: Concurrency",d:"Official interactive tour of goroutines and channels",url:"https://go.dev/tour/concurrency/1",type:"practice"},
+         {t:"Go by Example: Goroutines",d:"Goroutine basics with runnable examples",url:"https://gobyexample.com/goroutines",type:"article"},
+         {t:"Go Concurrency Patterns",d:"Rob Pike's talk on real Go concurrency patterns",url:"https://go.dev/blog/pipelines",type:"article"},
+         {t:"Go by Example: Channels",d:"Channels, buffered channels, channel select",url:"https://gobyexample.com/channels",type:"article"},
+       ],
+       quiz:[
+         {q:"How do you start a goroutine?",opts:["goroutine func()","async func()","go func()","thread func()"],ans:2},
+         {q:"What is a channel in Go?",opts:["An error type","A typed pipe for communication between goroutines","A network socket","A mutex"],ans:1},
+         {q:"What does `<-ch` do?",opts:["Sends to channel ch","Creates a channel","Receives a value from channel ch","Closes the channel"],ans:2},
+         {q:"What is a buffered channel?",opts:["A thread-safe array","A channel with a fixed capacity that doesn't immediately block","An async function","A WaitGroup"],ans:1},
+         {q:"What is `sync.WaitGroup` used for?",opts:["Locking shared memory","Waiting for a collection of goroutines to finish","Buffering channels","Timeout management"],ans:1},
+       ]},
+    ]
+  },
+};
+
+// ══════════════════════════════════════════════════════════════
+// APP STATE
+// ══════════════════════════════════════════════════════════════
+// ── Auth guard ─────────────────────────────────────────────────
+(function() {
+  const token = localStorage.getItem('cm_token');
+  if (!token) { window.location.href = '/auth.html'; }
+})();
+
+const CM_USER = JSON.parse(localStorage.getItem('cm_user') || 'null');
+const CM_TOKEN = localStorage.getItem('cm_token');
+
+function logout() {
+  localStorage.removeItem('cm_token');
+  localStorage.removeItem('cm_user');
+  window.location.href = '/auth.html';
+}
+
+// ── API helper ──────────────────────────────────────────────────
+async function apiCall(method, url, body) {
+  const opts = { method, headers: { 'Authorization': 'Bearer ' + CM_TOKEN, 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  try {
+    const res = await fetch(url, opts);
+    if (res.status === 401) { logout(); return null; }
+    return await res.json();
+  } catch(e) { return null; }
+}
+
+// ── Progress sync ───────────────────────────────────────────────
+async function syncProgressToServer(lang, topicId, score) {
+  await apiCall('POST', '/api/progress', { language: lang, topic_id: topicId, completed: true, score });
+}
+
+async function loadProgressFromServer() {
+  const data = await apiCall('GET', '/api/progress');
+  if (!data?.progress) return;
+  for (const row of data.progress) {
+    if (!state.progress[row.language]) state.progress[row.language] = new Set();
+    if (row.completed) state.progress[row.language].add(row.topic_id);
+  }
+}
+
+let state = {
+  lang: null,
+  topicIdx: -1,
+  activeTab: 'lesson',
+  chatOpen: false,
+  chatHistory: [],
+  progress: {},  // lang -> Set of completed topic ids
+  quizState: null,
+};
+
+// ══════════════════════════════════════════════════════════════
+// LANDING
+// ══════════════════════════════════════════════════════════════
+function buildLanding() {
+  const grid = document.getElementById('lang-grid');
+  grid.innerHTML = Object.entries(C).map(([key, lang]) => `
+    <div class="lang-card" onclick="selectLanguage('${key}')">
+      <div class="lang-icon">${lang.icon}</div>
+      <div class="lang-name">${lang.name}</div>
+      <div class="lang-topics">${lang.topics.length} topics</div>
+    </div>
+  `).join('');
+}
+
+function selectLanguage(key) {
+  state.lang = key;
+  if (!state.progress[key]) state.progress[key] = new Set();
+  document.getElementById('landing').style.display = 'none';
+  const app = document.getElementById('app');
+  app.style.display = 'flex';
+  buildApp();
+}
+
+function goHome() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('landing').style.display = 'flex';
+  state.topicIdx = -1;
+  state.chatOpen = false;
+}
+
+// ══════════════════════════════════════════════════════════════
+// APP BUILD
+// ══════════════════════════════════════════════════════════════
+function buildApp() {
+  const lang = C[state.lang];
+  // Topbar
+  document.getElementById('tb-lang-icon').textContent = lang.icon;
+  document.getElementById('tb-lang-name').textContent = lang.name;
+  // Sidebar
+  document.getElementById('sidebar-lang-icon').textContent = lang.icon;
+  document.getElementById('sidebar-lang-name').textContent = lang.name;
+  document.getElementById('sidebar-lang-sub').textContent = lang.tagline;
+  buildTopicList();
+  updateProgress();
+  // Chat
+  buildChatSuggestions();
+  updateChatContext();
+  showWelcome();
+}
+
+function buildTopicList() {
+  const lang = C[state.lang];
+  const done = state.progress[state.lang];
+  document.getElementById('topic-list').innerHTML = lang.topics.map((t, i) => `
+    <div class="topic-item ${i===state.topicIdx?'active':''} ${done.has(t.id)?'done':''}" onclick="selectTopic(${i})">
+      <div class="topic-num">${done.has(t.id)?'✓':(i+1)}</div>
+      <div class="topic-title">${t.title}</div>
+    </div>
+  `).join('');
+}
+
+function selectTopic(idx) {
+  state.topicIdx = idx;
+  state.activeTab = 'lesson';
+  buildTopicList();
+  showTopicView();
+  updateChatContext();
+  buildChatSuggestions();
+}
+
+function showWelcome() {
+  document.getElementById('welcome-screen').style.display = 'flex';
+  document.getElementById('topic-view').style.display = 'none';
+}
+
+function showTopicView() {
+  document.getElementById('welcome-screen').style.display = 'none';
+  const tv = document.getElementById('topic-view');
+  tv.style.display = 'flex';
+  // Render lesson
+  const topic = C[state.lang].topics[state.topicIdx];
+  document.getElementById('tab-lesson').innerHTML = `
+    ${topic.content}
+    <div class="lesson-actions">
+      <button class="btn-primary" onclick="openQuiz()">🎯 Take Quiz</button>
+      <button class="btn-secondary" onclick="switchTab('resources')">View Resources →</button>
+    </div>
+  `;
+  // Render resources
+  document.getElementById('tab-resources').innerHTML = `
+    <div style="padding-top:0.5rem">
+      <div class="resources-section-title">📚 Learning Resources for "${topic.title}"</div>
+      <div class="resources-grid">
+        ${topic.resources.map(r=>`
+          <div class="resource-card" onclick="window.open('${r.url}','_blank')">
+            <div class="res-icon ${r.type}">${{docs:'📄',video:'▶️',article:'✍️',practice:'💡'}[r.type]||'🔗'}</div>
+            <div>
+              <div class="res-title">${r.t}</div>
+              <div class="res-desc">${r.d}</div>
+              <div class="res-type">${r.type}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  // Set tab state
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active', i===(state.activeTab==='lesson'?0:1));
+  });
+  document.querySelectorAll('.tab-content').forEach((c,i)=>{
+    c.classList.toggle('active', i===(state.activeTab==='lesson'?0:1));
+  });
+  // Highlight code
+  document.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+}
+
+function switchTab(name) {
+  state.activeTab = name;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active', (name==='lesson'&&i===0)||(name==='resources'&&i===1));
+  });
+  document.querySelectorAll('.tab-content').forEach((c,i)=>{
+    c.classList.toggle('active', (name==='lesson'&&i===0)||(name==='resources'&&i===1));
+  });
+}
+
+function updateProgress() {
+  const lang = C[state.lang];
+  const done = state.progress[state.lang].size;
+  const total = lang.topics.length;
+  const pct = Math.round(done/total*100);
+  document.getElementById('progress-bar').style.width = pct+'%';
+  document.getElementById('progress-label').textContent = done+'/'+total;
+  document.getElementById('sidebar-footer').textContent = `${done} of ${total} topics done`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════════════════════════════
+function openQuiz() {
+  const topic = C[state.lang].topics[state.topicIdx];
+  state.quizState = {
+    questions: topic.quiz,
+    current: 0,
+    selected: null,
+    answered: false,
+    correct: 0,
+  };
+  document.getElementById('quiz-title').textContent = `Quiz: ${topic.title}`;
+  document.getElementById('quiz-modal').classList.add('open');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const qs = state.quizState;
+  if (qs.current >= qs.questions.length) { renderResult(); return; }
+  const q = qs.questions[qs.current];
+  const pct = (qs.current/qs.questions.length)*100;
+  document.getElementById('quiz-prog-fill').style.width = pct+'%';
+  document.getElementById('quiz-score').textContent = `Question ${qs.current+1} of ${qs.questions.length}`;
+  document.getElementById('btn-next').classList.remove('ready');
+  document.getElementById('quiz-inner').innerHTML = `
+    <div class="quiz-body">
+      <div class="quiz-q-num">QUESTION ${qs.current+1} / ${qs.questions.length}</div>
+      <div class="quiz-question">${q.q}</div>
+      <div class="quiz-options" id="opts">
+        ${q.opts.map((o,i)=>`
+          <div class="quiz-option" id="opt-${i}" onclick="selectOption(${i})">
+            <div class="opt-letter">${'ABCD'[i]}</div>
+            <span>${o}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+    </div>
+  `;
+}
+
+function selectOption(i) {
+  const qs = state.quizState;
+  if (qs.answered) return;
+  qs.selected = i;
+  qs.answered = true;
+  const q = qs.questions[qs.current];
+  const isCorrect = i === q.ans;
+  if (isCorrect) qs.correct++;
+  document.querySelectorAll('.quiz-option').forEach((el,idx) => {
+    if (idx === q.ans) el.classList.add('correct');
+    else if (idx === i && !isCorrect) el.classList.add('wrong');
+    el.classList.add('answered');
+  });
+  const fb = document.getElementById('quiz-feedback');
+  fb.classList.add('show', isCorrect?'correct':'wrong');
+  fb.textContent = isCorrect ? '✓ Correct!' : `✗ The correct answer was: ${q.opts[q.ans]}`;
+  document.getElementById('btn-next').classList.add('ready');
+}
+
+function nextQuestion() {
+  const qs = state.quizState;
+  if (!qs.answered) return;
+  qs.current++;
+  qs.answered = false;
+  qs.selected = null;
+  renderQuestion();
+}
+
+function renderResult() {
+  const qs = state.quizState;
+  const pct = Math.round(qs.correct/qs.questions.length*100);
+  const cls = pct>=80?'great':pct>=60?'ok':'low';
+  const msgs = {great:'Excellent work! Topic mastered 🎉',ok:'Good effort! Review a few concepts and retry.',low:'Keep studying — revisit the lesson and try again.'};
+  document.getElementById('quiz-prog-fill').style.width = '100%';
+  document.getElementById('quiz-footer').style.display = 'none';
+  document.getElementById('quiz-inner').innerHTML = `
+    <div class="quiz-result">
+      <div class="result-score ${cls}">${pct}%</div>
+      <div class="result-msg">${qs.correct}/${qs.questions.length} correct · ${msgs[cls]}</div>
+      <div class="result-actions">
+        ${pct>=60?`<button class="btn-primary" onclick="markDone()">Mark Complete ✓</button>`:''}
+        <button class="btn-secondary" onclick="retryQuiz()">Retry Quiz</button>
+        <button class="btn-secondary" onclick="closeQuiz()">Close</button>
+      </div>
+    </div>
+  `;
+}
+
+function markDone() {
+  const topic = C[state.lang].topics[state.topicIdx];
+  const score = state.quizState ? Math.round(state.quizState.correct / state.quizState.questions.length * 100) : 100;
+  state.progress[state.lang].add(topic.id);
+  updateProgress();
+  buildTopicList();
+  closeQuiz();
+  syncProgressToServer(state.lang, topic.id, score);
+}
+
+function retryQuiz() {
+  state.quizState.current = 0;
+  state.quizState.correct = 0;
+  state.quizState.answered = false;
+  state.quizState.selected = null;
+  document.getElementById('quiz-footer').style.display = 'flex';
+  document.getElementById('quiz-prog-fill').style.width = '0%';
+  renderQuestion();
+}
+
+function closeQuiz() {
+  document.getElementById('quiz-modal').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════════════
+// OFFLINE AI TUTOR ENGINE
+// Trained on all curriculum content — no API, no internet needed
+// ══════════════════════════════════════════════════════════════
+const AI = {
+  kb: {},        // knowledge base extracted from curriculum
+  quiz: null,    // active verbal quiz session
+  history: [],   // conversation memory (last 12 turns)
+  lastIntent: null, // for follow-up detection
+
+  build() {
+    for (const [lk, lang] of Object.entries(C)) {
+      this.kb[lk] = { name: lang.name, tagline: lang.tagline, topics: {} };
+      for (const t of lang.topics) {
+        // Plain readable text (strip code blocks first, then tags)
+        const plain = t.content
+          .replace(/<pre>[\s\S]*?<\/pre>/g, '')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ')
+          .replace(/\s+/g,' ').trim();
+
+        // Extract code samples from <pre><code>...</code></pre>
+        const codes = [];
+        const cRe = /<pre><code[^>]*>([\s\S]*?)<\/code><\/pre>/g;
+        let cm;
+        while ((cm = cRe.exec(t.content)) !== null) {
+          const c = cm[1].replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').trim();
+          if (c.length > 20) codes.push(c);
+        }
+
+        // Extract key concept callouts
+        const concepts = [];
+        const kRe = /<div class="key-concept">[\s\S]*?<\/div>/g;
+        let km;
+        while ((km = kRe.exec(t.content)) !== null) {
+          concepts.push(km[0].replace(/<[^>]+>/g,' ').replace(/KEY CONCEPT/,'').replace(/\s+/g,' ').trim());
+        }
+
+        // Extract h2 section headings
+        const sections = [...t.content.matchAll(/<h2>([\s\S]*?)<\/h2>/g)]
+          .map(m => m[1].replace(/<[^>]+>/g,'').trim());
+
+        this.kb[lk].topics[t.id] = {
+          id: t.id, title: t.title, duration: t.duration,
+          plain, codes, concepts, sections,
+          quiz: t.quiz, resources: t.resources
+        };
+      }
+    }
+  },
+
+  ctx() {
+    const lk = state.lang;
+    const lang = lk ? C[lk] : null;
+    const ti = state.topicIdx;
+    const topic = (ti >= 0 && lang) ? lang.topics[ti] : null;
+    const kb = (lk && topic) ? this.kb[lk]?.topics[topic.id] : null;
+    return { lk, lang, topic, kb };
+  },
+
+  intent(msg) {
+    const m = msg.toLowerCase();
+    if (/^(hi|hello|hey|sup|yo|howdy)\b/.test(m)) return 'greet';
+    if (/\b(code|example|show|snippet|sample|demonstrate|write|syntax|see)\b/.test(m)) return 'example';
+    if (/\b(mistake|wrong|error|pitfall|gotcha|common|avoid|trap|bug)\b/.test(m)) return 'mistakes';
+    if (/\b(quiz|test me|ask me|challenge|practice|exam)\b/.test(m)) return 'quiz';
+    if (/summary|summarize|summarise|recap|overview|tldr|briefly|gist/.test(m)) return 'summary';
+    if (/\b(explain|what is|what are|define|describe|meaning|concept|tell me)\b/.test(m)) return 'explain';
+    if (/\b(how do|how to|steps|implement|create|build|make|use|approach)\b/.test(m)) return 'how';
+    if (/\b(why|reason|purpose|benefit|advantage|important|use case)\b/.test(m)) return 'why';
+    if (/\b(compare|vs|versus|difference|differ|better|choose|prefer)\b/.test(m)) return 'compare';
+    if (/\b(next|after|continue|progress|move on|ready|done|complete)\b/.test(m)) return 'next';
+    if (/\b(resource|learn more|where|find|read|watch|link|recommend)\b/.test(m)) return 'resources';
+    if (/\b(help|stuck|confused|lost|hard|difficult|struggle)\b/.test(m)) return 'help';
+    return 'general';
+  },
+
+  respond(msg) {
+    if (this.quiz?.awaitingAnswer) return this.handleQuizAnswer(msg);
+
+    const m = msg.toLowerCase().trim();
+    const name = CM_USER?.name?.split(' ')[0] || null;
+    const greetName = name ? `, ${name}` : '';
+
+    // Natural small-talk / casual responses
+    if (/^(thanks|thank you|thx|ty|cheers|appreciate it|helpful|great|cool|nice|awesome|perfect|got it|ok|okay|understood|makes sense|i see|interesting|wow|sure|right)\b/.test(m)) {
+      const replies = [
+        `Glad that helped${greetName}! 😊 Anything else you'd like to explore?`,
+        `You're welcome${greetName}! Keep up the great work 🚀`,
+        `Happy to help! Ask me anything else about this topic.`,
+        `Of course${greetName}! Let me know what you want to dig into next.`,
+        `Awesome${greetName}! Want to quiz yourself to lock in the knowledge? 🎯`,
+      ];
+      return replies[Math.floor(Math.random() * replies.length)];
+    }
+
+    // Confusion / re-explain signals
+    if (/^(what\?|huh\?|i don'?t (get|understand)|what do you mean|confused|lost|eh\?|come again|not clear|explain again|simpler)/.test(m)) {
+      const ctx = this.ctx();
+      if (ctx.kb) return `No worries${greetName}! Let me break it down more simply:\n\n` + this.explain(msg, ctx, true);
+      return `No worries${greetName}! Could you let me know which part you're stuck on? I'll explain it simply!`;
+    }
+
+    // Follow-up signals → continue last topic
+    if (/^(tell me more|more|go on|continue|elaborate|and then|what else|keep going|next step|more detail)/.test(m) && this.lastIntent) {
+      const ctx = this.ctx();
+      const followMap = {
+        explain:  () => this.example(ctx),
+        example:  () => this.mistakes(ctx),
+        mistakes: () => this.help(ctx),
+        summary:  () => this.startQuiz(ctx),
+        how:      () => this.why(ctx),
+        why:      () => this.example(ctx),
+      };
+      const fn = followMap[this.lastIntent];
+      if (fn) return fn();
+    }
+
+    // Language change request
+    const langMatch = m.match(/\b(python|javascript|typescript|rust|go|golang)\b/);
+    if (langMatch && /\b(switch|change|try|learn|go to|move to|start)\b/.test(m)) {
+      const lkMap = { golang: 'go', python:'python', javascript:'javascript', typescript:'typescript', rust:'rust', go:'go' };
+      const lk = lkMap[langMatch[1]];
+      if (lk && lk !== state.lang) return `To switch to **${C[lk]?.name}**, click the logo or language switcher at the top to go back to the home screen, then select it! 🌍`;
+    }
+
+    // Topic selection by typing name
+    if (state.lang && C[state.lang]) {
+      const topics = C[state.lang].topics;
+      const tIdx = topics.findIndex(t => m === t.title.toLowerCase() || m === t.id.toLowerCase() || m.includes(t.title.toLowerCase()));
+      if (tIdx !== -1 && tIdx !== state.topicIdx) {
+        selectTopic(tIdx); // automatically navigate
+        this.lastIntent = 'explain';
+        const ctx = this.ctx();
+        return `I've opened **${ctx.topic.title}** for you! 📍\n\n` + this.explain(msg, ctx, true);
+      }
+    }
+
+    const intent = this.intent(msg);
+    this.lastIntent = intent;
+    const ctx = this.ctx();
+    const map = {
+      greet:    () => this.greet(ctx),
+      explain:  () => this.explain(msg, ctx),
+      example:  () => this.example(ctx),
+      mistakes: () => this.mistakes(ctx),
+      quiz:     () => this.startQuiz(ctx),
+      summary:  () => this.summary(ctx),
+      how:      () => this.how(msg, ctx),
+      why:      () => this.why(ctx),
+      compare:  () => this.compare(ctx),
+      next:     () => this.next(ctx),
+      resources:() => this.resources(ctx),
+      help:     () => this.help(ctx),
+      general:  () => this.general(msg, ctx),
+    };
+    return (map[intent] || map.general)();
+  },
+
+  // ── Response generators ─────────────────────────────────────
+
+  greet({ lang, topic }) {
+    const name = CM_USER?.name?.split(' ')[0] || null;
+    const hi = name ? `Hey ${name}! 👋` : `Hey! 👋`;
+    if (topic && lang) return `${hi} Great to see you studying **${topic.title}** in **${lang.name}**. 😊\n\nI\'m your AI tutor — trained on every lesson, code example, and quiz in this course. Ask me to:\n• **Explain** any concept\n• **Show** a code example\n• **Quiz** you verbally\n• List **common mistakes** to avoid\n• Chat about anything coding-related!`;
+    if (lang) return `${hi} Ready to master **${lang.name}**? 🚀\n\nPick a topic from the sidebar and I\'ll be your guide. I can explain concepts, walk through code, quiz you, and have a real conversation about coding!`;
+    return `${hi} I\'m your AI tutor — trained on all 5 languages in this course and ready to chat about anything coding-related! 🧠\n\nPick a language to get started, or just ask me something!`;
+  },
+
+  explain(msg, { lang, topic, kb }, simple) {
+    if (!kb) return this.noTopic();
+    const chars = simple ? 320 : 500;
+    const intro = kb.plain.substring(0, chars).trim();
+    let r = `**${kb.title} — Explained**\n\n${intro}...\n\n`;
+    if (kb.concepts.length) r += `**🔑 Key Concept:**\n${kb.concepts[0]}\n\n`;
+    if (!simple && kb.sections.length > 1) r += `**What\'s covered in this lesson:**\n${kb.sections.map(s=>`• ${s}`).join('\n')}\n\nWant a **code example** or should I **quiz you** on this?`;
+    return r;
+  },
+
+  example({ lang, topic, kb }) {
+    if (!kb) return this.noTopic();
+    if (!kb.codes.length) return `The code examples for this topic are embedded in the lesson above — scroll through the **Lesson** tab and look for the highlighted code blocks!`;
+    const idx = Math.floor(Math.random() * Math.min(kb.codes.length, 3));
+    const ext = state.lang || 'plaintext';
+    return `**Code example for "${kb.title}":**\n\n\`\`\`${ext}\n${kb.codes[idx]}\n\`\`\`\n\nWant me to explain this line by line? Just ask!`;
+  },
+
+  mistakes({ lang, topic }) {
+    if (!topic) return this.noTopic();
+    const lk = state.lang;
+    const id = topic.id;
+    const bank = {
+      python: {
+        setup:      ['Forgetting to use `python3` on macOS — just `python` often runs Python 2', 'Mixing tabs and spaces — Python is extremely strict about consistent indentation', 'Assuming Python 2 tutorials work in v3 — `print` is a function now, not a statement'],
+        variables:  ['Confusing `is` with `==` — use `==` for value comparison, `is` only for identity (like `None`)', 'Mutable default arguments: `def f(x=[]):` shares the list across all calls!', 'Reassigning built-in names like `list`, `input`, or `print` — this breaks them silently'],
+        functions:  ['Forgetting `return` — a function without it returns `None` by default', 'Shadowing outer variables: `nonlocal` is needed to reassign in a nested function', 'Calling a function without `()`: `result = my_func` stores the function object, not its result'],
+        oop:        ['Forgetting `self` as the first parameter of every instance method', 'Confusing `__init__` (initializer) with the constructor — `__new__` actually creates the object', 'Calling `ClassName.method()` without an instance when `self.method()` was intended'],
+        datastructs:['Using a list for membership checks (O(n)) when a `set` gives O(1)', 'Modifying a list while iterating over it — iterate a copy instead', '`list.copy()` is shallow — nested objects are still shared. Use `copy.deepcopy()` for full clones'],
+        fileio:     ['Not using `with open(...) as f:` — files may not close properly on errors', 'Using `.read()` for large files loads everything into memory — iterate line by line', 'Hardcoding paths — use `pathlib.Path(__file__).parent` for reliable relative paths'],
+      },
+      javascript: {
+        setup:  ['Using `==` instead of `===` — always prefer strict equality to avoid type coercion surprises', 'Omitting `const`/`let` — accidentally creates implicit global variables', 'Calling an async function without `await` — you get a Promise object, not the value'],
+        dom:    ['Inserting untrusted text with `innerHTML` — use `textContent` to prevent XSS attacks', 'Running DOM queries before the document is ready — wrap in `DOMContentLoaded`', 'Adding event listeners without removing them — can cause memory leaks in SPAs'],
+        functions:['Arrow functions capture `this` from their enclosing scope — regular functions create their own `this`', '`var` is function-scoped and hoisted; always use `let`/`const` instead', 'Deeply nested callbacks become unreadable fast — use `async/await`'],
+        async:  ['Not catching rejected Promises — always add `.catch()` or use `try/catch` with await', 'Forgetting `await` before an async call — the variable holds a Promise, not the result', 'Awaiting calls sequentially when `Promise.all([...])` could run them in parallel'],
+        arrays: ['`[1,2,3].map(parseInt)` breaks silently — `parseInt` takes a radix as its second arg', 'Mutating the original array inside `.map()` or `.filter()` instead of returning new values', '`delete arr[i]` leaves a hole — use `.splice(i, 1)` to remove elements properly'],
+        es6:    ['Destructuring `undefined` without defaults throws a TypeError', 'Spread `...` is shallow — `{...obj}` does not deep-clone nested objects', 'Using `const` doesn\'t make objects immutable — only the binding is constant'],
+      },
+      typescript: {
+        basics:     ['Using `any` to silence errors defeats the entire purpose of TypeScript', 'Forgetting `"strict": true` in tsconfig — many valuable checks are off by default', 'Types exist only at compile time — TypeScript disappears at runtime, so add runtime validation too'],
+        interfaces: ['Structural typing surprises — TS checks shape, not name, so extra properties can slip through', 'Forgetting `?` for optional properties means callers must always provide the field', 'Declaring the same interface name twice causes unexpected merging'],
+        generics:   ['Over-constraining with `extends` when a simple generic would do', 'Using `any` instead of `unknown` in generic catch blocks — `unknown` forces you to narrow first', 'Forgetting to provide type arguments when TS can\'t infer them automatically'],
+        advanced:   ['`as` type assertions hide real bugs — prefer type guards with `typeof` or `instanceof`', '`!` non-null assertion suppresses errors without checking — use carefully', 'Utility types like `Partial<T>` affect types only — you still need runtime checks'],
+      },
+      rust: {
+        ownership:  ['Fighting the borrow checker instead of redesigning data flow to work with it', 'Cloning everything to silence compiler errors — look for a borrow or lifetime solution first', 'Treating `String` and `&str` as interchangeable — they\'re different types with different ownership'],
+        structs:    ['Forgetting `#[derive(Debug)]` and being unable to print the struct', 'Trying to mutate a struct field through an immutable reference — the variable must be `mut`', '`impl Display` gives you `.to_string()` for free — no need to implement both'],
+        enums:      ['Using a plain struct when an `enum` with data would model the problem better', 'Non-exhaustive match arms — Rust won\'t compile until every case is handled (actually a feature!)', 'Treating `Option<T>` like a nullable value — you must explicitly handle `None`'],
+        concurrency:['Using `Arc<Mutex<T>>` everywhere when a channel would be cleaner', 'Not joining spawned threads before main exits — threads get killed when main returns', 'Deadlocking by locking the same `Mutex` twice in the same thread'],
+      },
+      go: {
+        setup:      ['`GOPATH` confusion — modern Go uses modules (`go mod init`), not GOPATH for your code', 'Forgetting to run `go mod init` when starting a new project', 'Unused imports are a compile error in Go — remove them or the build fails'],
+        functions:  ['Ignoring returned errors with `_` — in Go, error handling is not optional', 'Named return values can make code confusing — use them only when they genuinely help', 'Variable shadowing with `:=` inside if-blocks creates a new variable, not updating the outer one'],
+        datastructs:['Nil slices vs empty slices differ for JSON marshalling — `nil` becomes `null`, `[]T{}` becomes `[]`', 'Map iteration order is random in Go — never depend on it', 'Struct zero values are valid Go — you often don\'t need a constructor function'],
+        goroutines: ['Goroutine leaks — goroutines blocked forever because nobody reads their channel', 'Data races from accessing shared state without synchronization — use the race detector (`-race`)', 'Closing a channel from the receiver side — only senders should close channels'],
+      },
+    };
+    const list = bank[lk]?.[id] || [
+      'Always read error messages carefully — compilers tell you exactly what\'s wrong',
+      'Don\'t copy code without understanding it — trace through it line by line',
+      'Skipping fundamentals to jump to frameworks too early is the most common beginner trap',
+    ];
+    return `**⚠️ Common mistakes in "${topic.title}":**\n\n${list.map((m,i)=>`${i+1}. ${m}`).join('\n\n')}\n\n💡 Knowing these in advance puts you way ahead!`;
+  },
+
+  startQuiz({ kb }) {
+    if (!kb?.quiz?.length) return this.noTopic();
+    this.quiz = { q: [...kb.quiz], cur: 0, correct: 0, awaitingAnswer: true };
+    document.getElementById('quiz-mode-badge').style.display = 'inline-flex';
+    return this.renderQ();
+  },
+
+  renderQ() {
+    const q = this.quiz.q[this.quiz.cur];
+    const n = this.quiz.cur + 1;
+    const tot = this.quiz.q.length;
+    return `**🎯 Verbal Quiz (${n}/${tot})**\n\n${q.q}\n\n${q.opts.map((o,i)=>`**${'ABCD'[i]}.** ${o}`).join('\n')}\n\n*Type A, B, C, or D to answer*`;
+  },
+
+  handleQuizAnswer(msg) {
+    const letter = msg.trim().toUpperCase()[0];
+    const idx = 'ABCD'.indexOf(letter);
+    if (idx === -1) return `Please reply with **A**, **B**, **C**, or **D** 😊\n\n${this.renderQ()}`;
+    const q = this.quiz.q[this.quiz.cur];
+    const correct = idx === q.ans;
+    if (correct) this.quiz.correct++;
+    let resp = correct
+      ? `✅ **Correct!** Great work!\n\n`
+      : `❌ Not quite. The correct answer is **${'ABCD'[q.ans]}. ${q.opts[q.ans]}**\n\n`;
+    this.quiz.cur++;
+    if (this.quiz.cur >= this.quiz.q.length) {
+      const score = this.quiz.correct;
+      const total = this.quiz.q.length;
+      const pct = Math.round(score / total * 100);
+      const medal = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : '📚';
+      this.quiz = null;
+      document.getElementById('quiz-mode-badge').style.display = 'none';
+      return resp + `${medal} **Quiz complete!** You scored **${score}/${total}** (${pct}%)\n\n${pct >= 80 ? 'Excellent — you\'ve got this topic nailed!' : pct >= 60 ? 'Good effort! Review the parts you missed.' : 'Keep studying — revisit the lesson and try again!'}\n\nSay **"quiz me"** to try again!`;
+    }
+    return resp + this.renderQ();
+  },
+
+  summary({ topic, kb }) {
+    if (!kb) return this.noTopic();
+    let r = `**📋 Summary: ${kb.title}**\n\n`;
+    if (kb.sections.length) r += `**What\'s covered:**\n${kb.sections.map(s=>`• ${s}`).join('\n')}\n\n`;
+    if (kb.concepts.length) r += `**🔑 Key takeaway:**\n${kb.concepts[0]}\n\n`;
+    r += `**Duration:** ${kb.duration} · **${kb.quiz.length} quiz questions**\n\nReady to test yourself? Say **"quiz me"**!`;
+    return r;
+  },
+
+  how(msg, { lang, topic, kb }) {
+    if (!kb) return this.noTopic();
+    if (kb.codes.length) {
+      const ext = state.lang || 'plaintext';
+      return `**How it works — "${kb.title}":**\n\n\`\`\`${ext}\n${kb.codes[0]}\n\`\`\`\n\n${kb.concepts[0] ? `💡 ${kb.concepts[0]}` : 'Study the example above carefully — it demonstrates the core pattern.'}`;
+    }
+    return this.explain(msg, { lang, topic, kb });
+  },
+
+  why({ lang, topic, kb }) {
+    if (!kb) return this.noTopic();
+    const name = lang?.name || 'this language';
+    return `**Why "${kb.title}" matters in ${name}:**\n\n${kb.plain.substring(0, 450).trim()}...\n\n${kb.sections.length ? `**Topics covered:** ${kb.sections.join(' · ')}` : ''}\n\n${kb.concepts[0] ? `💡 ${kb.concepts[0]}` : ''}`;
+  },
+
+  compare({ lang }) {
+    if (!lang) return this.noTopic();
+    const list = lang.topics.map((t,i) =>
+      `${i+1}. **${t.title}** ${i===state.topicIdx ? '← you are here' : `(${t.duration})`}`
+    ).join('\n');
+    return `**${lang.name} — Course Topics:**\n\n${list}\n\nWant me to explain how a specific concept relates to another? Just ask!`;
+  },
+
+  next({ lang, topic }) {
+    if (!lang) return `Pick a language from the home screen to get started! 🌍`;
+    if (state.topicIdx < 0) return `Open any topic from the sidebar to begin — I\'d suggest starting at the top! ⬇️`;
+    if (state.topicIdx >= lang.topics.length - 1) {
+      return `🎉 You\'ve reached the **last topic** in **${lang.name}**!\n\nBefore moving on make sure you\'ve:\n• ✅ Passed the quiz for each topic\n• 📚 Explored the resources\n• 💻 Written the code examples from memory\n\nThen try another language from the home screen!`;
+    }
+    const nxt = lang.topics[state.topicIdx + 1];
+    return `**Next up: ${nxt.title}** (${nxt.duration})\n\nBefore you move on, make sure you can:\n• Explain **${topic?.title}** in your own words\n• Pass the quiz ✅\n• Write the examples from memory\n\nClick **"${nxt.title}"** in the sidebar when ready!`;
+  },
+
+  resources({ kb }) {
+    if (!kb?.resources?.length) return this.noTopic();
+    const icons = { docs:'📄', video:'▶️', article:'✍️', practice:'💡' };
+    return `**📚 Resources for "${kb.title}":**\n\n${kb.resources.map((r,i)=>`${i+1}. ${icons[r.type]||'🔗'} **${r.t}**\n   ${r.d}`).join('\n\n')}\n\nAll links are also in the **Resources** tab at the top of the lesson!`;
+  },
+
+  help({ topic }) {
+    if (!topic) return `No worries! Here\'s how to use me:\n\n• **Pick a language** from the home screen\n• **Select a topic** from the sidebar\n• Then ask me anything in plain English!\n\nI can explain concepts, show code, quiz you, list mistakes, or give a summary. All offline!`;
+    return `No worries — let\'s break it down! 😊\n\nFor **"${topic.title}"**, try:\n• _"Explain this simply"_\n• _"Show me a code example"_\n• _"What are common mistakes?"_\n• _"Quiz me"_\n• _"Give me a summary"_\n\nWhat specifically is confusing you?`;
+  },
+
+  general(msg, { lang, topic, kb }) {
+    if (!kb) return lang
+      ? `Good question! Select a **topic from the sidebar** so I can give you a context-specific answer for **${lang.name}**!`
+      : `Pick a language from the home screen and I\'ll be ready to help with anything!`;
+    // Keyword search in plain lesson text
+    const words = msg.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+    let best = { idx: Infinity, word: '' };
+    for (const w of words) {
+      const i = kb.plain.toLowerCase().indexOf(w);
+      if (i > -1 && i < best.idx) best = { idx: i, word: w };
+    }
+    if (best.idx < Infinity) {
+      const start = Math.max(0, best.idx - 30);
+      const excerpt = kb.plain.substring(start, start + 380).trim();
+      return `Here\'s what the lesson says about **"${best.word}"**:\n\n"${excerpt}..."\n\n${kb.concepts[0] ? `💡 ${kb.concepts[0]}` : 'Want a code example or more detail? Just ask!'}`;
+    }
+    return `I\'m trained on **"${kb.title}"** in ${lang?.name}. Try: **explain it**, **code example**, **common mistakes**, or **quiz me**!`;
+  },
+
+  noTopic() {
+    return `Please **select a topic** from the sidebar first 🎯 — I\'ll give you answers specific to what you\'re studying!`;
+  }
+};
+
+// ══════════════════════════════════════════════════════════════
+// CHAT — UI Handlers
+// ══════════════════════════════════════════════════════════════
+function toggleChat() {
+  state.chatOpen = !state.chatOpen;
+  document.getElementById('chat-panel').classList.toggle('open', state.chatOpen);
+}
+
+function updateChatContext() {
+  const el = document.getElementById('chat-context');
+  if (state.topicIdx >= 0 && state.lang) {
+    const t = C[state.lang].topics[state.topicIdx];
+    el.textContent = `📍 ${C[state.lang].name} → ${t.title}`;
+  } else if (state.lang) {
+    el.textContent = `📍 ${C[state.lang].name} — select a topic`;
+  }
+}
+
+function buildChatSuggestions() {
+  const langInfo = state.lang ? C[state.lang] : null;
+  const topicInfo = (state.topicIdx >= 0 && langInfo) ? langInfo.topics[state.topicIdx] : null;
+  const suggestions = topicInfo ? [
+    `Explain ${topicInfo.title} simply`,
+    'Show me a code example',
+    'What are common mistakes?',
+    'Quiz me on this topic',
+    'Give me a summary',
+  ] : langInfo ? [
+    `What can I build with ${langInfo.name}?`,
+    'Which topic should I start with?',
+    'Give me an overview of the course',
+  ] : [
+    'Which language should I learn first?',
+    'Compare Python and JavaScript',
+    'What is the fastest path to a coding job?',
+  ];
+  document.getElementById('chat-suggestions').innerHTML = suggestions
+    .map(s => `<div class="chat-suggestion" onclick="quickSend('${s.replace(/'/g,"&apos;")}')">${s}</div>`)
+    .join('');
+}
+
+function quickSend(text) {
+  document.getElementById('chat-input').value = text;
+  sendChat();
+}
+
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  input.style.height = '38px';
+
+  appendMessage('user', msg);
+  state.chatHistory.push({ role: 'user', content: msg });
+
+  const typingId = 'typing-' + Date.now();
+  appendTyping(typingId);
+
+  // Natural thinking delay
+  await new Promise(r => setTimeout(r, 350 + Math.random() * 450));
+
+  const response = AI.respond(msg);
+  state.chatHistory.push({ role: 'assistant', content: response });
+
+  removeTyping(typingId);
+  appendMessage('ai', response);
+
+  document.querySelectorAll('#chat-messages pre code').forEach(b => {
+    if (!b.dataset.highlighted) hljs.highlightElement(b);
+  });
+}
+
+function appendMessage(role, text) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  div.innerHTML = `<div class="bubble">${role === 'ai' ? formatAIMessage(text) : escapeHtml(text)}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function formatAIMessage(text) {
+  let out = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  out = out.replace(/```(\w+)?\n?([\s\S]*?)```/g, (_,lang,code) =>
+    `<pre><code class="language-${lang||'plaintext'}">${code.trim()}</code></pre>`);
+  out = out.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  out = out.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+  out = out.replace(/^## (.+)$/gm, '<strong style="display:block;margin:10px 0 4px;color:var(--accent);font-size:12px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase">$1</strong>');
+  out = out.replace(/^[•\-\*] (.+)$/gm, '<span style="display:block;padding-left:4px">• $1</span>');
+  out = out.replace(/^(\d+)\. (.+)$/gm, (_,n,p) => `<span style="display:block;padding-left:2px"><span style="color:var(--accent);font-family:var(--mono);font-size:11px">${n}.</span> ${p}</span>`);
+  out = out.replace(/\n\n/g, '<br><br>');
+  out = out.replace(/\n/g, '<br>');
+  return out;
+}
+
+function escapeHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function appendTyping(id) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ai chat-typing';
+  div.id = id;
+  div.innerHTML = `<div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping(id) { document.getElementById(id)?.remove(); }
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+AI.build();
+
+// Show student name in topbar
+if (CM_USER) {
+  const initials = CM_USER.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const avatar = document.getElementById('student-avatar');
+  const nameEl = document.getElementById('student-name');
+  if (avatar) { avatar.textContent = initials; avatar.style.background = CM_USER.avatar_color || '#00f5d4'; }
+  if (nameEl)   nameEl.textContent = CM_USER.name.split(' ')[0];
+}
+
+// Greet AI with student name if chat is opened before topic
+const _origBuildCS = buildChatSuggestions;
+
+async function boot() {
+  await loadProgressFromServer();
+  buildLanding();
+}
+boot();
+</script>
+</body>
+</html>
