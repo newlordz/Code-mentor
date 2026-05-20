@@ -6,9 +6,9 @@ const path = require('path');
 const os = require('os');
 
 // Verify JWT for abuse prevention
-const { verifyToken } = require('../middleware/auth');
+const authMiddleware = require('../middleware/auth');
 
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   const { language, code } = req.body;
   if (!code) return res.status(400).json({ error: 'No code provided' });
 
