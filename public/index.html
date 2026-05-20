@@ -131,15 +131,23 @@ pre code.hljs{font-family:var(--mono);font-size:13px;padding:1.25rem 1.5rem;back
 .sidebar-lang{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid var(--border)}
 .sidebar-lang-name{font-family:var(--head);font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:10px}
 .sidebar-lang-sub{font-size:12px;color:var(--text2);margin-top:4px}
-.topic-list{flex:1;overflow-y:auto;padding:0.75rem 0}
-.topic-item{display:flex;align-items:center;gap:12px;padding:11px 1.25rem;cursor:pointer;border-left:3px solid transparent;transition:all 0.2s;position:relative;color:var(--text2)}
-.topic-item:hover{background:rgba(255,255,255,0.02);color:var(--text)}
-.topic-item.active{background:rgba(0,245,212,0.04);border-left-color:var(--accent);color:var(--accent)}
-.topic-item.active .topic-num{background:var(--accent);color:#000;border-color:var(--accent);box-shadow:0 0 10px rgba(0,245,212,0.3)}
-.topic-item.done .topic-num{background:rgba(0,245,212,0.12);color:var(--accent);border-color:var(--accent-border)}
-.topic-num{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-family:var(--mono);color:var(--text2);flex-shrink:0;transition:all 0.25s}
-.topic-title{font-size:13.5px;font-weight:600;line-height:1.35;flex:1}
-.topic-check{width:14px;height:14px;color:var(--accent);flex-shrink:0}
+.topic-list{flex:1;overflow-y:auto;padding:2rem 0;position:relative;display:flex;flex-direction:column;gap:2.5rem;align-items:center}
+.topic-list::before{content:'';position:absolute;top:2rem;bottom:2rem;left:50%;width:2px;background:var(--border2);transform:translateX(-50%);z-index:0}
+.topic-item{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;cursor:pointer;width:100%;transition:all 0.3s;opacity:0.4;pointer-events:none}
+.topic-item.unlocked, .topic-item.active, .topic-item.done{opacity:1;pointer-events:auto}
+.topic-item.unlocked:hover{transform:translateY(-2px)}
+.topic-num{width:42px;height:42px;border-radius:50%;background:var(--bg);border:2px solid var(--border3);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;font-family:var(--head);color:var(--text3);flex-shrink:0;transition:all 0.4s;box-shadow:0 0 0 5px var(--bg);position:relative;z-index:2}
+.topic-item.active .topic-num{border-color:var(--accent);background:rgba(0,245,212,0.1);color:var(--accent);box-shadow:0 0 0 5px var(--bg), 0 0 20px rgba(0,245,212,0.4);transform:scale(1.15);animation:pulseGlow 2s infinite}
+.topic-item.unlocked:not(.active):not(.done) .topic-num{border-color:var(--text);color:var(--text);background:rgba(255,255,255,0.05)}
+.topic-item.done .topic-num{border-color:var(--accent);background:var(--accent);color:#010409;box-shadow:0 0 0 5px var(--bg), 0 0 10px rgba(0,245,212,0.2)}
+.topic-title{position:absolute;top:50%;transform:translateY(-50%);font-size:12.5px;font-weight:700;white-space:nowrap;padding:6px 14px;background:rgba(10, 14, 25, 0.85);border:1px solid var(--border2);border-radius:99px;backdrop-filter:blur(4px);transition:all 0.3s;color:var(--text2);pointer-events:none}
+.topic-item:nth-child(odd) .topic-title{right:calc(50% + 35px)}
+.topic-item:nth-child(even) .topic-title{left:calc(50% + 35px)}
+.topic-item.active .topic-title{color:var(--text);border-color:var(--accent-border);background:var(--accent-dim);box-shadow:0 4px 12px rgba(0,245,212,0.1)}
+.topic-item.done .topic-title{color:var(--text);border-color:var(--border3)}
+.topic-item:not(.unlocked):not(.done):not(.active) .topic-num::after{content:'🔒';font-size:14px}
+.topic-item:not(.unlocked):not(.done):not(.active) .topic-num{font-size:0}
+.topic-item.done::after{content:'';position:absolute;top:42px;left:50%;width:2px;height:calc(2.5rem + 5px);background:var(--accent);transform:translateX(-50%);z-index:1}
 .sidebar-footer{padding:1rem 1.25rem;border-top:1px solid var(--border);font-size:11px;color:var(--text2);font-family:var(--mono)}
 
 /* ─── MAIN CONTENT ─────────────────────────────────────── */
@@ -2264,13 +2272,35 @@ function buildApp() {
 
 function buildTopicList() {
   const lang = C[state.lang];
-  const done = state.progress[state.lang];
-  document.getElementById('topic-list').innerHTML = lang.topics.map((t, i) => `
-    <div class="topic-item ${i===state.topicIdx?'active':''} ${done.has(t.id)?'done':''}" onclick="selectTopic(${i})">
-      <div class="topic-num">${done.has(t.id)?'✓':(i+1)}</div>
-      <div class="topic-title">${t.title}</div>
-    </div>
-  `).join('');
+  const doneSet = state.progress[state.lang];
+  
+  // Calculate highest unlocked index (strict progression)
+  let maxUnlockedIdx = 0;
+  for (let i = 0; i < lang.topics.length; i++) {
+    if (doneSet.has(lang.topics[i].id)) {
+      maxUnlockedIdx = i + 1; // if i is done, i+1 is unlocked
+    } else {
+      break;
+    }
+  }
+
+  document.getElementById('topic-list').innerHTML = lang.topics.map((t, i) => {
+    const isDone = doneSet.has(t.id);
+    const isActive = i === state.topicIdx;
+    const isUnlocked = isDone || i <= maxUnlockedIdx;
+    
+    let classes = [];
+    if (isActive) classes.push('active');
+    if (isDone) classes.push('done');
+    if (isUnlocked) classes.push('unlocked');
+    
+    return `
+      <div class="topic-item ${classes.join(' ')}" ${isUnlocked ? `onclick="selectTopic(${i})"` : ''}>
+        <div class="topic-num">${isDone ? '✓' : (i + 1)}</div>
+        <div class="topic-title">${t.title}</div>
+      </div>
+    `;
+  }).join('');
 }
 
 function selectTopic(idx) {
