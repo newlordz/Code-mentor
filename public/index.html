@@ -2344,11 +2344,11 @@ function switchTab(name) {
 // ── Playground & Piston API ──
 function loadPlaygroundTemplate() {
   const templates = {
-    python: 'print("Hello World from Python!")\\n\\n# Write your code here\\n',
-    javascript: 'console.log("Hello World from JavaScript!");\\n\\n// Write your code here\\n',
-    typescript: 'const greeting: string = "Hello World from TypeScript!";\\nconsole.log(greeting);\\n',
-    go: 'package main\\n\\nimport "fmt"\\n\\nfunc main() {\\n\\tfmt.Println("Hello World from Go!")\\n}\\n',
-    rust: 'fn main() {\\n    println!("Hello World from Rust!");\\n}\\n'
+    python: 'print("Hello World from Python!")\n\n# Write your code here\n',
+    javascript: 'console.log("Hello World from JavaScript!");\n\n// Write your code here\n',
+    typescript: 'const greeting: string = "Hello World from TypeScript!";\nconsole.log(greeting);\n',
+    go: 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello World from Go!")\n}\n',
+    rust: 'fn main() {\n    println!("Hello World from Rust!");\n}\n'
   };
   const editor = document.getElementById('pg-editor');
   if (editor && state.lang && templates[state.lang]) {
