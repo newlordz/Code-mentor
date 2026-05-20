@@ -18,6 +18,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 // ── API Routes ──────────────────────────────────────────────────
 app.use('/api/auth',     require('./routes/auth'));
 app.use('/api/progress', require('./routes/progress'));
+app.use('/api/run',      require('./routes/run'));
 
 // ── Catch-all: serve index.html for SPA routing ─────────────────
 app.get('*', (req, res) => {

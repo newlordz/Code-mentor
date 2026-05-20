@@ -2395,40 +2395,34 @@ async function runCode() {
   out.textContent = 'Running...';
 
   const langMap = { python: 'python', javascript: 'javascript', typescript: 'typescript', go: 'go', rust: 'rust' };
-  const pistonLang = langMap[state.lang] || state.lang;
+  const exeLang = langMap[state.lang] || state.lang;
 
   try {
-    const res = await fetch('https://emacs.piston.rs/api/v2/execute', {
+    const res = await fetch('/api/run', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        language: pistonLang,
-        version: '*',
-        files: [{ content: code }]
-      })
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + CM_TOKEN },
+      body: JSON.stringify({ language: exeLang, code: code })
     });
     
     const data = await res.json();
-    if (data.run) {
-      if (data.run.stderr) {
-        out.className = 'pg-output error';
-        out.textContent = data.run.stderr;
-        status.textContent = 'Error';
-        status.style.color = 'var(--red)';
-      } else {
-        out.textContent = data.run.stdout || 'No output.';
-        status.textContent = 'Success';
-        status.style.color = 'var(--accent)';
-      }
-    } else {
+    if (data.error) {
       out.className = 'pg-output error';
-      out.textContent = data.message || 'Execution failed.';
+      out.textContent = data.error;
       status.textContent = 'Failed';
       status.style.color = 'var(--red)';
+    } else if (data.stderr) {
+      out.className = 'pg-output error';
+      out.textContent = data.stderr;
+      status.textContent = 'Error';
+      status.style.color = 'var(--red)';
+    } else {
+      out.textContent = data.stdout || 'No output.';
+      status.textContent = 'Success';
+      status.style.color = 'var(--accent)';
     }
   } catch(e) {
     out.className = 'pg-output error';
-    out.textContent = 'Network error: Could not reach Piston execution API.\\nMake sure your adblocker is not blocking piston.rs';
+    out.textContent = 'Network error: Could not connect to backend server execution engine.';
     status.textContent = 'Network Error';
     status.style.color = 'var(--red)';
   } finally {
