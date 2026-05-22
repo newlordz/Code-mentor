@@ -1,24 +1,34 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
-const pool = new Pool(
-  process.env.DATABASE_URL
-    ? { 
-        connectionString: process.env.DATABASE_URL,
-        ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false }
-      }
-    : {
-        host:     process.env.DB_HOST     || 'localhost',
-        port:     parseInt(process.env.DB_PORT) || 5432,
-        database: process.env.DB_NAME     || 'codementor_db',
-        user:     process.env.DB_USER     || 'postgres',
-        password: process.env.DB_PASSWORD || 'postgres',
-      }
-);
+const dbConfig = (() => {
+  if (process.env.DATABASE_URL) {
+    return {
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false }
+    };
+  }
+  const host = process.env.DB_HOST || process.env.PGHOST || 'localhost';
+  const port = parseInt(process.env.DB_PORT || process.env.PGPORT || '5432');
+  const database = process.env.DB_NAME || process.env.PGDATABASE || 'codementor_db';
+  const user = process.env.DB_USER || process.env.PGUSER || 'postgres';
+  const password = process.env.DB_PASSWORD || process.env.PGPASSWORD || 'postgres';
+  const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+  return {
+    host,
+    port,
+    database,
+    user,
+    password,
+    ssl: isLocalhost ? false : { rejectUnauthorized: false }
+  };
+})();
+
+const pool = new Pool(dbConfig);
 
 // Create tables if they don't exist
 async function initDB() {
-  console.log(`Connecting to database at: ${process.env.DATABASE_URL ? 'External URL (DATABASE_URL)' : (process.env.DB_HOST || 'localhost')}`);
+  console.log(`Connecting to database at: ${dbConfig.connectionString ? 'External DATABASE_URL' : dbConfig.host}`);
   const client = await pool.connect();
   try {
     await client.query(`
