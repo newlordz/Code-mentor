@@ -33,15 +33,16 @@ app.get('*', (req, res) => {
 async function start() {
   try {
     await initDB();
-    app.listen(PORT, () => {
-      console.log(`\n🚀 CodeMentor AI running at http://localhost:${PORT}`);
-      console.log(`   Sign In page: http://localhost:${PORT}/auth.html`);
-      console.log(`   Main app:     http://localhost:${PORT}/\n`);
-    });
   } catch (err) {
-    console.error('Failed to start server. Full error details:', err);
-    process.exit(1);
+    console.error('\n⚠️ WARNING: Database connection failed! The server will continue to run, but database-reliant features (user auth, progress saving) will be unavailable until a PostgreSQL database is created and linked in your Railway dashboard.');
+    console.error('Error details:', err.message, '\n');
   }
+
+  app.listen(PORT, () => {
+    console.log(`\n🚀 CodeMentor AI running at http://localhost:${PORT}`);
+    console.log(`   Sign In page: http://localhost:${PORT}/auth.html`);
+    console.log(`   Main app:     http://localhost:${PORT}/\n`);
+  });
 }
 
 start();
