@@ -2795,12 +2795,12 @@ const AI = {
   },
 
   respond(msg) {
-    if (this.quiz?.awaitingAnswer) return this.handleQuizAnswer(msg);
-
-    // Playground diagnostics bypass
+    // Playground diagnostics bypass MUST come first!
     if (msg.includes("Explain this code and help me analyze the output:")) {
       return this.handleCodeDiagnostics(msg);
     }
+
+    if (this.quiz?.awaitingAnswer) return this.handleQuizAnswer(msg);
 
     const m = msg.toLowerCase().trim();
     const name = CM_USER?.name?.split(' ')[0] || null;
