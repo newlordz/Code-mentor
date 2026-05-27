@@ -7,6 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+<!-- CodeMirror 5 CDN resources -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/material-palenight.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/go/go.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -48,6 +55,73 @@
   --chat-w:380px;
   --topbar-h:64px;
   --panel-blur:blur(18px);
+}
+
+/* ─── THEME OVERRIDES ─────────────────────────────────── */
+body.theme-dracula {
+  --bg: #110915;
+  --bg-panel: rgba(28, 15, 36, 0.4);
+  --bg-panel-hover: rgba(38, 20, 50, 0.55);
+  --accent: #ff79c6;             /* Cyber Pink */
+  --accent-dim: rgba(255, 121, 198, 0.08);
+  --accent-border: rgba(255, 121, 198, 0.25);
+  --purple: #ff5555;             /* Red Alert */
+  --purple-dim: rgba(255, 85, 85, 0.08);
+  --purple-border: rgba(255, 85, 85, 0.25);
+}
+body.theme-cyberpunk {
+  --bg: #0c0b05;
+  --bg-panel: rgba(28, 25, 12, 0.45);
+  --bg-panel-hover: rgba(38, 34, 16, 0.6);
+  --accent: #f5a623;             /* Amber Gold */
+  --accent-dim: rgba(245, 166, 35, 0.08);
+  --accent-border: rgba(245, 166, 35, 0.25);
+  --purple: #00f5d4;             /* Cyber Teal */
+  --purple-dim: rgba(0, 245, 212, 0.08);
+  --purple-border: rgba(0, 245, 212, 0.25);
+}
+body.theme-ocean {
+  --bg: #040d12;
+  --bg-panel: rgba(12, 34, 46, 0.4);
+  --bg-panel-hover: rgba(18, 48, 64, 0.55);
+  --accent: #3b82f6;             /* Electric Blue */
+  --accent-dim: rgba(59, 130, 246, 0.08);
+  --accent-border: rgba(59, 130, 246, 0.25);
+  --purple: #10b981;             /* Emerald Green */
+  --purple-dim: rgba(16, 185, 129, 0.08);
+  --purple-border: rgba(16, 185, 129, 0.25);
+}
+
+/* ─── CODEMIRROR CUSTOM DARK STYLE ───────────────────── */
+.CodeMirror {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  height: 100%;
+  background: transparent !important;
+  color: var(--text) !important;
+}
+.CodeMirror-gutters {
+  background: rgba(10, 15, 30, 0.3) !important;
+  border-right: 1px solid var(--border) !important;
+}
+.CodeMirror-linenumber {
+  color: var(--text3) !important;
+  padding: 0 8px 0 4px;
+}
+.CodeMirror-cursor {
+  border-left: 2px solid var(--accent) !important;
+}
+.CodeMirror-selected {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+.CodeMirror-focused .CodeMirror-selected {
+  background: var(--accent-dim) !important;
+}
+.CodeMirror-activeline-background {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+.pg-editor-wrap .CodeMirror {
+  padding: 8px 0;
 }
 body{
   font-family:var(--font);
@@ -343,6 +417,10 @@ pre code.hljs{font-family:var(--mono);font-size:13px;padding:1.25rem 1.5rem;back
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         AI Tutor
       </button>
+      <!-- Theme Switcher -->
+      <button class="lang-switcher" onclick="toggleTheme()" id="theme-btn" style="padding:0 12px;height:38px">
+        <span>🎨 Theme: <b id="tb-theme-name">Aurora</b></span>
+      </button>
       <!-- Student avatar + logout -->
       <div id="student-chip" style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:99px;padding:5px 12px 5px 6px;cursor:default">
         <div id="student-avatar" style="width:26px;height:26px;border-radius:50%;background:#00f5d4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#010409;flex-shrink:0"></div>
@@ -385,7 +463,10 @@ pre code.hljs{font-family:var(--mono);font-size:13px;padding:1.25rem 1.5rem;back
           <div class="pg-container">
             <div class="pg-header">
               <div class="pg-title">Live Code Editor</div>
-              <button class="btn-primary" onclick="runCode()" id="btn-run-code">▶ Run Code</button>
+              <div style="display:flex;gap:10px">
+                <button class="btn-primary" onclick="explainCodeWithAI()" id="btn-explain-code" style="background:var(--accent-dim);border:1px solid var(--accent-border);color:var(--accent);box-shadow:none">🪄 Explain & Debug</button>
+                <button class="btn-primary" onclick="runCode()" id="btn-run-code">▶ Run Code</button>
+              </div>
             </div>
             <div class="pg-editor-wrap">
               <textarea id="pg-editor" class="pg-editor" spellcheck="false"></textarea>
@@ -2219,6 +2300,7 @@ let state = {
   chatHistory: [],
   progress: {},  // lang -> Set of completed topic ids
   quizState: null,
+  theme: 'aurora',
 };
 
 // ══════════════════════════════════════════════════════════════
@@ -2372,7 +2454,9 @@ function switchTab(name) {
   });
 }
 
-// ── Playground & Piston API ──
+// ── Playground & CodeMirror IDE ──
+let editorInstance = null;
+
 function loadPlaygroundTemplate() {
   const templates = {
     python: 'print("Hello World from Python!")\n\n# Write your code here\n',
@@ -2381,39 +2465,80 @@ function loadPlaygroundTemplate() {
     go: 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello World from Go!")\n}\n',
     rust: 'fn main() {\n    println!("Hello World from Rust!");\n}\n'
   };
-  const editor = document.getElementById('pg-editor');
-  if (editor && state.lang && templates[state.lang]) {
-    if (!editor.value || Object.values(templates).includes(editor.value)) {
-      editor.value = templates[state.lang];
+  
+  if (editorInstance && state.lang && templates[state.lang]) {
+    const val = editorInstance.getValue();
+    if (!val || Object.values(templates).includes(val)) {
+      editorInstance.setValue(templates[state.lang]);
       document.getElementById('pg-output').textContent = 'Ready to execute.';
       document.getElementById('pg-status').textContent = 'Ready';
       document.getElementById('pg-output').className = 'pg-output';
     }
+    
+    // Dynamically update CodeMirror mode
+    const modeMap = {
+      python: 'python',
+      javascript: 'javascript',
+      typescript: 'text/typescript',
+      go: 'text/x-go'
+    };
+    editorInstance.setOption('mode', modeMap[state.lang] || 'javascript');
   }
 }
 
-// Need to attach event listener after DOM loads. We can do it on the textarea inline, or globally on boot.
-// Since the textarea is in the HTML, we can attach it directly here.
 document.addEventListener('DOMContentLoaded', () => {
-  const editor = document.getElementById('pg-editor');
-  if (editor) {
-    editor.addEventListener('keydown', function(e) {
-      if (e.key === 'Tab') {
-        e.preventDefault();
-        const start = this.selectionStart;
-        const end = this.selectionEnd;
-        this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
-        this.selectionStart = this.selectionEnd = start + 4;
-      }
+  const editorEl = document.getElementById('pg-editor');
+  if (editorEl) {
+    editorInstance = CodeMirror.fromTextArea(editorEl, {
+      lineNumbers: true,
+      theme: 'material-palenight',
+      mode: 'python',
+      tabSize: 4,
+      indentUnit: 4,
+      lineWrapping: true
+    });
+    
+    loadPlaygroundTemplate();
+    
+    // CodeMirror refresh hack for hidden divs when switching tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setTimeout(() => {
+          if (editorInstance) {
+            editorInstance.refresh();
+          }
+        }, 50);
+      });
     });
   }
 });
+
+function explainCodeWithAI() {
+  if (!editorInstance) return;
+  const code = editorInstance.getValue().trim();
+  if (!code) {
+    alert("Please write some code in the editor first!");
+    return;
+  }
+  const output = document.getElementById('pg-output').textContent.trim();
+  
+  if (!state.chatOpen) {
+    toggleChat();
+  }
+  
+  const promptText = `Explain this code and help me analyze the output:\n\n\`\`\`${state.lang}\n${code}\n\`\`\`\n\nConsole Output:\n\`\`\`\n${output}\n\`\`\``;
+  
+  document.getElementById('chat-input').value = promptText;
+  sendChat();
+}
 
 async function runCode() {
   const btn = document.getElementById('btn-run-code');
   const out = document.getElementById('pg-output');
   const status = document.getElementById('pg-status');
-  const code = document.getElementById('pg-editor').value;
+  
+  if (!editorInstance) return;
+  const code = editorInstance.getValue();
   
   if (!code.trim()) return;
 
@@ -2672,6 +2797,11 @@ const AI = {
   respond(msg) {
     if (this.quiz?.awaitingAnswer) return this.handleQuizAnswer(msg);
 
+    // Playground diagnostics bypass
+    if (msg.includes("Explain this code and help me analyze the output:")) {
+      return this.handleCodeDiagnostics(msg);
+    }
+
     const m = msg.toLowerCase().trim();
     const name = CM_USER?.name?.split(' ')[0] || null;
     const greetName = name ? `, ${name}` : '';
@@ -2882,6 +3012,77 @@ const AI = {
     return this.explain(msg, { lang, topic, kb });
   },
 
+  noTopic() {
+    return `Please **select a topic** from the sidebar first 🎯 — I\'ll give you answers specific to what you\'re studying!`;
+  },
+
+  handleCodeDiagnostics(msg) {
+    const codeMatch = msg.match(/```(\w+)?\n([\s\S]*?)```/);
+    const code = codeMatch ? codeMatch[2].trim() : '';
+    
+    const parts = msg.split("Console Output:");
+    const outputPart = parts[1] || '';
+    const outputMatch = outputPart.match(/```\n([\s\S]*?)```/);
+    const output = outputMatch ? outputMatch[1].trim() : 'Ready to execute.';
+
+    const langName = state.lang ? C[state.lang].name : 'programming';
+    
+    const isError = output.toLowerCase().includes('error') || 
+                    output.toLowerCase().includes('failed') || 
+                    output.toLowerCase().includes('exception') || 
+                    output.toLowerCase().includes('not found') || 
+                    output.toLowerCase().includes('timeout') ||
+                    output.toLowerCase().includes('invalid') ||
+                    output.toLowerCase().includes('errno') ||
+                    output.toLowerCase().includes('enoent');
+                    
+    if (isError) {
+      let solution = "Double check your syntax and verify that any required components are running.";
+      if (output.includes('python3: not found') || output.includes('python: not found')) {
+        solution = "The server could not locate Python 3. Make sure the builder in your Railway dashboard is set to **Nixpacks** rather than *Herokuish Buildpacks*, and rebuild the service so Python is installed.";
+      } else if (output.includes('timed out')) {
+        solution = "Your code timed out (5-second limit). This usually happens if you have an **infinite loop** (like `while True:` without a break) or a blocking action waiting for user input that can't be resolved.";
+      } else if (output.includes('IndentationError')) {
+        solution = "Python is strict about spacing! Make sure you are consistently using 4 spaces for indented blocks, and don't mix tabs and spaces.";
+      } else if (output.includes('SyntaxError')) {
+        solution = "You have a typo or incorrect syntax in your script. Double check parenthesized items, matching quotes, or colons at the end of conditional statements.";
+      } else if (output.includes('NameError')) {
+        solution = "You tried to use a variable or function name that has not been declared or is spelled incorrectly. Verify that the variable is defined before it's called.";
+      }
+      
+      return `## 🐞 Code Diagnostic — Error Detected
+
+It looks like your code ran into an issue! Here is my analysis of the error in your **${langName}** playground:
+
+**Error Console Output:**
+\`\`\`text
+${output}
+\`\`\`
+
+### 💡 Root Cause & Solution:
+${solution}
+
+### 🛠️ How to Debug:
+1. Review the code inside the **Playground** editor.
+2. Read the error message carefully — it tells you the exact line number where the issue occurred.
+3. Make the necessary fixes and click **▶ Run Code** again to verify!`;
+    }
+    
+    let explanation = `Your script executed successfully inside the **${langName}** playground with zero errors! Here is a breakdown of what this script demonstrates:`;
+    
+    if (code.includes('print') || code.includes('console.log') || code.includes('fmt.Println')) {
+      explanation += `\n\n1. **Console Output:** It successfully printed \`${output || 'empty'}\` to the screen.`;
+    }
+    explanation += `\n2. **Concepts Demonstrated:** This is a perfect example of ${state.topicIdx >= 0 ? C[state.lang].topics[state.topicIdx].title.toLowerCase() : 'basic programming logic'} in ${langName}. It shows how statements execute linearly and print results.`;
+    
+    return `## 🪄 Code Walkthrough — Successful Run
+
+${explanation}
+
+### 🚀 What to do next:
+Try modifying the values, adding new variables, or writing a custom function to test your understanding! Let me know if you want me to write a custom challenge for you to solve!`;
+  },
+
   why({ lang, topic, kb }) {
     if (!kb) return this.noTopic();
     const name = lang?.name || 'this language';
@@ -2934,10 +3135,6 @@ const AI = {
       return `Here\'s what the lesson says about **"${best.word}"**:\n\n"${excerpt}..."\n\n${kb.concepts[0] ? `💡 ${kb.concepts[0]}` : 'Want a code example or more detail? Just ask!'}`;
     }
     return `I\'m trained on **"${kb.title}"** in ${lang?.name}. Try: **explain it**, **code example**, **common mistakes**, or **quiz me**!`;
-  },
-
-  noTopic() {
-    return `Please **select a topic** from the sidebar first 🎯 — I\'ll give you answers specific to what you\'re studying!`;
   }
 };
 
@@ -3063,6 +3260,33 @@ function appendTyping(id) {
 
 function removeTyping(id) { document.getElementById(id)?.remove(); }
 
+// ── Theme Switcher ──
+function initTheme() {
+  const theme = localStorage.getItem('cm_theme') || 'aurora';
+  applyTheme(theme);
+}
+
+function applyTheme(theme) {
+  document.body.className = '';
+  if (theme !== 'aurora') {
+    document.body.classList.add('theme-' + theme);
+  }
+  const themeNameMap = { aurora: 'Aurora', dracula: 'Dracula', cyberpunk: 'Cyberpunk', ocean: 'Deep Ocean' };
+  const el = document.getElementById('tb-theme-name');
+  if (el) {
+    el.textContent = themeNameMap[theme] || 'Aurora';
+  }
+  state.theme = theme;
+}
+
+function toggleTheme() {
+  const themes = ['aurora', 'dracula', 'cyberpunk', 'ocean'];
+  let idx = themes.indexOf(state.theme || 'aurora');
+  let nextTheme = themes[(idx + 1) % themes.length];
+  localStorage.setItem('cm_theme', nextTheme);
+  applyTheme(nextTheme);
+}
+
 // ══════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════
@@ -3081,6 +3305,7 @@ if (CM_USER) {
 const _origBuildCS = buildChatSuggestions;
 
 async function boot() {
+  initTheme();
   await loadProgressFromServer();
   buildLanding();
 }
