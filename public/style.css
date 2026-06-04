@@ -573,3 +573,232 @@ pre code.hljs{font-family:var(--mono);font-size:13px;padding:1.25rem 1.5rem;back
 .pg-output-header{background:rgba(255,240,220,0.02);border-bottom:1px solid var(--border2);padding:8px 16px;font-size:11px;font-family:var(--mono);color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;display:flex;justify-content:space-between;align-items:center}
 .pg-output{flex:1;padding:1.25rem;font-family:var(--mono);font-size:13px;color:var(--text);overflow-y:auto;white-space:pre-wrap;margin:0}
 .pg-output.error{color:var(--red)}
+
+/* ─── SPLIT PANE & TRACER PANEL ─────────────────────── */
+.pg-split {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  height: 100%;
+}
+.pg-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 0;
+}
+.pg-split.split-open .pg-left {
+  flex: 1.2;
+}
+.tracer-panel {
+  width: 320px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  backdrop-filter: var(--panel-blur);
+  -webkit-backdrop-filter: var(--panel-blur);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.3s ease;
+}
+.tracer-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 240, 220, 0.01);
+}
+.tracer-title {
+  font-family: var(--head);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+}
+.tracer-close {
+  background: transparent;
+  border: none;
+  color: var(--text3);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.tracer-close:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+.tracer-step-info {
+  padding: 12px 18px;
+  background: rgba(155, 138, 251, 0.04);
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--purple);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.tracer-controls {
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 240, 220, 0.01);
+}
+.tracer-btn {
+  background: rgba(255, 240, 220, 0.03);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--r);
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.tracer-btn:hover {
+  background: rgba(255, 240, 220, 0.08);
+  border-color: var(--border3);
+}
+.tracer-btn-play {
+  background: var(--purple-dim);
+  border-color: var(--purple-border);
+  color: var(--purple);
+}
+.tracer-btn-play:hover {
+  background: rgba(155, 138, 251, 0.16);
+}
+.tracer-speed-wrap {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text2);
+}
+.tracer-section-label {
+  font-size: 10px;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  padding: 12px 18px 6px;
+  font-weight: 700;
+}
+.tracer-vars, .tracer-console, .tracer-stack {
+  padding: 0 18px 12px;
+  overflow-y: auto;
+}
+.tracer-vars {
+  max-height: 180px;
+}
+.tracer-console {
+  max-height: 100px;
+}
+.tracer-stack {
+  max-height: 80px;
+}
+.tracer-empty {
+  font-size: 12px;
+  color: var(--text3);
+  font-style: italic;
+  padding: 4px 0;
+}
+.tracer-log {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text);
+  padding: 3px 0;
+  word-break: break-all;
+}
+.tracer-stack-frame {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text2);
+  padding: 5px 8px;
+  background: rgba(255, 240, 220, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+.var-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 4px;
+}
+.var-table th, .var-table td {
+  text-align: left;
+  padding: 6px 8px;
+  font-size: 11.5px;
+}
+.var-table th {
+  color: var(--text3);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+.var-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  font-family: var(--mono);
+}
+.var-name {
+  color: var(--accent);
+  font-weight: 600;
+}
+.var-type {
+  color: var(--text3);
+}
+.var-type.number { color: #f0c148; }
+.var-type.string { color: #85e89d; }
+.var-type.boolean { color: #c77dba; }
+.var-type.array { color: #5b9bd5; }
+.var-val {
+  color: var(--text);
+  word-break: break-all;
+}
+
+/* Active Line Highlight in CodeMirror */
+.tracer-line-active {
+  background: rgba(155, 138, 251, 0.12) !important;
+  border-left: 3px solid var(--purple) !important;
+}
+
+/* ─── CODEMIRROR AUTOCOMPLETE HINTS ─────────────────── */
+.CodeMirror-hints {
+  position: absolute;
+  z-index: 1010;
+  overflow: hidden;
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  background: rgba(22, 19, 32, 0.95) !important;
+  backdrop-filter: var(--panel-blur);
+  border: 1px solid var(--border3) !important;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  max-height: 20em;
+  overflow-y: auto;
+}
+.CodeMirror-hint {
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 4px;
+  color: var(--text2);
+  cursor: pointer;
+  white-space: pre;
+}
+.CodeMirror-hint-active {
+  background: linear-gradient(135deg, var(--accent) 0%, #d06a42 100%) !important;
+  color: #0f0d15 !important;
+  font-weight: 600;
+}
+
