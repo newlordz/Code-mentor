@@ -50,10 +50,28 @@ async function initDB() {
         topic_id     VARCHAR(100) NOT NULL,
         completed    BOOLEAN DEFAULT false,
         score        INTEGER DEFAULT 0,
+        code_snippet TEXT,
         updated_at   TIMESTAMP DEFAULT NOW(),
         UNIQUE(student_id, language, topic_id)
       );
     `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS badges (
+        id           SERIAL PRIMARY KEY,
+        student_id   INTEGER REFERENCES students(id) ON DELETE CASCADE,
+        badge_id     VARCHAR(100) NOT NULL,
+        earned_at    TIMESTAMP DEFAULT NOW(),
+        UNIQUE(student_id, badge_id)
+      );
+    `);
+
+    // In case the tables already exist, let's safely try to add code_snippet if it's missing.
+    try {
+      await client.query('ALTER TABLE progress ADD COLUMN code_snippet TEXT;');
+    } catch (e) {
+      // Column already exists, ignore
+    }
 
     console.log('✅ Database tables ready');
   } catch (err) {

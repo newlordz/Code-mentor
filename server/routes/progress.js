@@ -11,7 +11,7 @@ router.use(authMiddleware);
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT language, topic_id, completed, score, updated_at FROM progress WHERE student_id = $1',
+      'SELECT language, topic_id, completed, score, code_snippet, updated_at FROM progress WHERE student_id = $1',
       [req.user.id]
     );
     res.json({ progress: result.rows });
@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
 // ── POST /api/progress ──────────────────────────────────────────
 // Upsert a single topic progress entry
 router.post('/', async (req, res) => {
-  const { language, topic_id, completed, score } = req.body;
+  const { language, topic_id, completed, score, code_snippet } = req.body;
 
   if (!language || !topic_id) {
     return res.status(400).json({ error: 'language and topic_id are required' });
@@ -32,14 +32,15 @@ router.post('/', async (req, res) => {
 
   try {
     await pool.query(`
-      INSERT INTO progress (student_id, language, topic_id, completed, score, updated_at)
-      VALUES ($1, $2, $3, $4, $5, NOW())
+      INSERT INTO progress (student_id, language, topic_id, completed, score, code_snippet, updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, NOW())
       ON CONFLICT (student_id, language, topic_id)
       DO UPDATE SET
-        completed  = EXCLUDED.completed,
-        score      = GREATEST(progress.score, EXCLUDED.score),
-        updated_at = NOW()
-    `, [req.user.id, language, topic_id, !!completed, score || 0]);
+        completed    = progress.completed OR EXCLUDED.completed,
+        score        = GREATEST(progress.score, EXCLUDED.score),
+        code_snippet = COALESCE(EXCLUDED.code_snippet, progress.code_snippet),
+        updated_at   = NOW()
+    `, [req.user.id, language, topic_id, !!completed, score || 0, code_snippet || null]);
 
     res.json({ ok: true });
   } catch (err) {

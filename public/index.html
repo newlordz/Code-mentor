@@ -83,6 +83,10 @@
           </svg>
           AI Tutor
         </button>
+        <!-- Badges Button -->
+        <button class="lang-switcher" onclick="openBadgesModal()" style="padding:0 12px;height:38px;background:rgba(255, 215, 0, 0.1);color:#FFD700;border:1px solid rgba(255, 215, 0, 0.2)">
+          <span>🏆 Badges</span>
+        </button>
         <!-- Theme Switcher -->
         <button class="lang-switcher" onclick="toggleTheme()" id="theme-btn" style="padding:0 12px;height:38px">
           <span>🎨 Theme: <b id="tb-theme-name">Warm</b></span>
@@ -127,10 +131,12 @@
           <div class="content-tabs">
             <button class="tab-btn active" onclick="switchTab('lesson')">📖 Lesson</button>
             <button class="tab-btn" onclick="switchTab('resources')">🔗 Resources</button>
+            <button class="tab-btn" onclick="switchTab('challenges')">🎯 Challenges</button>
             <button class="tab-btn" onclick="switchTab('playground')">💻 Playground</button>
           </div>
           <div class="tab-content active" id="tab-lesson"></div>
           <div class="tab-content" id="tab-resources"></div>
+          <div class="tab-content" id="tab-challenges" style="padding: 1.5rem 2.5rem; overflow-y:auto;"></div>
           <div class="tab-content" id="tab-playground" style="padding: 1.5rem 2.5rem;">
             <div class="pg-container">
               <div class="pg-header">
@@ -251,6 +257,19 @@
       <div class="quiz-footer" id="quiz-footer">
         <div class="quiz-score" id="quiz-score">Question 1 of 5</div>
         <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BADGE MODAL ═══════════════════════════════════════════ -->
+  <div id="badge-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; width:450px; max-width:90%; padding:24px; box-shadow:0 10px 40px rgba(0,0,0,0.5);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 style="margin:0; font-size:20px;">🏆 Your Achievements</h2>
+        <button onclick="closeBadgesModal()" style="background:none; border:none; color:var(--text3); font-size:20px; cursor:pointer;">✕</button>
+      </div>
+      <div id="badge-list" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <!-- Badges will be injected here -->
       </div>
     </div>
   </div>
@@ -2313,24 +2332,26 @@ func main() {
   `;
       // Set tab state
       document.querySelectorAll('.tab-btn').forEach((b, i) => {
-        b.classList.toggle('active', i === (state.activeTab === 'lesson' ? 0 : state.activeTab === 'resources' ? 1 : 2));
+        b.classList.toggle('active', i === (state.activeTab === 'lesson' ? 0 : state.activeTab === 'resources' ? 1 : state.activeTab === 'challenges' ? 2 : 3));
       });
       document.querySelectorAll('.tab-content').forEach((c, i) => {
-        c.classList.toggle('active', i === (state.activeTab === 'lesson' ? 0 : state.activeTab === 'resources' ? 1 : 2));
+        c.classList.toggle('active', i === (state.activeTab === 'lesson' ? 0 : state.activeTab === 'resources' ? 1 : state.activeTab === 'challenges' ? 2 : 3));
       });
       // Highlight code
       document.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
       // Load playground template
       loadPlaygroundTemplate();
+      // Render challenges
+      renderChallenges();
     }
 
     function switchTab(name) {
       state.activeTab = name;
       document.querySelectorAll('.tab-btn').forEach((b, i) => {
-        b.classList.toggle('active', (name === 'lesson' && i === 0) || (name === 'resources' && i === 1) || (name === 'playground' && i === 2));
+        b.classList.toggle('active', (name === 'lesson' && i === 0) || (name === 'resources' && i === 1) || (name === 'challenges' && i === 2) || (name === 'playground' && i === 3));
       });
       document.querySelectorAll('.tab-content').forEach((c, i) => {
-        c.classList.toggle('active', (name === 'lesson' && i === 0) || (name === 'resources' && i === 1) || (name === 'playground' && i === 2));
+        c.classList.toggle('active', (name === 'lesson' && i === 0) || (name === 'resources' && i === 1) || (name === 'challenges' && i === 2) || (name === 'playground' && i === 3));
       });
     }
 
@@ -2351,15 +2372,29 @@ func main() {
     function getCompletions(cm) {
       const cursor = cm.getCursor();
       const token = cm.getTokenAt(cursor);
+      
+      // Disable autocomplete inside strings or comments to reduce noise
+      if (token.type && (token.type.includes('string') || token.type.includes('comment'))) {
+        return null;
+      }
+
       const word = token.string.toLowerCase();
       const lang = state.lang || 'javascript';
       const dict = AUTOCOMPLETE_DICT[lang] || [];
-      const anyWord = CodeMirror.hint.anyword(cm, {}) || { list: [] };
+      
+      // Is it a valid word prefix?
+      const isWord = /^[a-zA-Z_#0-9]+$/.test(token.string);
+      
+      if (!isWord) return null;
 
+      // We are typing a word. Find matching keywords & document words.
+      const anyWord = CodeMirror.hint.anyword(cm, {}) || { list: [] };
       const matches = [...new Set([
         ...dict.filter(k => k.toLowerCase().startsWith(word) && k !== token.string),
         ...anyWord.list
       ])].filter(k => k.length > word.length).slice(0, 12);
+
+      if (matches.length === 0) return null;
 
       return {
         list: matches,
@@ -2469,6 +2504,11 @@ func main() {
       const status = document.getElementById('pg-status');
       const btn = document.getElementById('btn-run-code');
       btn.innerHTML = '⏳ Running...'; btn.style.opacity = '0.7'; btn.style.pointerEvents = 'none';
+      
+      awardBadge('first_run');
+      if(state.topicIdx >= 0) {
+        apiCall('POST', '/api/progress', { language: state.lang, topic_id: C[state.lang].topics[state.topicIdx].id, code_snippet: code });
+      }
       try {
         // Fresh DB each run so CREATE TABLE statements don't conflict
         const SQL = await initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/${f}` });
@@ -2796,6 +2836,11 @@ func main() {
       const code = editorInstance.getValue();
 
       if (!code.trim()) return;
+      
+      awardBadge('first_run');
+      if(state.topicIdx >= 0) {
+        apiCall('POST', '/api/progress', { language: state.lang, topic_id: C[state.lang].topics[state.topicIdx].id, code_snippet: code });
+      }
 
       if (state.lang === 'sql') {
         return runSqlInBrowser(code);
@@ -2955,6 +3000,7 @@ func main() {
     function markDone() {
       const topic = C[state.lang].topics[state.topicIdx];
       const score = state.quizState ? Math.round(state.quizState.correct / state.quizState.questions.length * 100) : 100;
+      if (score === 100) awardBadge('perfect_quiz');
       state.progress[state.lang].add(topic.id);
       updateProgress();
       buildTopicList();
@@ -3680,9 +3726,102 @@ Try modifying the values, adding new variables, or writing a custom function to 
     // Greet AI with student name if chat is opened before topic
     const _origBuildCS = buildChatSuggestions;
 
+    // ══════════════════════════════════════════════════════════════
+    // BADGES & CHALLENGES LOGIC
+    // ══════════════════════════════════════════════════════════════
+    const BADGES_DEFS = {
+      'first_run': { title: 'First Run', icon: '🚀', desc: 'Run code in the playground for the first time' },
+      'perfect_quiz': { title: 'Perfect Score', icon: '💯', desc: 'Score 100% on a topic quiz' },
+      'first_challenge': { title: 'Challenge Accepted', icon: '🎯', desc: 'Complete your first coding challenge' }
+    };
+    state.badges = new Set();
+
+    async function loadBadgesFromServer() {
+      const data = await apiCall('GET', '/api/badges');
+      if (data?.badges) {
+        data.badges.forEach(b => state.badges.add(b.badge_id));
+      }
+    }
+
+    async function awardBadge(badgeId) {
+      if (!state.badges.has(badgeId)) {
+        state.badges.add(badgeId);
+        await apiCall('POST', '/api/badges', { badge_id: badgeId });
+        const notif = document.createElement('div');
+        notif.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--accent);color:#000;padding:12px 20px;border-radius:8px;font-weight:bold;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.3);animation:slideIn 0.5s ease-out;';
+        notif.innerHTML = `🏆 Badge Earned: ${BADGES_DEFS[badgeId].title}`;
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 4000);
+      }
+    }
+
+    function openBadgesModal() {
+      const list = document.getElementById('badge-list');
+      list.innerHTML = Object.entries(BADGES_DEFS).map(([id, b]) => {
+        const earned = state.badges.has(id);
+        return `
+          <div style="background:var(--bg-lighter); padding:16px; border-radius:8px; border:1px solid ${earned ? 'var(--accent)' : 'var(--border)'}; opacity:${earned ? '1' : '0.5'}; text-align:center;">
+            <div style="font-size:32px; margin-bottom:8px;">${b.icon}</div>
+            <div style="font-weight:bold; margin-bottom:4px; color:${earned ? 'var(--accent)' : 'var(--text)'}">${b.title}</div>
+            <div style="font-size:12px; color:var(--text2)">${b.desc}</div>
+            <div style="font-size:10px; margin-top:8px; color:var(--text3)">${earned ? 'EARNED ✓' : 'LOCKED'}</div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('badge-modal').style.display = 'flex';
+    }
+
+    function closeBadgesModal() {
+      document.getElementById('badge-modal').style.display = 'none';
+    }
+
+    Object.keys(C).forEach(langKey => {
+      C[langKey].topics.forEach((topic) => {
+        topic.challenges = [{
+          title: `Challenge: ${topic.title} Basics`,
+          prompt: `Write a simple program that demonstrates what you've learned in the ${topic.title} lesson. Try to run it and verify the output.`,
+        }];
+      });
+    });
+
+    function renderChallenges() {
+      if(state.topicIdx < 0) return;
+      const topic = C[state.lang].topics[state.topicIdx];
+      const tab = document.getElementById('tab-challenges');
+      if(!tab) return;
+      tab.innerHTML = `
+        <div style="padding-top:0.5rem">
+          <div class="resources-section-title" style="font-size:1.5rem;margin-bottom:1rem;color:var(--text);font-weight:700;">🎯 Coding Challenges</div>
+          <p style="color:var(--text2); font-size:14px; margin-bottom:20px;">Put your skills to the test with these practical exercises.</p>
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            ${topic.challenges.map((ch, i) => `
+              <div style="background:var(--bg-lighter); border:1px solid var(--border); border-radius:8px; padding:20px;">
+                <h3 style="margin-top:0; color:var(--accent)">${ch.title}</h3>
+                <p style="color:var(--text); font-size:14.5px; line-height:1.5">${ch.prompt}</p>
+                <button class="btn-primary" onclick="startChallenge(${i})" style="margin-top:10px;">Solve in Playground 💻</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    window.startChallenge = function(idx) {
+      const topic = C[state.lang].topics[state.topicIdx];
+      const ch = topic.challenges[idx];
+      switchTab('playground');
+      if (editorInstance) {
+        let commentChar = '//';
+        if (state.lang === 'python') commentChar = '#';
+        else if (state.lang === 'sql') commentChar = '--';
+        editorInstance.setValue(`${commentChar} ${ch.title}\n${commentChar} ${ch.prompt}\n\n`);
+      }
+      awardBadge('first_challenge');
+    };
+
     async function boot() {
       initTheme();
-      await loadProgressFromServer();
+      await Promise.all([loadProgressFromServer(), loadBadgesFromServer()]);
       buildLanding();
     }
     boot();
