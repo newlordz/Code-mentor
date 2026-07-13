@@ -12,6 +12,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Prevent browser caching of HTML pages so back-button navigation rechecks auth
+app.use((req, res, next) => {
+  if (req.path === '/' || req.path.endsWith('.html')) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+  next();
+});
+
 // ── Static files (serve the frontend) ──────────────────────────
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
@@ -25,6 +35,7 @@ app.use('/api/challenge', require('./routes/challenge'));
 
 // ── Auth Page Routes ────────────────────────────────────────────
 app.get(['/auth', '/auth.html', '/login', '/signin', '/register', '/signup'], (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.sendFile(path.join(__dirname, '..', 'public', 'auth.html'));
 });
 
@@ -34,6 +45,7 @@ app.get('*', (req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'Not found' });
   }
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 

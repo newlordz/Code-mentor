@@ -471,7 +471,7 @@ async function handleSignin(e) {
     localStorage.setItem('cm_token', data.token);
     localStorage.setItem('cm_user',  JSON.stringify(data.user));
     document.getElementById('signin-success').classList.add('show');
-    setTimeout(() => { window.location.href = 'index.html'; }, 900);
+    setTimeout(() => { window.location.replace('index.html'); }, 900);
   } catch (err) {
     showError('signin', err.message);
     setLoading('signin-btn', false);
@@ -497,7 +497,7 @@ async function handleSignup(e) {
     localStorage.setItem('cm_token', data.token);
     localStorage.setItem('cm_user',  JSON.stringify(data.user));
     document.getElementById('signup-success').classList.add('show');
-    setTimeout(() => { window.location.href = 'index.html'; }, 900);
+    setTimeout(() => { window.location.replace('index.html'); }, 900);
   } catch (err) {
     showError('signup', err.message);
     setLoading('signup-btn', false);
@@ -508,7 +508,7 @@ async function handleSignup(e) {
 (function() {
   const token = localStorage.getItem('cm_token');
   if (token && token !== 'undefined' && token !== 'null' && !window.location.search.includes('force=1')) {
-    window.location.href = 'index.html';
+    window.location.replace('index.html');
   } else if (!token || token === 'undefined' || token === 'null') {
     localStorage.removeItem('cm_token');
     localStorage.removeItem('cm_user');

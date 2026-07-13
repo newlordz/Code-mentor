@@ -2217,14 +2217,21 @@ func main() {
     // APP STATE
     // ══════════════════════════════════════════════════════════════
     // ── Auth guard ─────────────────────────────────────────────────
-    (function () {
+    function checkAuthGuard() {
       const token = localStorage.getItem('cm_token');
       if (!token || token === 'undefined' || token === 'null') {
         localStorage.removeItem('cm_token');
         localStorage.removeItem('cm_user');
-        window.location.href = 'auth.html';
+        window.location.replace('auth.html');
+        return false;
       }
-    })();
+      return true;
+    }
+    checkAuthGuard();
+    window.addEventListener('pageshow', checkAuthGuard);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') checkAuthGuard();
+    });
 
     let CM_USER = null;
     let CM_TOKEN = null;
@@ -2240,13 +2247,13 @@ func main() {
     } catch(e) {}
 
     if (!CM_TOKEN) {
-      window.location.href = 'auth.html';
+      window.location.replace('auth.html');
     }
 
     function logout() {
       localStorage.removeItem('cm_token');
       localStorage.removeItem('cm_user');
-      window.location.href = 'auth.html';
+      window.location.replace('auth.html');
     }
 
     // ── API helper ──────────────────────────────────────────────────
