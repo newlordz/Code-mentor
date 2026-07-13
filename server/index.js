@@ -21,6 +21,12 @@ app.use('/api/progress', require('./routes/progress'));
 app.use('/api/run',      require('./routes/run'));
 app.use('/api/chat',     require('./routes/chat'));
 app.use('/api/badges',   require('./routes/badges'));
+app.use('/api/challenge', require('./routes/challenge'));
+
+// ── Auth Page Routes ────────────────────────────────────────────
+app.get(['/auth', '/auth.html', '/login', '/signin', '/register', '/signup'], (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'auth.html'));
+});
 
 // ── Catch-all: serve index.html for SPA routing ─────────────────
 app.get('*', (req, res) => {

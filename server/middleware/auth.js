@@ -7,7 +7,7 @@ function authMiddleware(req, res, next) {
   }
   const token = header.slice(7);
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'codementor_dev_secret');
     req.user = decoded; // { id, name, email }
     next();
   } catch (err) {

@@ -43,9 +43,18 @@
 
   <!-- ═══ LANDING PAGE ═══════════════════════════════════════════ -->
   <div id="landing">
-    <nav class="land-nav">
+    <nav class="land-nav" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:18px 40px">
       <div class="logo">code<span>mentor</span>.ai</div>
-      <div style="font-size:13px;color:var(--text2)">Pick a language. Start learning.</div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div style="font-size:13px;color:var(--text2)">Pick a language. Start learning.</div>
+        <div id="landing-user-bar" style="display:flex;align-items:center;gap:10px">
+          <div id="landing-student-chip" style="display:flex;align-items:center;gap:8px;background:rgba(255,240,220,0.03);border:1px solid rgba(255,240,220,0.08);border-radius:99px;padding:4px 12px 4px 5px">
+            <div id="landing-student-avatar" style="width:24px;height:24px;border-radius:50%;background:#e8845c;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#0f0d15"></div>
+            <span id="landing-student-name" style="font-size:12.5px;font-weight:600;color:var(--text)"></span>
+          </div>
+          <button onclick="logout()" style="background:rgba(232,93,117,0.08);border:1px solid rgba(232,93,117,0.25);color:#e85d75;border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer">Sign Out</button>
+        </div>
+      </div>
     </nav>
     <div class="land-hero">
       <div class="hero-glow"></div>
@@ -83,6 +92,23 @@
           </svg>
           AI Tutor
         </button>
+        <!-- Search Button -->
+        <button class="lang-switcher" onclick="openSearch()" style="padding:0 12px;height:38px;background:rgba(139,92,246,0.1);color:#a78bfa;border:1px solid rgba(139,92,246,0.2)">
+          <span>🔍 Search</span>
+        </button>
+        <!-- Certificates Button -->
+        <button class="lang-switcher" onclick="openCertificates()" style="padding:0 12px;height:38px;background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.2)">
+          <span>🎓 Certificates</span>
+        </button>
+        <!-- Analytics Button -->
+        <button class="lang-switcher" onclick="openAnalytics()" style="padding:0 12px;height:38px;background:rgba(16,185,129,0.1);color:#34d399;border:1px solid rgba(16,185,129,0.2)">
+          <span>📊 Analytics</span>
+        </button>
+        <!-- Review Button -->
+        <button class="lang-switcher" onclick="openFlashcardReview()" style="padding:0 12px;height:38px;background:rgba(99,102,241,0.12);color:#818cf8;border:1px solid rgba(99,102,241,0.25);position:relative" id="review-btn">
+          <span>🔄 Review</span>
+          <span id="review-due-badge" style="display:none;position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:0 5px;border-radius:8px;line-height:16px;min-width:16px;text-align:center"></span>
+        </button>
         <!-- Badges Button -->
         <button class="lang-switcher" onclick="openBadgesModal()" style="padding:0 12px;height:38px;background:rgba(255, 215, 0, 0.1);color:#FFD700;border:1px solid rgba(255, 215, 0, 0.2)">
           <span>🏆 Badges</span>
@@ -115,6 +141,7 @@
             <span id="sidebar-lang-name"></span>
           </div>
           <div class="sidebar-lang-sub" id="sidebar-lang-sub"></div>
+          <button class="sidebar-roadmap-btn" onclick="openRoadmap()">🗺️ Roadmap</button>
         </div>
         <div class="topic-list" id="topic-list"></div>
         <div class="sidebar-footer" id="sidebar-footer">0 of 6 topics done</div>
@@ -273,6 +300,101 @@
       </div>
     </div>
   </div>
+
+  <!-- ═══ FLASHCARD REVIEW MODAL ══════════════════════════════════ -->
+  <div id="flashcard-modal">
+    <div class="flashcard-box">
+      <div class="flashcard-header">
+        <div class="flashcard-title" id="fc-title">Review</div>
+        <button class="quiz-close" onclick="closeFlashcardReview()">✕</button>
+      </div>
+      <div class="flashcard-stats" id="fc-stats">0 due today · 0 total</div>
+      <div class="flashcard-card" id="fc-card" onclick="flipFlashcard()">
+        <div class="flashcard-inner" id="fc-inner">
+          <div class="flashcard-front" id="fc-front">
+            <div class="fc-label">Question</div>
+            <div class="fc-text" id="fc-question">Loading...</div>
+          </div>
+          <div class="flashcard-back" id="fc-back">
+            <div class="fc-label">Answer</div>
+            <div class="fc-text" id="fc-answer">Loading...</div>
+          </div>
+        </div>
+      </div>
+      <div class="flashcard-hint" id="fc-hint">Tap card to reveal answer</div>
+      <div class="flashcard-actions" id="fc-actions" style="display:none">
+        <button class="fc-btn fc-again" onclick="rateFlashcard(0)">Again</button>
+        <button class="fc-btn fc-hard" onclick="rateFlashcard(1)">Hard</button>
+        <button class="fc-btn fc-good" onclick="rateFlashcard(2)">Good</button>
+        <button class="fc-btn fc-easy" onclick="rateFlashcard(3)">Easy</button>
+      </div>
+      <div class="flashcard-progress" id="fc-progress">
+        <div class="flashcard-progress-fill" id="fc-prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ANALYTICS DASHBOARD MODAL ══════════════════════════════ -->
+  <div id="analytics-modal">
+    <div class="analytics-box">
+      <div class="analytics-header">
+        <div class="analytics-title">📊 Study Analytics</div>
+        <button class="quiz-close" onclick="closeAnalytics()">✕</button>
+      </div>
+      <div class="analytics-body" id="analytics-body">
+        <div class="analytics-loading">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SEARCH MODAL ═══════════════════════════════════════════ -->
+  <div id="search-modal">
+    <div class="search-overlay" onclick="closeSearch()"></div>
+    <div class="search-panel">
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="search-input" type="text" placeholder="Search lessons, concepts, quizzes..." autocomplete="off" spellcheck="false" oninput="doSearch(this.value)">
+        <button class="search-close-btn" onclick="closeSearch()">✕</button>
+      </div>
+      <div class="search-results" id="search-results">
+        <div class="search-empty">Type to search across all languages...</div>
+      </div>
+      <div class="search-footer">
+        <span>↑↓ Navigate</span>
+        <span>↵ Open</span>
+        <span>Esc Close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ROADMAP MODAL ══════════════════════════════════════════ -->
+  <div id="roadmap-modal">
+    <div class="roadmap-overlay" onclick="closeRoadmap()"></div>
+    <div class="roadmap-box">
+      <div class="roadmap-header">
+        <div class="roadmap-title"><span id="rm-lang-icon"></span> <span id="rm-lang-name"></span> Roadmap</div>
+        <button class="quiz-close" onclick="closeRoadmap()">✕</button>
+      </div>
+      <div class="roadmap-body" id="roadmap-body">
+        <div class="roadmap-loading">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CERTIFICATE MODAL ══════════════════════════════════════ -->
+  <div id="cert-modal">
+    <div class="cert-overlay" onclick="closeCertificates()"></div>
+    <div class="cert-box">
+      <div class="cert-header">
+        <div class="cert-title">🎓 Certificates</div>
+        <button class="quiz-close" onclick="closeCertificates()">✕</button>
+      </div>
+      <div class="cert-body" id="cert-body"></div>
+    </div>
+  </div>
+
+  <!-- ═══ CERTIFICATE PRINT AREA (hidden, for canvas/print) ════ -->
+  <div id="cert-print-area" style="position:fixed;left:-9999px;top:0;width:800px;height:600px;background:#fff;padding:0;z-index:-1"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>
@@ -2097,16 +2219,34 @@ func main() {
     // ── Auth guard ─────────────────────────────────────────────────
     (function () {
       const token = localStorage.getItem('cm_token');
-      if (!token) { window.location.href = '/auth.html'; }
+      if (!token || token === 'undefined' || token === 'null') {
+        localStorage.removeItem('cm_token');
+        localStorage.removeItem('cm_user');
+        window.location.href = 'auth.html';
+      }
     })();
 
-    const CM_USER = JSON.parse(localStorage.getItem('cm_user') || 'null');
-    const CM_TOKEN = localStorage.getItem('cm_token');
+    let CM_USER = null;
+    let CM_TOKEN = null;
+    try {
+      const userRaw = localStorage.getItem('cm_user');
+      if (userRaw && userRaw !== 'undefined' && userRaw !== 'null') {
+        CM_USER = JSON.parse(userRaw);
+      }
+    } catch(e) {}
+    try {
+      CM_TOKEN = localStorage.getItem('cm_token');
+      if (CM_TOKEN === 'undefined' || CM_TOKEN === 'null') CM_TOKEN = null;
+    } catch(e) {}
+
+    if (!CM_TOKEN) {
+      window.location.href = 'auth.html';
+    }
 
     function logout() {
       localStorage.removeItem('cm_token');
       localStorage.removeItem('cm_user');
-      window.location.href = '/auth.html';
+      window.location.href = 'auth.html';
     }
 
     // ── API helper ──────────────────────────────────────────────────
@@ -2125,9 +2265,12 @@ func main() {
       await apiCall('POST', '/api/progress', { language: lang, topic_id: topicId, completed: true, score });
     }
 
+    let FULL_PROGRESS = []; // full rows for analytics
+
     async function loadProgressFromServer() {
       const data = await apiCall('GET', '/api/progress');
       if (!data?.progress) return;
+      FULL_PROGRESS = data.progress;
       for (const row of data.progress) {
         if (!state.progress[row.language]) state.progress[row.language] = new Set();
         if (row.completed) state.progress[row.language].add(row.topic_id);
@@ -3712,16 +3855,23 @@ Try modifying the values, adding new variables, or writing a custom function to 
     // ══════════════════════════════════════════════════════════════
     // INIT
     // ══════════════════════════════════════════════════════════════
-    AI.build();
+    try { AI.build(); } catch (e) { console.warn('AI.build error:', e); }
 
-    // Show student name in topbar
-    if (CM_USER) {
-      const initials = CM_USER.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
-      const avatar = document.getElementById('student-avatar');
-      const nameEl = document.getElementById('student-name');
-      if (avatar) { avatar.textContent = initials; avatar.style.background = CM_USER.avatar_color || '#e8845c'; }
-      if (nameEl) nameEl.textContent = CM_USER.name.split(' ')[0];
-    }
+    // Show student name in topbar and landing
+    try {
+      if (CM_USER && CM_USER.name) {
+        const initials = CM_USER.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+        const avatar = document.getElementById('student-avatar');
+        const nameEl = document.getElementById('student-name');
+        if (avatar) { avatar.textContent = initials; avatar.style.background = CM_USER.avatar_color || '#e8845c'; }
+        if (nameEl) nameEl.textContent = CM_USER.name.split(' ')[0];
+
+        const lAvatar = document.getElementById('landing-student-avatar');
+        const lNameEl = document.getElementById('landing-student-name');
+        if (lAvatar) { lAvatar.textContent = initials; lAvatar.style.background = CM_USER.avatar_color || '#e8845c'; }
+        if (lNameEl) lNameEl.textContent = CM_USER.name.split(' ')[0];
+      }
+    } catch (e) { console.warn('Student chip error:', e); }
 
     // Greet AI with student name if chat is opened before topic
     const _origBuildCS = buildChatSuggestions;
@@ -3738,9 +3888,33 @@ Try modifying the values, adding new variables, or writing a custom function to 
 
     async function loadBadgesFromServer() {
       const data = await apiCall('GET', '/api/badges');
-      if (data?.badges) {
-        data.badges.forEach(b => state.badges.add(b.badge_id));
-      }
+      if (!data?.badges) return;
+      window.BADGES = data.badges;
+      for (const b of data.badges) state.badges.add(b.badge_id);
+      // Render badges list if modal is open
+      const list = document.getElementById('badge-list');
+      if (!list) return;
+      const badgeDefs = [
+        { id: 'first_topic', icon: '🌱', label: 'First Topic', desc: 'Complete your first topic' },
+        { id: 'five_topics', icon: '🌿', label: 'Growing', desc: 'Complete 5 topics' },
+        { id: 'ten_topics', icon: '🌳', label: 'Knowledge Tree', desc: 'Complete 10 topics' },
+        { id: 'quiz_master', icon: '🧠', label: 'Quiz Master', desc: 'Score 100% on any quiz' },
+        { id: 'polyglot', icon: '🗣️', label: 'Polyglot', desc: 'Study 3 different languages' },
+        { id: 'streak_3', icon: '🔥', label: 'On Fire', desc: '3-day study streak' },
+        { id: 'streak_7', icon: '💎', label: 'Diamond Habit', desc: '7-day study streak' },
+        { id: 'first_challenge', icon: '⚡', label: 'Code Rookie', desc: 'Complete your first coding challenge' },
+        { id: 'type_racer', icon: '⌨️', label: 'Type Racer', desc: 'Complete all TypeScript challenges' },
+      ];
+      list.innerHTML = badgeDefs.map(b => {
+        const earned = data.badges.some(r => r.badge_id === b.id);
+        return `
+          <div style="background:${earned ? 'rgba(255,215,0,0.08)' : 'var(--bg-panel)'};border:1px solid ${earned ? 'rgba(255,215,0,0.2)' : 'var(--border)'};border-radius:10px;padding:14px;text-align:center;opacity:${earned ? '1' : '0.4'}">
+            <div style="font-size:2rem;margin-bottom:6px">${earned ? b.icon : '🔒'}</div>
+            <div style="font-size:12px;font-weight:700;margin-bottom:3px">${b.label}</div>
+            <div style="font-size:10px;color:var(--text3)">${b.desc}</div>
+          </div>
+        `;
+      }).join('');
     }
 
     async function awardBadge(badgeId) {
@@ -3775,30 +3949,193 @@ Try modifying the values, adding new variables, or writing a custom function to 
       document.getElementById('badge-modal').style.display = 'none';
     }
 
+    // ══════════════════════════════════════════════════════════════
+    // AUTO-GRADED CODING CHALLENGES
+    // ══════════════════════════════════════════════════════════════
+    const CHALLENGE_DEFS = {
+      python: {
+        setup: [
+          { title: 'Hello, World!', difficulty: 'easy', description: 'Write a function that returns the greeting string "Hello, World!".', functionName: 'hello', starterCode: 'def hello():\n    # Return "Hello, World!"\n    pass', testCases: [{ input: [], expected: "Hello, World!" }] },
+          { title: 'Add Two Numbers', difficulty: 'easy', description: 'Write a function that takes two numbers and returns their sum.', functionName: 'add', starterCode: 'def add(a, b):\n    # Return the sum of a and b\n    pass', testCases: [{ input: [2, 3], expected: 5 }, { input: [-1, 1], expected: 0 }, { input: [0, 0], expected: 0 }] },
+        ],
+        variables: [
+          { title: 'String Combiner', difficulty: 'easy', description: 'Write a function that takes a first and last name and returns the full name with a space between.', functionName: 'full_name', starterCode: 'def full_name(first, last):\n    # Return first + " " + last\n    pass', testCases: [{ input: ["Alice", "Smith"], expected: "Alice Smith" }, { input: ["Bob", "Jones"], expected: "Bob Jones" }] },
+          { title: 'Type Checker', difficulty: 'easy', description: 'Write a function that returns the type name of a value as a string (e.g., "int", "str", "bool", "float", "list").', functionName: 'get_type', starterCode: 'def get_type(value):\n    # Return the type name as a string\n    pass', testCases: [{ input: [42], expected: "int" }, { input: ["hello"], expected: "str" }, { input: [true], expected: "bool" }] },
+        ],
+        control: [
+          { title: 'Even or Odd', difficulty: 'easy', description: 'Write a function that returns "even" if a number is even, "odd" if odd.', functionName: 'even_or_odd', starterCode: 'def even_or_odd(n):\n    # Return "even" or "odd"\n    pass', testCases: [{ input: [4], expected: "even" }, { input: [7], expected: "odd" }, { input: [0], expected: "even" }] },
+          { title: 'Count to N', difficulty: 'medium', description: 'Write a function that returns a list of integers from 1 to n (inclusive).', functionName: 'count_to', starterCode: 'def count_to(n):\n    # Return list of numbers 1..n\n    pass', testCases: [{ input: [3], expected: [1, 2, 3] }, { input: [1], expected: [1] }, { input: [0], expected: [] }] },
+        ],
+        functions: [
+          { title: 'Square It', difficulty: 'easy', description: 'Write a function that returns the square of a number.', functionName: 'square', starterCode: 'def square(x):\n    # Return x squared\n    pass', testCases: [{ input: [5], expected: 25 }, { input: [-3], expected: 9 }, { input: [0], expected: 0 }] },
+          { title: 'Factorial', difficulty: 'medium', description: 'Write a function that returns the factorial of n (n!). Assume n >= 0.', functionName: 'factorial', starterCode: 'def factorial(n):\n    # Return n! (n factorial)\n    pass', testCases: [{ input: [5], expected: 120 }, { input: [0], expected: 1 }, { input: [3], expected: 6 }] },
+        ],
+        datastructs: [
+          { title: 'List Sum', difficulty: 'easy', description: 'Write a function that returns the sum of all numbers in a list.', functionName: 'list_sum', starterCode: 'def list_sum(nums):\n    # Return sum of all numbers\n    pass', testCases: [{ input: [[1, 2, 3, 4, 5]], expected: 15 }, { input: [[-1, 1]], expected: 0 }, { input: [[]], expected: 0 }] },
+          { title: 'Dictionary Lookup', difficulty: 'medium', description: 'Write a function that takes a dictionary and a key, and returns the value for that key, or None if the key is not found.', functionName: 'dict_get', starterCode: 'def dict_get(d, key):\n    # Return d[key] or None\n    pass', testCases: [{ input: [{"a": 1, "b": 2}, "a"], expected: 1 }, { input: [{"x": 10}, "y"], expected: null }] },
+        ],
+      },
+      javascript: {
+        setup: [
+          { title: 'Hello, World!', difficulty: 'easy', description: 'Write a function that returns the string "Hello, World!".', functionName: 'hello', starterCode: 'function hello() {\n  // Return "Hello, World!"\n}', testCases: [{ input: [], expected: "Hello, World!" }] },
+          { title: 'Add Two Numbers', difficulty: 'easy', description: 'Write a function that takes two numbers and returns their sum.', functionName: 'add', starterCode: 'function add(a, b) {\n  // Return a + b\n}', testCases: [{ input: [2, 3], expected: 5 }, { input: [-1, 1], expected: 0 }, { input: [0, 0], expected: 0 }] },
+        ],
+        variables: [
+          { title: 'String Combiner', difficulty: 'easy', description: 'Write a function that takes a first and last name and returns the full name.', functionName: 'fullName', starterCode: 'function fullName(first, last) {\n  // Return first + " " + last\n}', testCases: [{ input: ["Alice", "Smith"], expected: "Alice Smith" }, { input: ["Bob", "Jones"], expected: "Bob Jones" }] },
+        ],
+        control: [
+          { title: 'Even or Odd', difficulty: 'easy', description: 'Write a function that returns "even" if a number is even, "odd" if odd.', functionName: 'evenOrOdd', starterCode: 'function evenOrOdd(n) {\n  // Return "even" or "odd"\n}', testCases: [{ input: [4], expected: "even" }, { input: [7], expected: "odd" }, { input: [0], expected: "even" }] },
+          { title: 'FizzBuzz', difficulty: 'medium', description: 'Return "Fizz" for multiples of 3, "Buzz" for multiples of 5, "FizzBuzz" for both, or the number as a string.', functionName: 'fizzBuzz', starterCode: 'function fizzBuzz(n) {\n  // Return appropriate string\n}', testCases: [{ input: [3], expected: "Fizz" }, { input: [5], expected: "Buzz" }, { input: [15], expected: "FizzBuzz" }, { input: [7], expected: "7" }] },
+        ],
+        functions: [
+          { title: 'Square It', difficulty: 'easy', description: 'Write a function that returns the square of a number.', functionName: 'square', starterCode: 'function square(x) {\n  // Return x * x\n}', testCases: [{ input: [5], expected: 25 }, { input: [-3], expected: 9 }, { input: [0], expected: 0 }] },
+        ],
+        datastructs: [
+          { title: 'Array Sum', difficulty: 'easy', description: 'Write a function that returns the sum of all numbers in an array.', functionName: 'arraySum', starterCode: 'function arraySum(nums) {\n  // Return sum of all numbers\n}', testCases: [{ input: [[1, 2, 3, 4, 5]], expected: 15 }, { input: [[-1, 1]], expected: 0 }, { input: [[]], expected: 0 }] },
+        ],
+      },
+      typescript: {
+        setup: [
+          { title: 'Hello, World!', difficulty: 'easy', description: 'Write a function that returns "Hello, World!".', functionName: 'hello', starterCode: 'const hello = (): string => {\n  // Return "Hello, World!"\n}', testCases: [{ input: [], expected: "Hello, World!" }] },
+          { title: 'Add Two Numbers', difficulty: 'easy', description: 'Write a function that takes two numbers and returns their sum.', functionName: 'add', starterCode: 'const add = (a: number, b: number): number => {\n  // Return a + b\n}', testCases: [{ input: [2, 3], expected: 5 }, { input: [-1, 1], expected: 0 }, { input: [0, 0], expected: 0 }] },
+        ],
+        types: [
+          { title: 'Greet User', difficulty: 'easy', description: 'Write a function that takes a name string and returns "Hello, {name}!".', functionName: 'greet', starterCode: 'const greet = (name: string): string => {\n  // Return "Hello, {name}!"\n}', testCases: [{ input: ["Alice"], expected: "Hello, Alice!" }, { input: ["World"], expected: "Hello, World!" }] },
+          { title: 'Is Adult', difficulty: 'easy', description: 'Write a function that returns true if age >= 18, false otherwise.', functionName: 'isAdult', starterCode: 'const isAdult = (age: number): boolean => {\n  // Return true if age >= 18\n}', testCases: [{ input: [20], expected: true }, { input: [16], expected: false }, { input: [18], expected: true }] },
+        ],
+        control: [
+          { title: 'Max of Two', difficulty: 'easy', description: 'Write a function that returns the larger of two numbers.', functionName: 'max', starterCode: 'const max = (a: number, b: number): number => {\n  // Return the larger number\n}', testCases: [{ input: [3, 7], expected: 7 }, { input: [-1, -5], expected: -1 }, { input: [5, 5], expected: 5 }] },
+          { title: 'FizzBuzz', difficulty: 'medium', description: 'Return "Fizz" for multiples of 3, "Buzz" for multiples of 5, "FizzBuzz" for both, or the number as a string.', functionName: 'fizzBuzz', starterCode: 'const fizzBuzz = (n: number): string => {\n  // Return appropriate string\n}', testCases: [{ input: [3], expected: "Fizz" }, { input: [5], expected: "Buzz" }, { input: [15], expected: "FizzBuzz" }, { input: [7], expected: "7" }] },
+        ],
+        functions: [
+          { title: 'Square It', difficulty: 'easy', description: 'Write a function that returns the square of a number.', functionName: 'square', starterCode: 'const square = (x: number): number => {\n  // Return x * x\n}', testCases: [{ input: [5], expected: 25 }, { input: [-3], expected: 9 }, { input: [0], expected: 0 }] },
+        ],
+        datastructs: [
+          { title: 'Array Sum', difficulty: 'easy', description: 'Write a function that returns the sum of all numbers in an array.', functionName: 'arraySum', starterCode: 'const arraySum = (nums: number[]): number => {\n  // Return sum of all numbers\n}', testCases: [{ input: [[1, 2, 3, 4, 5]], expected: 15 }, { input: [[-1, 1]], expected: 0 }, { input: [[]], expected: 0 }] },
+        ],
+      },
+      go: {
+        setup: [
+          { title: 'Hello, World!', difficulty: 'easy', description: 'Write a function that returns "Hello, World!".', functionName: 'Hello', starterCode: 'package main\n\nfunc Hello() string {\n  // Return "Hello, World!"\n  return ""\n}', testCases: [] },
+        ],
+        variables: [
+          { title: 'Add Numbers', difficulty: 'easy', description: 'Write a program that declares two integers, adds them, and prints the result.', functionName: 'solve', starterCode: 'package main\n\nimport "fmt"\n\nfunc main() {\n  // Declare a := 5, b := 3, print sum\n}', testCases: [] },
+        ],
+        control: [
+          { title: 'Even or Odd', difficulty: 'easy', description: 'Write a program that checks if a number is even or odd and prints it.', functionName: 'solve', starterCode: 'package main\n\nimport "fmt"\n\nfunc main() {\n  n := 7\n  // Print "even" or "odd"\n}', testCases: [] },
+        ],
+        functions: [
+          { title: 'Square Function', difficulty: 'medium', description: 'Write a function that takes an int and returns its square.', functionName: 'square', starterCode: 'package main\n\nfunc square(x int) int {\n  // Return x * x\n}', testCases: [] },
+        ],
+        datastructs: [
+          { title: 'Sum Slice', difficulty: 'medium', description: 'Write a function that sums all elements in a slice.', functionName: 'sumSlice', starterCode: 'package main\n\nfunc sumSlice(nums []int) int {\n  // Return sum of all elements\n}', testCases: [] },
+        ],
+      },
+      cpp: {
+        setup: [
+          { title: 'Hello, World!', difficulty: 'easy', description: 'Write a program that prints "Hello, World!" to the console.', functionName: 'solve', starterCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n  // Print "Hello, World!"\n  return 0;\n}', testCases: [] },
+        ],
+        variables: [
+          { title: 'Add Two Numbers', difficulty: 'easy', description: 'Write a program that adds two integers and prints the result.', functionName: 'solve', starterCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n  int a = 10, b = 5;\n  // Print sum\n  return 0;\n}', testCases: [] },
+        ],
+        control: [
+          { title: 'Even or Odd', difficulty: 'easy', description: 'Write a program that checks if a number is even or odd.', functionName: 'solve', starterCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n  int n = 7;\n  // Print "even" or "odd"\n  return 0;\n}', testCases: [] },
+        ],
+        functions: [
+          { title: 'Square Function', difficulty: 'medium', description: 'Write a function that returns the square of an integer.', functionName: 'square', starterCode: '#include <iostream>\nusing namespace std;\n\nint square(int x) {\n  // Return x * x\n}\n\nint main() {\n  cout << square(5) << endl;\n  return 0;\n}', testCases: [] },
+        ],
+        pointers: [
+          { title: 'Swap Values', difficulty: 'hard', description: 'Write a function that swaps two integers using pointers.', functionName: 'solve', starterCode: '#include <iostream>\nusing namespace std;\n\nvoid swap(int* a, int* b) {\n  // Swap values using pointers\n}\n\nint main() {\n  int x = 5, y = 10;\n  swap(&x, &y);\n  cout << x << " " << y << endl;\n  return 0;\n}', testCases: [] },
+        ],
+      },
+      csharp: {
+        setup: [
+          { title: 'Hello, World!', difficulty: 'easy', description: 'Write a program that prints "Hello, World!" to the console.', functionName: 'solve', starterCode: 'using System;\n\nConsole.WriteLine("Hello, World!");\n\n// Write your code here\n', testCases: [] },
+        ],
+        variables: [
+          { title: 'Add Two Numbers', difficulty: 'easy', description: 'Write a program that adds two integers and prints the sum.', functionName: 'solve', starterCode: 'using System;\n\nint a = 10;\nint b = 5;\n// Print sum\n', testCases: [] },
+        ],
+        control: [
+          { title: 'Even or Odd', difficulty: 'easy', description: 'Write a program that checks if a number is even or odd.', functionName: 'solve', starterCode: 'using System;\n\nint n = 7;\n// Print "even" or "odd"\n', testCases: [] },
+        ],
+        methods: [
+          { title: 'Square Function', difficulty: 'medium', description: 'Write a method that returns the square of an integer.', functionName: 'solve', starterCode: 'using System;\n\nstatic int Square(int x) {\n  // Return x * x\n}\n\nConsole.WriteLine(Square(5));\n', testCases: [] },
+        ],
+        oop: [
+          { title: 'Create a Class', difficulty: 'medium', description: 'Create a Person class with Name and Age properties, and a Greet method.', functionName: 'solve', starterCode: 'using System;\n\nclass Person {\n  // Add Name and Age properties\n  // Add a Greet() method\n}\n\nvar p = new Person();\nConsole.WriteLine(p.Greet());\n', testCases: [] },
+        ],
+      },
+      rust: {
+        setup: [
+          { title: 'Hello, World!', difficulty: 'easy', description: 'Write a program that prints "Hello, World!" to the console.', functionName: 'solve', starterCode: 'fn main() {\n  // Print "Hello, World!"\n}', testCases: [] },
+        ],
+        variables: [
+          { title: 'Add Numbers', difficulty: 'easy', description: 'Write a program that adds two integers and prints the result.', functionName: 'solve', starterCode: 'fn main() {\n  let a = 10;\n  let b = 5;\n  // Print sum\n}', testCases: [] },
+        ],
+        control: [
+          { title: 'Even or Odd', difficulty: 'easy', description: 'Write a program that checks if a number is even or odd.', functionName: 'solve', starterCode: 'fn main() {\n  let n = 7;\n  // Print "even" or "odd"\n}', testCases: [] },
+        ],
+        functions: [
+          { title: 'Square Function', difficulty: 'medium', description: 'Write a function that returns the square of an integer.', functionName: 'solve', starterCode: 'fn square(x: i32) -> i32 {\n  // Return x * x\n}\n\nfn main() {\n  println!("{}", square(5));\n}', testCases: [] },
+        ],
+        datastructs: [
+          { title: 'Sum Vector', difficulty: 'medium', description: 'Write a function that sums all elements in a vector.', functionName: 'solve', starterCode: 'fn sum_vec(nums: &Vec<i32>) -> i32 {\n  // Return sum of all elements\n}\n\nfn main() {\n  let v = vec![1, 2, 3, 4, 5];\n  println!("{}", sum_vec(&v));\n}', testCases: [] },
+        ],
+      },
+    };
+
+    const STYLED_DIFFICULTY = { easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard' };
+
+    // Build challenges from definitions, falling back to generic prompts
     Object.keys(C).forEach(langKey => {
+      const defs = CHALLENGE_DEFS[langKey] || {};
       C[langKey].topics.forEach((topic) => {
-        topic.challenges = [{
-          title: `Challenge: ${topic.title} Basics`,
-          prompt: `Write a simple program that demonstrates what you've learned in the ${topic.title} lesson. Try to run it and verify the output.`,
-        }];
+        const topicDefs = defs[topic.id] || [];
+        if (topicDefs.length > 0) {
+          topic.challenges = topicDefs;
+        } else {
+          topic.challenges = [{
+            title: `Practice: ${topic.title}`,
+            difficulty: 'medium',
+            description: `Write a program that demonstrates what you learned in "${topic.title}". Use the Playground to write and test your code.`,
+            functionName: 'solve',
+            starterCode: '// Write your solution here',
+            testCases: [],
+          }];
+        }
       });
     });
 
     function renderChallenges() {
-      if(state.topicIdx < 0) return;
+      if (state.topicIdx < 0) return;
       const topic = C[state.lang].topics[state.topicIdx];
       const tab = document.getElementById('tab-challenges');
-      if(!tab) return;
+      if (!tab) return;
+
+      if (state.activeChallenge !== undefined) {
+        renderChallengeDetail(tab, topic);
+        return;
+      }
+
       tab.innerHTML = `
         <div style="padding-top:0.5rem">
-          <div class="resources-section-title" style="font-size:1.5rem;margin-bottom:1rem;color:var(--text);font-weight:700;">🎯 Coding Challenges</div>
-          <p style="color:var(--text2); font-size:14px; margin-bottom:20px;">Put your skills to the test with these practical exercises.</p>
+          <div class="resources-section-title" style="font-size:1.5rem;margin-bottom:0.25rem;color:var(--text);font-weight:700;">🎯 Coding Challenges</div>
+          <p style="color:var(--text2); font-size:14px; margin-bottom:24px;">Write code that passes all test cases. Auto-graded with instant feedback.</p>
           <div style="display:flex; flex-direction:column; gap:16px;">
             ${topic.challenges.map((ch, i) => `
-              <div style="background:var(--bg-lighter); border:1px solid var(--border); border-radius:8px; padding:20px;">
-                <h3 style="margin-top:0; color:var(--accent)">${ch.title}</h3>
-                <p style="color:var(--text); font-size:14.5px; line-height:1.5">${ch.prompt}</p>
-                <button class="btn-primary" onclick="startChallenge(${i})" style="margin-top:10px;">Solve in Playground 💻</button>
+              <div class="challenge-card" onclick="startChallenge(${i})" style="background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--r2); padding:20px; cursor:pointer; transition:all 0.25s; display:flex; align-items:flex-start; gap:16px;" onmouseover="this.style.borderColor='var(--accent-border)';this.style.transform='translateX(4px)'" onmouseout="this.style.borderColor='';this.style.transform=''">
+                <div style="font-size:1.75rem; flex-shrink:0; width:40px; text-align:center">${ch.difficulty === 'hard' ? '🔥' : ch.difficulty === 'medium' ? '⚡' : '💡'}</div>
+                <div style="flex:1">
+                  <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px; flex-wrap:wrap">
+                    <span style="font-weight:700; font-size:16px; color:var(--text)">${ch.title}</span>
+                    <span class="pill ${ch.difficulty === 'easy' ? 'green' : 'purple'}" style="font-size:10px">${STYLED_DIFFICULTY[ch.difficulty] || ch.difficulty}</span>
+                    ${ch.testCases.length > 0 ? `<span style="font-size:11px; color:var(--text2); font-family:var(--mono)">${ch.testCases.length} tests</span>` : ''}
+                  </div>
+                  <p style="color:var(--text2); font-size:13.5px; margin:0; line-height:1.5">${ch.description}</p>
+                </div>
+                <div style="flex-shrink:0">
+                  <span style="background:var(--accent-dim); color:var(--accent); border-radius:var(--r); padding:8px 16px; font-size:12px; font-weight:700; display:inline-block">Solve →</span>
+                </div>
               </div>
             `).join('')}
           </div>
@@ -3806,22 +4143,964 @@ Try modifying the values, adding new variables, or writing a custom function to 
       `;
     }
 
-    window.startChallenge = function(idx) {
-      const topic = C[state.lang].topics[state.topicIdx];
-      const ch = topic.challenges[idx];
-      switchTab('playground');
-      if (editorInstance) {
-        let commentChar = '//';
-        if (state.lang === 'python') commentChar = '#';
-        else if (state.lang === 'sql') commentChar = '--';
-        editorInstance.setValue(`${commentChar} ${ch.title}\n${commentChar} ${ch.prompt}\n\n`);
+    function renderChallengeDetail(tab, topic) {
+      const ch = topic.challenges[state.activeChallenge];
+
+      const resultsHtml = state.challengeResults ? `
+        <div style="margin-top:16px; background:var(--bg-panel); border:1px solid var(--border2); border-radius:var(--r2); overflow:hidden;">
+          <div style="padding:14px 18px; border-bottom:1px solid var(--border); font-weight:700; font-size:14px; color:var(--text); display:flex; align-items:center; gap:10px">
+            <span>Test Results</span>
+            <span class="pill ${state.challengeResults.allPassed ? 'green' : ''}" style="background:${state.challengeResults.allPassed ? 'rgba(0,245,212,0.1)' : 'rgba(244,63,94,0.1)'}; color:${state.challengeResults.allPassed ? 'var(--accent)' : 'var(--red)'}; border-color:${state.challengeResults.allPassed ? 'var(--accent-border)' : 'rgba(244,63,94,0.25)'}">
+              ${state.challengeResults.passed}/${state.challengeResults.total} passed
+            </span>
+          </div>
+          <div style="padding:12px 18px;">
+            ${state.challengeResults.results.map((r, i) => `
+              <div style="display:flex; align-items:flex-start; gap:12px; padding:10px 0; ${i < state.challengeResults.results.length - 1 ? 'border-bottom:1px solid var(--border)' : ''}">
+                <div style="flex-shrink:0; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; background:${r.passed ? 'var(--accent-dim)' : 'var(--red-dim)'}; color:${r.passed ? 'var(--accent)' : 'var(--red)'}">
+                  ${r.passed ? '✓' : '✗'}
+                </div>
+                <div style="flex:1; min-width:0">
+                  <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:4px">Test ${i + 1}</div>
+                  <div style="font-size:12px; color:var(--text2); font-family:var(--mono); line-height:1.6">
+                    ${r.input !== undefined ? `<div>Input: <span style="color:var(--accent)">${JSON.stringify(r.input)}</span></div>` : ''}
+                    <div>Expected: <span style="color:var(--amber)">${JSON.stringify(r.expected)}</span></div>
+                    <div>Actual: <span style="color:${r.passed ? 'var(--accent)' : 'var(--red)'}">${r.actual !== undefined ? JSON.stringify(r.actual) : '—'}</span></div>
+                    ${r.error ? `<div style="color:var(--red); margin-top:4px; background:var(--red-dim); padding:6px 10px; border-radius:6px; font-size:11px">${r.error}</div>` : ''}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <div style="padding:12px 18px; border-top:1px solid var(--border); text-align:center; font-size:13px; font-weight:700">
+            ${state.challengeResults.allPassed
+              ? `<span style="color:var(--accent)">🎉 All tests passed! Great work!</span>`
+              : `<span style="color:var(--text2)">Keep trying — fix the failing tests above</span>`}
+          </div>
+        </div>
+      ` : state.challengeRunning ? `
+        <div style="margin-top:16px; background:var(--bg-panel); border:1px solid var(--border2); border-radius:var(--r2); padding:24px; text-align:center">
+          <div style="font-size:14px; color:var(--text2)">⏳ Running tests...</div>
+        </div>
+      ` : '';
+
+      const hasTests = ch.testCases && ch.testCases.length > 0;
+
+      tab.innerHTML = `
+        <div style="padding-top:0.5rem">
+          <div style="display:flex; align-items:flex-start; gap:16px; margin-bottom:20px; flex-wrap:wrap">
+            <button class="btn-secondary" onclick="closeChallengeDetail()" style="padding:8px 14px; font-size:12px">← Back to challenges</button>
+            <div style="flex:1">
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+                <span style="font-size:1.5rem">${ch.difficulty === 'hard' ? '🔥' : ch.difficulty === 'medium' ? '⚡' : '💡'}</span>
+                <span style="font-weight:800; font-size:1.3rem; color:var(--text)">${ch.title}</span>
+                <span class="pill ${ch.difficulty === 'easy' ? 'green' : 'purple'}" style="font-size:10px">${STYLED_DIFFICULTY[ch.difficulty] || ch.difficulty}</span>
+                <span style="font-size:11px; color:var(--text2); font-family:var(--mono)">function: ${ch.functionName}()</span>
+              </div>
+              <p style="color:var(--text2); font-size:14px; margin:10px 0 0; line-height:1.6">${ch.description}</p>
+            </div>
+          </div>
+
+          <div id="challenge-editor-area">
+            <textarea id="challenge-editor" style="display:none">${ch.starterCode}</textarea>
+          </div>
+
+          ${hasTests ? `
+            <div style="display:flex; gap:12px; margin-top:16px; align-items:center">
+              <button class="btn-primary" id="btn-run-challenge" onclick="runChallengeTests()" style="padding:12px 24px">
+                ▶ Run ${ch.testCases.length} Test${ch.testCases.length > 1 ? 's' : ''}
+              </button>
+              <span id="challenge-status" style="font-size:12px; color:var(--text2); font-family:var(--mono)">Ready</span>
+            </div>
+          ` : `
+            <div style="display:flex; gap:12px; margin-top:16px">
+              <button class="btn-primary" onclick="solveInPlayground()" style="padding:12px 24px">Open in Playground 💻</button>
+            </div>
+          `}
+
+          <div id="challenge-results">${resultsHtml}</div>
+        </div>
+      `;
+
+      // Init CodeMirror for the challenge editor
+      const editorEl = document.getElementById('challenge-editor');
+      if (editorEl && !editorEl._cm) {
+        const cm = CodeMirror.fromTextArea(editorEl, {
+          lineNumbers: true,
+          theme: 'material-palenight',
+          mode: state.lang === 'python' ? 'python' : state.lang === 'go' ? 'text/x-go' : state.lang === 'typescript' ? 'text/typescript' : 'javascript',
+          tabSize: 2,
+          indentUnit: 2,
+          lineWrapping: true,
+          extraKeys: { 'Tab': cm => { if (cm.somethingSelected()) cm.indentSelection('add'); else cm.replaceSelection('  '); } },
+        });
+        editorEl._cm = cm;
+        state._challengeEditor = cm;
+        cm.refresh();
       }
-      awardBadge('first_challenge');
+    }
+
+    window.startChallenge = function(idx) {
+      state.activeChallenge = idx;
+      state.challengeResults = null;
+      state.challengeRunning = false;
+      renderChallenges();
     };
 
+    function closeChallengeDetail() {
+      state.activeChallenge = undefined;
+      state.challengeResults = null;
+      state.challengeRunning = false;
+      if (state._challengeEditor) {
+        const el = state._challengeEditor.getTextArea();
+        if (el) el._cm = null;
+        state._challengeEditor.toTextArea();
+        state._challengeEditor = null;
+      }
+      renderChallenges();
+    }
+
+    function solveInPlayground() {
+      const ch = C[state.lang].topics[state.topicIdx].challenges[state.activeChallenge];
+      switchTab('playground');
+      if (editorInstance) {
+        editorInstance.setValue(ch.starterCode);
+      }
+      awardBadge('first_challenge');
+    }
+
+    async function runChallengeTests() {
+      const cm = state._challengeEditor;
+      if (!cm) return;
+      const code = cm.getValue().trim();
+      const topic = C[state.lang].topics[state.topicIdx];
+      const ch = topic.challenges[state.activeChallenge];
+
+      if (!ch.testCases || ch.testCases.length === 0) return;
+
+      state.challengeRunning = true;
+      state.challengeResults = null;
+      renderChallengeDetail(document.getElementById('tab-challenges'), topic);
+
+      const langMap = { python: 'python', javascript: 'javascript', typescript: 'typescript', go: 'go', cpp: 'cpp', csharp: 'csharp' };
+      const exeLang = langMap[state.lang] || state.lang;
+
+      try {
+        const res = await fetch('/api/challenge/test', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + CM_TOKEN },
+          body: JSON.stringify({ language: exeLang, code, functionName: ch.functionName, testCases: ch.testCases }),
+        });
+
+        const data = await res.json();
+
+        if (data.error && !data.results.length) {
+          state.challengeResults = {
+            results: ch.testCases.map(tc => ({ ...tc, actual: null, passed: false, error: data.error })),
+            passed: 0,
+            total: ch.testCases.length,
+            allPassed: false,
+          };
+        } else {
+          const results = data.results;
+          const passed = results.filter(r => r.passed).length;
+          state.challengeResults = {
+            results,
+            passed,
+            total: results.length,
+            allPassed: passed === results.length,
+          };
+          if (state.challengeResults.allPassed) awardBadge('first_challenge');
+        }
+      } catch (e) {
+        state.challengeResults = {
+          results: ch.testCases.map(tc => ({ ...tc, actual: null, passed: false, error: e.message })),
+          passed: 0,
+          total: ch.testCases.length,
+          allPassed: false,
+        };
+      }
+
+      state.challengeRunning = false;
+      renderChallengeDetail(document.getElementById('tab-challenges'), topic);
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // SPACED REPETITION FLASHCARDS
+    // ══════════════════════════════════════════════════════════════
+
+    function generateFlashcards() {
+      const cards = [];
+      let id = 0;
+      const topics = Object.keys(C);
+      for (const lang of topics) {
+        const langData = C[lang];
+        const langKey = lang;
+        const langIcon = langData.icon;
+        const langs = Object.keys(langData.topics);
+        for (const t of langs) {
+          const topic = langData.topics[t];
+          if (!topic) continue;
+          // Concept flashcards
+          if (topic.content) {
+            const concepts = topic.content.split(/[.?!]\s+/).filter(s => s.trim().length > 20);
+            for (const c of concepts.slice(0, 3)) {
+              const lines = c.trim().split('\n');
+              if (lines.length < 2) continue;
+              const question = lines[0].substring(0, 80).replace(/<[^>]*>/g, '').trim();
+              const answer = lines.slice(1).join('\n').substring(0, 200).replace(/<[^>]*>/g, '').trim();
+              if (question && answer) {
+                cards.push({ id: id++, lang: langIcon, langKey, topicId: t, front: question, back: answer });
+              }
+            }
+          }
+          // Quiz flashcards
+          if (topic.quiz) {
+            for (const q of topic.quiz) {
+              const correctAnswer = q.opts[q.answer];
+              if (q.q && correctAnswer) {
+                cards.push({ id: id++, lang: langIcon, langKey, topicId: t, front: q.q, back: correctAnswer });
+              }
+            }
+          }
+        }
+      }
+      return cards;
+    }
+
+    const FLASHCARDS = generateFlashcards();
+
+    function getFlashcardData() {
+      try {
+        const raw = localStorage.getItem('fcdata');
+        return raw ? JSON.parse(raw) : {};
+      } catch { return {}; }
+    }
+
+    function saveFlashcardData(data) {
+      localStorage.setItem('fcdata', JSON.stringify(data));
+    }
+
+    function todayStr() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function fcState(cardId) {
+      const data = getFlashcardData();
+      if (!data[cardId]) {
+        data[cardId] = { ease: 2.5, interval: 0, due: todayStr(), reps: 0 };
+        saveFlashcardData(data);
+      }
+      return data[cardId];
+    }
+
+    function sm2(cardId, quality) {
+      // quality: 0=again, 1=hard, 2=good, 3=easy
+      const data = getFlashcardData();
+      const card = data[cardId] || { ease: 2.5, interval: 0, due: todayStr(), reps: 0 };
+      if (quality === 0) {
+        card.ease = Math.max(1.3, card.ease - 0.2);
+        card.interval = 0;
+        card.reps = 0;
+      } else if (quality === 1) {
+        card.ease = Math.max(1.3, card.ease - 0.15);
+        card.interval = 1;
+        card.reps += 1;
+      } else if (quality === 2) {
+        if (card.reps === 0) card.interval = 1;
+        else if (card.reps === 1) card.interval = 6;
+        else card.interval = Math.round(card.interval * card.ease);
+        card.reps += 1;
+      } else {
+        card.ease = Math.min(3.0, card.ease + 0.15);
+        if (card.reps === 0) card.interval = 2;
+        else if (card.reps === 1) card.interval = 8;
+        else card.interval = Math.round(card.interval * card.ease * 1.3);
+        card.reps += 1;
+      }
+      const d = new Date();
+      d.setDate(d.getDate() + Math.max(1, card.interval));
+      card.due = d.toISOString().slice(0, 10);
+      data[cardId] = card;
+      saveFlashcardData(data);
+    }
+
+    function getDueFlashcards() {
+      const today = todayStr();
+      const data = getFlashcardData();
+      const due = [];
+      for (const card of FLASHCARDS) {
+        const state = data[card.id] || { due: today };
+        if (state.due <= today) {
+          due.push(card);
+        }
+      }
+      return due;
+    }
+
+    function countDueFlashcards() {
+      return getDueFlashcards().length;
+    }
+
+    function updateReviewBadge() {
+      const badge = document.getElementById('review-due-badge');
+      if (!badge) return;
+      const n = countDueFlashcards();
+      if (n > 0) {
+        badge.textContent = n > 99 ? '99+' : n;
+        badge.style.display = '';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    let fcQueue = [];
+    let fcCurrent = 0;
+    let fcReviewed = 0;
+    let fcTotal = 0;
+
+    function openFlashcardReview() {
+      fcQueue = [...getDueFlashcards()];
+      fcCurrent = 0;
+      fcReviewed = 0;
+      fcTotal = fcQueue.length;
+      if (fcTotal === 0) {
+        document.getElementById('fc-question').textContent = 'All caught up! 🎉';
+        document.getElementById('fc-answer').textContent = 'Come back later for new reviews.';
+        document.getElementById('fc-actions').style.display = 'none';
+        document.getElementById('fc-hint').textContent = '';
+        document.getElementById('fc-stats').textContent = '0 due today';
+      }
+      const modal = document.getElementById('flashcard-modal');
+      modal.classList.add('open');
+      showFlashcard();
+    }
+
+    function closeFlashcardReview() {
+      document.getElementById('flashcard-modal').classList.remove('open');
+      document.getElementById('fc-inner').classList.remove('flipped');
+      updateReviewBadge();
+    }
+
+    function showFlashcard() {
+      const card = fcQueue[fcCurrent];
+      if (!card) {
+        document.getElementById('fc-question').textContent = 'Review complete! 🎉';
+        document.getElementById('fc-answer').textContent = `You reviewed ${fcReviewed} card${fcReviewed !== 1 ? 's' : ''}.`;
+        document.getElementById('fc-actions').style.display = 'none';
+        document.getElementById('fc-hint').textContent = '';
+        document.getElementById('fc-stats').textContent = `${fcReviewed} reviewed today`;
+        document.getElementById('fc-prog-fill').style.width = '100%';
+        document.getElementById('fc-title').textContent = 'Complete!';
+        return;
+      }
+      document.getElementById('fc-title').textContent = `Review — ${card.lang} · ${card.topicId}`;
+      document.getElementById('fc-question').textContent = card.front;
+      document.getElementById('fc-answer').textContent = card.back;
+      document.getElementById('fc-inner').classList.remove('flipped');
+      document.getElementById('fc-actions').style.display = 'none';
+      document.getElementById('fc-hint').style.display = '';
+      document.getElementById('fc-hint').textContent = 'Tap card to reveal answer';
+      document.getElementById('fc-stats').textContent = `Due: ${fcTotal} · ${fcCurrent + 1} of ${fcTotal} · Reviewed: ${fcReviewed}`;
+      document.getElementById('fc-prog-fill').style.width = `${(fcCurrent / fcTotal) * 100}%`;
+    }
+
+    function flipFlashcard() {
+      const inner = document.getElementById('fc-inner');
+      if (inner.classList.contains('flipped')) return;
+      inner.classList.add('flipped');
+      document.getElementById('fc-actions').style.display = 'flex';
+      document.getElementById('fc-hint').style.display = 'none';
+    }
+
+    function rateFlashcard(quality) {
+      const card = fcQueue[fcCurrent];
+      if (card) {
+        sm2(card.id, quality);
+        fcReviewed++;
+      }
+      fcCurrent++;
+      if (fcCurrent < fcQueue.length) {
+        showFlashcard();
+      } else {
+        fcCurrent = fcQueue.length;
+        showFlashcard();
+      }
+    }
+
+    // Update due badge on page load and on visibility change
+    document.addEventListener('visibilitychange', updateReviewBadge);
+
+    // ══════════════════════════════════════════════════════════════
+    // STUDY ANALYTICS DASHBOARD
+    // ══════════════════════════════════════════════════════════════
+
+    function openAnalytics() {
+      document.getElementById('analytics-modal').classList.add('open');
+      renderAnalytics();
+    }
+
+    function closeAnalytics() {
+      document.getElementById('analytics-modal').classList.remove('open');
+    }
+
+    function renderAnalytics() {
+      const body = document.getElementById('analytics-body');
+
+      // Compute stats from FULL_PROGRESS
+      const totalTopics = {};
+      let grandTotal = 0;
+      let grandDone = 0;
+      for (const [langKey, lang] of Object.entries(C)) {
+        const tCount = Object.keys(lang.topics).length;
+        totalTopics[langKey] = tCount;
+        grandTotal += tCount;
+        const doneSet = state.progress[langKey];
+        const done = doneSet ? doneSet.size : 0;
+        grandDone += done;
+      }
+
+      const overallPct = grandTotal > 0 ? Math.round((grandDone / grandTotal) * 100) : 0;
+
+      // Per-language stats
+      const langStats = Object.entries(C).map(([key, lang]) => {
+        const doneSet = state.progress[key];
+        const done = doneSet ? doneSet.size : 0;
+        const total = totalTopics[key];
+        const pct = Math.round((done / total) * 100);
+        // Quiz score: average score from FULL_PROGRESS for this language
+        const langRows = FULL_PROGRESS.filter(r => r.language === key);
+        const avgScore = langRows.length > 0
+          ? Math.round(langRows.reduce((s, r) => s + (Number(r.score) || 0), 0) / langRows.length)
+          : 0;
+        return { key, name: lang.name, icon: lang.icon, done, total, pct, avgScore, rows: langRows.length };
+      });
+
+      // Badge count
+      const badgeCount = window.BADGES ? window.BADGES.length : 0;
+
+      // Compute streak from progress dates
+      const dates = FULL_PROGRESS
+        .filter(r => r.updated_at)
+        .map(r => r.updated_at.slice(0, 10))
+        .filter((d, i, a) => a.indexOf(d) === i)
+        .sort();
+      let currentStreak = 0;
+      const today = todayStr();
+      const checkDate = new Date(today);
+      for (let i = dates.length - 1; i >= 0; i--) {
+        const dStr = checkDate.toISOString().slice(0, 10);
+        if (dates[i] === dStr) {
+          currentStreak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else if (dates[i] < dStr) {
+          break;
+        }
+      }
+
+      // Activity heatmap: last 7 weeks
+      const activityMap = {};
+      for (const r of FULL_PROGRESS) {
+        if (r.updated_at) {
+          const d = r.updated_at.slice(0, 10);
+          activityMap[d] = (activityMap[d] || 0) + 1;
+        }
+      }
+      const activityHTML = [];
+      const now = new Date();
+      // Go back 49 days, show in rows of 7 (weeks)
+      for (let w = 0; w < 7; w++) {
+        for (let d = 6; d >= 0; d--) {
+          const day = new Date(now);
+          day.setDate(day.getDate() - (w * 7 + d));
+          const ds = day.toISOString().slice(0, 10);
+          const count = activityMap[ds] || 0;
+          let level = 0;
+          if (count > 0) level = Math.min(4, Math.ceil(count / 2));
+          activityHTML.push(`<div class="analytics-activity-day level-${level}" title="${ds}: ${count} action${count !== 1 ? 's' : ''}"></div>`);
+        }
+      }
+
+      // Compute XP
+      let xp = 0;
+      for (const r of FULL_PROGRESS) {
+        if (r.completed) xp += 10;
+        xp += Math.round((Number(r.score) || 0) / 20);
+      }
+      // Bonus for badges
+      xp += badgeCount * 25;
+
+      body.innerHTML = `
+        <div class="analytics-section">
+          <div class="analytics-section-title">Overview</div>
+          <div class="analytics-grid">
+            <div class="analytics-stat-card">
+              <div class="stat-value" style="color:var(--accent)">${overallPct}%</div>
+              <div class="stat-label">Overall Progress</div>
+            </div>
+            <div class="analytics-stat-card">
+              <div class="stat-value" style="color:#34d399">${grandDone}<span style="font-size:0.9rem;color:var(--text3)">/${grandTotal}</span></div>
+              <div class="stat-label">Topics Completed</div>
+            </div>
+            <div class="analytics-stat-card">
+              <div class="stat-value" style="color:#f59e0b">${xp.toLocaleString()}</div>
+              <div class="stat-label">Total XP</div>
+            </div>
+            <div class="analytics-stat-card">
+              <div class="analytics-streak" style="justify-content:center">
+                <span class="streak-fire">${currentStreak > 0 ? '🔥' : '❄️'}</span>
+                <span class="streak-days">${currentStreak}</span>
+              </div>
+              <div class="stat-label">Day Streak</div>
+            </div>
+            <div class="analytics-stat-card">
+              <div class="stat-value" style="color:#818cf8">${badgeCount}</div>
+              <div class="stat-label">Badges Earned</div>
+            </div>
+            <div class="analytics-stat-card">
+              <div class="stat-value" style="color:#60a5fa">${FULL_PROGRESS.length}</div>
+              <div class="stat-label">Total Actions</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="analytics-section">
+          <div class="analytics-section-title">Progress by Language</div>
+          <div class="analytics-bar-chart">
+            ${langStats.map((ls, i) => {
+              const colors = ['accent','purple','green','blue','amber','accent','purple','green'];
+              return `
+                <div class="analytics-bar-row">
+                  <div class="analytics-bar-label">${ls.icon} ${ls.name}</div>
+                  <div class="analytics-bar-track">
+                    <div class="analytics-bar-fill ${colors[i % colors.length]}" style="width:${ls.pct}%"></div>
+                  </div>
+                  <div class="analytics-bar-count">${ls.done}/${ls.total}</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <div class="analytics-section">
+          <div class="analytics-section-title">Activity (Last 7 Weeks)</div>
+          <div class="analytics-activity-grid">${activityHTML.join('')}</div>
+          <div style="display:flex;gap:6px;align-items:center;margin-top:8px;font-size:11px;color:var(--text3)">
+            <span>Less</span>
+            <div class="analytics-activity-day level-0"></div>
+            <div class="analytics-activity-day level-1"></div>
+            <div class="analytics-activity-day level-2"></div>
+            <div class="analytics-activity-day level-3"></div>
+            <div class="analytics-activity-day level-4"></div>
+            <span>More</span>
+          </div>
+        </div>
+
+        ${langStats.filter(ls => ls.rows > 0).length > 0 ? `
+        <div class="analytics-section">
+          <div class="analytics-section-title">Quiz Scores (Avg)</div>
+          <div class="analytics-bar-chart">
+            ${langStats.filter(ls => ls.rows > 0).map((ls, i) => {
+              const colors = ['accent','purple','green','blue','amber','accent','purple','green'];
+              const maxPossible = 100;
+              const pct2 = Math.min(100, Math.round((ls.avgScore / maxPossible) * 100));
+              return `
+                <div class="analytics-bar-row">
+                  <div class="analytics-bar-label">${ls.icon} ${ls.name}</div>
+                  <div class="analytics-bar-track">
+                    <div class="analytics-bar-fill ${colors[i % colors.length]}" style="width:${pct2}%"></div>
+                  </div>
+                  <div class="analytics-bar-count">${ls.avgScore}%</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+        ` : ''}
+      `;
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // SEARCH
+    // ══════════════════════════════════════════════════════════════
+
+    const SEARCH_INDEX = [];
+
+    function buildSearchIndex() {
+      SEARCH_INDEX.length = 0;
+      for (const [langKey, lang] of Object.entries(C)) {
+        for (const topic of lang.topics) {
+          // Extract plain text from content HTML
+          const plainContent = topic.content ? topic.content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : '';
+          // Topic title
+          SEARCH_INDEX.push({ langKey, langIcon: lang.icon, langName: lang.name, tId: topic.id, title: topic.title, context: topic.title, type: 'topic' });
+          // Content sentences
+          if (plainContent.length > 20) {
+            const sentences = plainContent.match(/[^.!?]+[.!?]+/g) || [];
+            for (const s of sentences.slice(0, 5)) {
+              const trimmed = s.trim();
+              if (trimmed.length > 15) {
+                SEARCH_INDEX.push({ langKey, langIcon: lang.icon, langName: lang.name, tId: topic.id, title: topic.title, context: trimmed, type: 'content' });
+              }
+            }
+          }
+          // Quiz questions
+          if (topic.quiz) {
+            for (const q of topic.quiz) {
+              SEARCH_INDEX.push({ langKey, langIcon: lang.icon, langName: lang.name, tId: topic.id, title: topic.title, context: q.q, type: 'quiz' });
+            }
+          }
+        }
+      }
+    }
+
+    let searchSelectedIdx = -1;
+    let searchResults = [];
+
+    function openSearch() {
+      const modal = document.getElementById('search-modal');
+      modal.classList.add('open');
+      document.getElementById('search-input').value = '';
+      document.getElementById('search-results').innerHTML = '<div class="search-empty">Type to search across all languages...</div>';
+      setTimeout(() => document.getElementById('search-input').focus(), 100);
+      searchSelectedIdx = -1;
+      searchResults = [];
+    }
+
+    function closeSearch() {
+      document.getElementById('search-modal').classList.remove('open');
+    }
+
+    function doSearch(q) {
+      const resultsEl = document.getElementById('search-results');
+      if (!q.trim()) {
+        resultsEl.innerHTML = '<div class="search-empty">Type to search across all languages...</div>';
+        searchResults = [];
+        return;
+      }
+
+      const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
+      searchResults = SEARCH_INDEX.filter(item => {
+        const text = (item.title + ' ' + item.context).toLowerCase();
+        return terms.every(t => text.includes(t));
+      }).slice(0, 30);
+
+      searchSelectedIdx = -1;
+
+      if (searchResults.length === 0) {
+        resultsEl.innerHTML = '<div class="search-empty">No results found for "' + q + '"</div>';
+        return;
+      }
+
+      resultsEl.innerHTML = searchResults.map((r, i) => {
+        const ctx = highlightMatches(r.context, terms);
+        const title = highlightMatches(r.title, terms);
+        const typeLabel = { topic: 'Topic', content: 'Lesson', quiz: 'Quiz' }[r.type] || r.type;
+        return `
+          <div class="search-result-item" data-idx="${i}" onclick="navigateSearchResult(${i})" onmouseenter="searchSelectedIdx=${i};updateSearchSelection()">
+            <div class="search-result-icon">${r.langIcon}</div>
+            <div class="search-result-info">
+              <div class="search-result-title">${title}</div>
+              <div class="search-result-context">${ctx}</div>
+              <div class="search-result-badge">${r.langName} · ${typeLabel} <em>${r.tId}</em></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      updateSearchSelection();
+    }
+
+    function highlightMatches(text, terms) {
+      if (!text) return '';
+      let result = text;
+      for (const t of terms) {
+        const re = new RegExp('(' + t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+        result = result.replace(re, '<span class="search-highlight">$1</span>');
+      }
+      return result;
+    }
+
+    function updateSearchSelection() {
+      document.querySelectorAll('.search-result-item').forEach(el => {
+        el.classList.toggle('selected', Number(el.dataset.idx) === searchSelectedIdx);
+      });
+    }
+
+    function navigateSearchResult(idx) {
+      const r = searchResults[idx];
+      if (!r) return;
+      closeSearch();
+      selectLanguage(r.langKey);
+      // Scroll to and highlight the topic
+      const topicEl = document.querySelector(`[data-topic-id="${r.tId}"]`);
+      if (topicEl) {
+        setTimeout(() => {
+          topicEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          topicEl.style.transition = 'background 0.5s';
+          topicEl.style.background = 'rgba(139,92,246,0.15)';
+          setTimeout(() => { topicEl.style.background = ''; }, 2000);
+        }, 400);
+      }
+    }
+
+    // Keyboard shortcuts for search
+    document.addEventListener('keydown', (e) => {
+      // Ctrl+K / Cmd+K to open search
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        openSearch();
+      }
+      // Esc to close
+      if (e.key === 'Escape') {
+        if (document.getElementById('search-modal').classList.contains('open')) {
+          closeSearch();
+        }
+      }
+      // Arrow navigation within search
+      if (document.getElementById('search-modal').classList.contains('open')) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          searchSelectedIdx = Math.min(searchResults.length - 1, searchSelectedIdx + 1);
+          updateSearchSelection();
+          const selected = document.querySelector('.search-result-item.selected');
+          if (selected) selected.scrollIntoView({ block: 'nearest' });
+        }
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          searchSelectedIdx = Math.max(0, searchSelectedIdx - 1);
+          updateSearchSelection();
+          const selected = document.querySelector('.search-result-item.selected');
+          if (selected) selected.scrollIntoView({ block: 'nearest' });
+        }
+        if (e.key === 'Enter' && searchSelectedIdx >= 0) {
+          e.preventDefault();
+          navigateSearchResult(searchSelectedIdx);
+        }
+      }
+    });
+
+    // Build search index after curriculum data is defined
+    buildSearchIndex();
+
+    // ══════════════════════════════════════════════════════════════
+    // CERTIFICATES
+    // ══════════════════════════════════════════════════════════════
+
+    function openCertificates() {
+      document.getElementById('cert-modal').classList.add('open');
+      renderCertificates();
+    }
+
+    function closeCertificates() {
+      document.getElementById('cert-modal').classList.remove('open');
+    }
+
+    function renderCertificates() {
+      const body = document.getElementById('cert-body');
+      const studentName = (CM_USER && CM_USER.name) || 'Student';
+      const langs = Object.entries(C).map(([key, lang]) => {
+        const doneSet = state.progress[key] || new Set();
+        const total = lang.topics.length;
+        const done = doneSet.size;
+        const pct = Math.round((done / total) * 100);
+        const completed = done >= total;
+        return { key, lang, done, total, pct, completed };
+      });
+
+      body.innerHTML = langs.map(ls => `
+        <div class="cert-lang-card">
+          <div class="cert-lang-info">
+            <div class="cert-lang-icon">${ls.lang.icon}</div>
+            <div>
+              <div class="cert-lang-name">${ls.lang.name}</div>
+              <div class="cert-lang-progress">${ls.done}/${ls.total} topics (${ls.pct}%)</div>
+            </div>
+          </div>
+          <button class="cert-dl-btn" onclick="downloadCertificate('${ls.key}')" ${ls.done === 0 ? 'disabled' : ''}>
+            ${ls.completed ? '🎓 Download' : '📄 Download'}
+          </button>
+        </div>
+      `).join('') || '<div class="cert-empty">No languages available.</div>';
+    }
+
+    function downloadCertificate(langKey) {
+      const lang = C[langKey];
+      const studentName = (CM_USER && CM_USER.name) || 'Student';
+      const doneSet = state.progress[langKey] || new Set();
+      const total = lang.topics.length;
+      const done = doneSet.size;
+      const completed = done >= total;
+      const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 600;
+      const ctx = canvas.getContext('2d');
+
+      // Background
+      const grad = ctx.createLinearGradient(0, 0, 800, 600);
+      grad.addColorStop(0, '#fdfbf7');
+      grad.addColorStop(1, '#f5f0e8');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 800, 600);
+
+      // Decorative border
+      ctx.strokeStyle = '#c7a45a';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(20, 20, 760, 560);
+      ctx.strokeStyle = '#e8d5a3';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(30, 30, 740, 540);
+
+      // Corner decorations
+      const corners = [[40,40],[760,40],[40,560],[760,560]];
+      for (const [cx, cy] of corners) {
+        ctx.fillStyle = '#c7a45a';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Top seal
+      ctx.fillStyle = '#c7a45a';
+      ctx.beginPath();
+      ctx.arc(400, 90, 30, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 22px "Georgia", serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🏅', 400, 100);
+
+      // Title
+      ctx.fillStyle = '#2d2a24';
+      ctx.font = 'bold 28px "Georgia", serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Certificate of Completion', 400, 160);
+
+      // Decorative line
+      ctx.strokeStyle = '#c7a45a';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(250, 175);
+      ctx.lineTo(550, 175);
+      ctx.stroke();
+
+      // Present to
+      ctx.fillStyle = '#6b6558';
+      ctx.font = '14px "Georgia", serif';
+      ctx.fillText('Presented to', 400, 215);
+
+      ctx.fillStyle = '#2d2a24';
+      ctx.font = 'bold 32px "Georgia", serif';
+      ctx.fillText(studentName, 400, 260);
+
+      // Language
+      ctx.fillStyle = '#6b6558';
+      ctx.font = '14px "Georgia", serif';
+      ctx.fillText('for completing the', 400, 305);
+      ctx.fillStyle = '#2d2a24';
+      ctx.font = 'bold 24px "Georgia", serif';
+      ctx.fillText(lang.icon + ' ' + lang.name + ' Course', 400, 345);
+
+      // Details
+      ctx.fillStyle = '#6b6558';
+      ctx.font = '15px "Georgia", serif';
+      ctx.fillText(`${done} of ${total} topics completed`, 400, 395);
+
+      if (completed) {
+        ctx.fillStyle = '#2d7d46';
+        ctx.font = 'bold 18px "Georgia", serif';
+        ctx.fillText('✓ Fully Completed', 400, 430);
+      }
+
+      // Date
+      ctx.fillStyle = '#8a847a';
+      ctx.font = '13px "Georgia", serif';
+      ctx.fillText(date, 400, 490);
+
+      // Footer
+      ctx.fillStyle = '#a09888';
+      ctx.font = '11px "Georgia", serif';
+      ctx.fillText('CodeMentor AI — Learn Programming with an AI Tutor', 400, 540);
+      ctx.fillText('codementor.app', 400, 558);
+
+      // Download
+      const link = document.createElement('a');
+      link.download = `CodeMentor-${lang.name}-Certificate.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+
+
+    // ══════════════════════════════════════════════════════════════
+    // ROADMAP
+    // ══════════════════════════════════════════════════════════════
+
+    function openRoadmap() {
+      const lang = C[state.lang];
+      document.getElementById('rm-lang-icon').textContent = lang.icon;
+      document.getElementById('rm-lang-name').textContent = lang.name;
+      document.getElementById('roadmap-modal').classList.add('open');
+      renderRoadmap();
+    }
+
+    function closeRoadmap() {
+      document.getElementById('roadmap-modal').classList.remove('open');
+    }
+
+    function renderRoadmap() {
+      const body = document.getElementById('roadmap-body');
+      const lang = C[state.lang];
+      const doneSet = state.progress[state.lang] || new Set();
+      // Determine which index is unlocked
+      let unlockedIdx = 0;
+      for (let i = 0; i < lang.topics.length; i++) {
+        if (doneSet.has(lang.topics[i].id)) unlockedIdx = i + 1;
+      }
+      const currentIdx = state.topicIdx;
+
+      body.innerHTML = lang.topics.map((topic, i) => {
+        const completed = doneSet.has(topic.id);
+        const locked = i > unlockedIdx;
+        const isActive = i === currentIdx;
+        let status = 'locked';
+        let label = 'Locked';
+        if (completed) { status = 'completed'; label = 'Completed'; }
+        else if (isActive) { status = 'current'; label = 'In Progress'; }
+        else if (!locked) { status = 'active'; label = 'Ready'; }
+
+        return `
+          <div class="roadmap-node">
+            <div class="roadmap-node-icon">
+              <div class="roadmap-node-dot ${status}">${completed ? '✓' : isActive ? '●' : ''}</div>
+            </div>
+            <div class="roadmap-node-card ${status}" onclick="${locked ? '' : "selectTopicFromRoadmap(" + i + ")"}">
+              <div class="roadmap-node-title" style="color:${isActive ? '#f59e0b' : ''}">${topic.title}</div>
+              <div class="roadmap-node-meta">
+                <span>⏱ ${topic.duration || 'N/A'}</span>
+                <span class="roadmap-node-badge ${status}">${label}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectTopicFromRoadmap(idx) {
+      closeRoadmap();
+      selectTopic(idx);
+    }
+
     async function boot() {
-      initTheme();
-      await Promise.all([loadProgressFromServer(), loadBadgesFromServer()]);
+      try {
+        initTheme();
+        await Promise.all([loadProgressFromServer(), loadBadgesFromServer()]);
+      } catch(e) {
+        console.warn('Boot error (non-fatal):', e);
+      }
+      updateReviewBadge();
       buildLanding();
     }
     boot();

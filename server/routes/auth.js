@@ -35,7 +35,7 @@ router.post('/register', async (req, res) => {
     const student = result.rows[0];
     const token   = jwt.sign(
       { id: student.id, name: student.name, email: student.email, avatar_color: student.avatar_color },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'codementor_dev_secret',
       { expiresIn: '30d' }
     );
 
@@ -72,7 +72,7 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { id: student.id, name: student.name, email: student.email, avatar_color: student.avatar_color },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'codementor_dev_secret',
       { expiresIn: '30d' }
     );
 

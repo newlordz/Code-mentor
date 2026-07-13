@@ -2136,16 +2136,34 @@ case <-time.After(1 * time.Second):
 // ── Auth guard ─────────────────────────────────────────────────
 (function() {
   const token = localStorage.getItem('cm_token');
-  if (!token) { window.location.href = '/auth.html'; }
+  if (!token || token === 'undefined' || token === 'null') {
+    localStorage.removeItem('cm_token');
+    localStorage.removeItem('cm_user');
+    window.location.href = 'auth.html';
+  }
 })();
 
-const CM_USER = JSON.parse(localStorage.getItem('cm_user') || 'null');
-const CM_TOKEN = localStorage.getItem('cm_token');
+let CM_USER = null;
+let CM_TOKEN = null;
+try {
+  const userRaw = localStorage.getItem('cm_user');
+  if (userRaw && userRaw !== 'undefined' && userRaw !== 'null') {
+    CM_USER = JSON.parse(userRaw);
+  }
+} catch(e) {}
+try {
+  CM_TOKEN = localStorage.getItem('cm_token');
+  if (CM_TOKEN === 'undefined' || CM_TOKEN === 'null') CM_TOKEN = null;
+} catch(e) {}
+
+if (!CM_TOKEN) {
+  window.location.href = 'auth.html';
+}
 
 function logout() {
   localStorage.removeItem('cm_token');
   localStorage.removeItem('cm_user');
-  window.location.href = '/auth.html';
+  window.location.href = 'auth.html';
 }
 
 // ── API helper ──────────────────────────────────────────────────
