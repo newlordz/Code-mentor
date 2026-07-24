@@ -42,6 +42,10 @@ html{scroll-behavior:smooth}
   --r:10px;
   --r2:16px;
   --r3:24px;
+
+  --text-on-accent:#0f0d15;
+  --bg-tint:rgba(255,240,220,0.03);
+  --bg-tint2:rgba(255,240,220,0.05);
 }
 
 body{
@@ -94,7 +98,7 @@ body{
 }
 .logo-mark:hover{transform:rotate(-5deg) scale(1.05)}
 .logo-text{display:flex;align-items:center;gap:4px}
-.logo-text .hi{background:linear-gradient(135deg,var(--primary) 0%,var(--purple) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-text .hi{background:linear-gradient(135deg,var(--primary) 0%,var(--purple) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 
 /* ─── CARD ───────────────────────────────────────────── */
 .card{
@@ -106,7 +110,7 @@ body{
 }
 
 /* ─── TABS ───────────────────────────────────────────── */
-.tabs{display:flex;border-bottom:1px solid var(--border);background:rgba(255,240,220,0.015)}
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg-tint)}
 .tab-btn{
   flex:1;padding:0.75rem;font-size:13px;font-weight:700;
   font-family:var(--head);color:var(--text3);
@@ -140,7 +144,7 @@ body{
   color:var(--text3);font-size:14px;pointer-events:none;transition:all 0.25s ease;
 }
 input[type=text],input[type=email],input[type=password]{
-  width:100%;background:rgba(255,240,220,0.03);border:1px solid var(--border2);
+  width:100%;background:var(--bg-tint);border:1px solid var(--border2);
   border-radius:var(--r);padding:9px 13px 9px 38px;
   font-size:13.5px;color:var(--text);font-family:var(--font);
   transition:all 0.25s ease;outline:none;
@@ -165,7 +169,7 @@ input::placeholder{color:var(--text3)}
 .strength-wrap{margin-top:5px;display:none}
 .strength-wrap.show{display:block}
 .strength-bars{display:flex;gap:4px}
-.strength-bar{flex:1;height:3px;border-radius:99px;background:rgba(255,240,220,0.06);transition:background 0.3s ease}
+.strength-bar{flex:1;height:3px;border-radius:99px;background:var(--bg-tint2);transition:background 0.3s ease}
 .strength-label{font-size:11px;color:var(--text3);margin-top:4px;font-family:var(--mono)}
 
 /* ─── MESSAGES ───────────────────────────────────────── */
@@ -183,7 +187,7 @@ input::placeholder{color:var(--text3)}
 .btn-submit{
   width:100%;padding:10px;
   background:linear-gradient(135deg,var(--primary) 0%,#d06a42 100%);
-  color:#0f0d15;border:none;border-radius:var(--r);
+  color:var(--text-on-accent);border:none;border-radius:var(--r);
   font-size:14px;font-weight:700;font-family:var(--head);
   cursor:pointer;transition:all 0.25s ease;letter-spacing:0.02em;
   box-shadow:0 6px 18px rgba(232,132,92,0.2);
@@ -199,8 +203,8 @@ input::placeholder{color:var(--text3)}
 .btn-submit:active{transform:translateY(0);box-shadow:0 3px 10px rgba(232,132,92,0.15)}
 .btn-submit:disabled{opacity:0.55;cursor:not-allowed;transform:none!important}
 .btn-submit .spinner{
-  display:none;width:15px;height:15px;border:2px solid rgba(15,13,21,0.3);
-  border-top-color:#0f0d15;border-radius:50%;animation:spin 0.7s linear infinite;
+  display:none;width:15px;height:15px;border:2px solid var(--border3);
+  border-top-color:var(--text-on-accent);border-radius:50%;animation:spin 0.7s linear infinite;
 }
 .btn-submit.loading .btn-text{display:none}
 .btn-submit.loading .spinner{display:inline-block}
@@ -239,7 +243,43 @@ input::placeholder{color:var(--text3)}
 /* ─── SCROLLBAR ──────────────────────────────────────── */
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(255,240,220,0.06);border-radius:99px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+/* ─── LIGHT THEME ──────────────────────────────────────────── */
+body.theme-light{
+  --bg:#f5f3ef;
+  --card:rgba(255,255,255,0.92);
+  --border:rgba(0,0,0,0.07);
+  --border2:rgba(0,0,0,0.12);
+  --border3:rgba(0,0,0,0.2);
+  --primary:#c45a35;
+  --primary-dim:rgba(196,90,53,0.06);
+  --primary-border:rgba(196,90,53,0.2);
+  --primary-glow:rgba(196,90,53,0.08);
+  --purple:#6a58c0;
+  --purple-dim:rgba(106,88,192,0.06);
+  --rose:#d43d56;
+  --rose-dim:rgba(212,61,86,0.06);
+  --rose-border:rgba(212,61,86,0.2);
+  --teal:#2e9e48;
+  --text:#1a1625;
+  --text2:#5c5665;
+  --text3:#8e879a;
+  --text-on-accent:#fff;
+  --bg-tint:rgba(0,0,0,0.02);
+  --bg-tint2:rgba(0,0,0,0.04);
+}
+body.theme-light .bg-gradient{
+  background:radial-gradient(ellipse at 25% 20%,rgba(196,90,53,0.06) 0%,transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(106,88,192,0.05) 0%,transparent 55%),radial-gradient(ellipse at 50% 50%,#f5f3ef 0%,#eae7e1 100%);
+}
+body.theme-light .bg-grid{background-image:radial-gradient(rgba(196,90,53,0.04) 1px, transparent 1px)}
+body.theme-light .orb-1{background:radial-gradient(circle,rgba(196,90,53,0.06) 0%,transparent 70%)}
+body.theme-light .orb-2{background:radial-gradient(circle,rgba(106,88,192,0.05) 0%,transparent 70%)}
+body.theme-light .orb-3{background:radial-gradient(circle,rgba(200,154,30,0.03) 0%,transparent 70%)}
+body.theme-light ::selection{background:rgba(196,90,53,0.15);color:var(--text)}
+body.theme-light .btn-submit{color:#fff}
+body.theme-light .spinner{border-color:rgba(255,255,255,0.3);border-top-color:#fff}
+body.theme-light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.08)}
 </style>
 </head>
 <body>
@@ -384,6 +424,14 @@ input::placeholder{color:var(--text3)}
 </div>
 
 <script>
+// ── Apply saved theme ──────────────────────────────────────────────
+(function() {
+  const savedTheme = localStorage.getItem('cm_theme');
+  if (savedTheme && savedTheme !== 'aurora') {
+    document.body.classList.add('theme-' + savedTheme);
+  }
+})();
+
 // ── Tab switching ───────────────────────────────────────────────
 function switchTab(tab) {
   const isSignin = tab === 'signin';
@@ -430,7 +478,7 @@ function checkStrength(val) {
   const colors = ['#e85d75','#f0c148','#9b8afb','#6bcb77'];
   const labels = ['Weak','Fair','Good','Strong'];
   bars.forEach((b, i) => {
-    b.style.background = i < score ? colors[score - 1] : 'rgba(255,240,220,0.06)';
+    b.style.background = i < score ? colors[score - 1] : 'var(--bg-tint2)';
   });
   label.textContent = labels[score - 1] || 'Very Weak';
   label.style.color = score > 0 ? colors[score - 1] : 'var(--text3)';

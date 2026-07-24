@@ -115,7 +115,7 @@
         </button>
         <!-- Theme Switcher -->
         <button class="lang-switcher" onclick="toggleTheme()" id="theme-btn" style="padding:0 12px;height:38px">
-          <span>🎨 Theme: <b id="tb-theme-name">Warm</b></span>
+          <span id="theme-btn-inner">🎨 Theme: <b id="tb-theme-name">Warm</b></span>
         </button>
         <!-- Student avatar + logout -->
         <div id="student-chip"
@@ -3843,16 +3843,21 @@ Try modifying the values, adding new variables, or writing a custom function to 
       if (theme !== 'aurora') {
         document.body.classList.add('theme-' + theme);
       }
-      const themeNameMap = { aurora: 'Warm', dracula: 'Dracula', cyberpunk: 'Cyberpunk', ocean: 'Deep Ocean' };
+      const themeNameMap = { aurora: 'Warm', dracula: 'Dracula', cyberpunk: 'Cyberpunk', ocean: 'Deep Ocean', light: 'Light' };
       const el = document.getElementById('tb-theme-name');
       if (el) {
         el.textContent = themeNameMap[theme] || 'Warm';
+      }
+      const btnIcon = document.getElementById('theme-btn');
+      if (btnIcon) {
+        const isLight = theme === 'light';
+        btnIcon.querySelector('span').innerHTML = (isLight ? '☀️' : '🎨') + ' Theme: <b id="tb-theme-name">' + (themeNameMap[theme] || 'Warm') + '</b>';
       }
       state.theme = theme;
     }
 
     function toggleTheme() {
-      const themes = ['aurora', 'dracula', 'cyberpunk', 'ocean'];
+      const themes = ['aurora', 'dracula', 'cyberpunk', 'ocean', 'light'];
       let idx = themes.indexOf(state.theme || 'aurora');
       let nextTheme = themes[(idx + 1) % themes.length];
       localStorage.setItem('cm_theme', nextTheme);

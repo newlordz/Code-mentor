@@ -94,7 +94,7 @@ body{
 }
 .logo-mark:hover{transform:rotate(-5deg) scale(1.05)}
 .logo-text{display:flex;align-items:center;gap:4px}
-.logo-text .hi{background:linear-gradient(135deg,var(--primary) 0%,var(--purple) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-text .hi{background:linear-gradient(135deg,var(--primary) 0%,var(--purple) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 
 /* ─── CARD ───────────────────────────────────────────── */
 .card{
@@ -240,6 +240,39 @@ input::placeholder{color:var(--text3)}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,240,220,0.06);border-radius:99px}
+
+/* ─── LIGHT THEME ──────────────────────────────────────────── */
+body.theme-light{
+  --bg:#f5f3ef;
+  --card:rgba(255,255,255,0.92);
+  --border:rgba(0,0,0,0.07);
+  --border2:rgba(0,0,0,0.12);
+  --border3:rgba(0,0,0,0.2);
+  --primary:#c45a35;
+  --primary-dim:rgba(196,90,53,0.06);
+  --primary-border:rgba(196,90,53,0.2);
+  --primary-glow:rgba(196,90,53,0.08);
+  --purple:#6a58c0;
+  --purple-dim:rgba(106,88,192,0.06);
+  --rose:#d43d56;
+  --rose-dim:rgba(212,61,86,0.06);
+  --rose-border:rgba(212,61,86,0.2);
+  --teal:#2e9e48;
+  --text:#1a1625;
+  --text2:#5c5665;
+  --text3:#8e879a;
+}
+body.theme-light .bg-gradient{
+  background:radial-gradient(ellipse at 25% 20%,rgba(196,90,53,0.06) 0%,transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(106,88,192,0.05) 0%,transparent 55%),radial-gradient(ellipse at 50% 50%,#f5f3ef 0%,#eae7e1 100%);
+}
+body.theme-light .bg-grid{background-image:radial-gradient(rgba(196,90,53,0.04) 1px, transparent 1px)}
+body.theme-light .orb-1{background:radial-gradient(circle,rgba(196,90,53,0.06) 0%,transparent 70%)}
+body.theme-light .orb-2{background:radial-gradient(circle,rgba(106,88,192,0.05) 0%,transparent 70%)}
+body.theme-light .orb-3{background:radial-gradient(circle,rgba(200,154,30,0.03) 0%,transparent 70%)}
+body.theme-light ::selection{background:rgba(196,90,53,0.15);color:var(--text)}
+body.theme-light .btn-submit{color:#fff}
+body.theme-light .spinner{border-color:rgba(255,255,255,0.3);border-top-color:#fff}
+body.theme-light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.08)}
 </style>
 </head>
 <body>
@@ -384,6 +417,14 @@ input::placeholder{color:var(--text3)}
 </div>
 
 <script>
+// ── Apply saved theme ──────────────────────────────────────────────
+(function() {
+  const savedTheme = localStorage.getItem('cm_theme');
+  if (savedTheme && savedTheme !== 'aurora') {
+    document.body.classList.add('theme-' + savedTheme);
+  }
+})();
+
 // ── Tab switching ───────────────────────────────────────────────
 function switchTab(tab) {
   const isSignin = tab === 'signin';
