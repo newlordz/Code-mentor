@@ -390,11 +390,18 @@
         <button class="quiz-close" onclick="closeCertificates()">✕</button>
       </div>
       <div class="cert-body" id="cert-body"></div>
+      <div class="cert-preview-area" id="cert-preview-area" style="display:none">
+        <div class="cert-preview-header">
+          <button class="cert-back-btn" onclick="closePreview()">← Back</button>
+          <div class="cert-preview-title" id="cert-preview-title">Certificate Preview</div>
+          <button class="cert-dl-btn cert-dl-preview-btn" id="cert-preview-dl-btn">⬇ Download PNG</button>
+        </div>
+        <div class="cert-preview-img-wrap">
+          <img id="cert-preview-img" class="cert-preview-img" alt="Certificate Preview">
+        </div>
+      </div>
     </div>
   </div>
-
-  <!-- ═══ CERTIFICATE PRINT AREA (hidden, for canvas/print) ════ -->
-  <div id="cert-print-area" style="position:fixed;left:-9999px;top:0;width:800px;height:600px;background:#fff;padding:0;z-index:-1"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>
@@ -4905,6 +4912,7 @@ Try modifying the values, adding new variables, or writing a custom function to 
     }
 
     function closeCertificates() {
+      closePreview();
       document.getElementById('cert-modal').classList.remove('open');
     }
 
@@ -4929,14 +4937,51 @@ Try modifying the values, adding new variables, or writing a custom function to 
               <div class="cert-lang-progress">${ls.done}/${ls.total} topics (${ls.pct}%)</div>
             </div>
           </div>
-          <button class="cert-dl-btn" onclick="downloadCertificate('${ls.key}')" ${ls.done === 0 ? 'disabled' : ''}>
-            ${ls.completed ? '🎓 Download' : '📄 Download'}
+          <button class="cert-dl-btn" onclick="showCertPreview('${ls.key}')" ${ls.done === 0 ? 'disabled' : ''}>
+            ${ls.completed ? '🎓 View Certificate' : '📄 View Certificate'}
           </button>
         </div>
       `).join('') || '<div class="cert-empty">No languages available.</div>';
     }
 
+    function closePreview() {
+      document.getElementById('cert-body').style.display = '';
+      document.getElementById('cert-preview-area').style.display = 'none';
+      document.querySelector('.cert-header').style.display = '';
+    }
+
+    function showCertPreview(langKey) {
+      const lang = C[langKey];
+      const canvas = buildCertCanvas(langKey);
+
+      const previewArea = document.getElementById('cert-preview-area');
+      const previewImg = document.getElementById('cert-preview-img');
+      const previewTitle = document.getElementById('cert-preview-title');
+      const previewDlBtn = document.getElementById('cert-preview-dl-btn');
+
+      previewImg.src = canvas.toDataURL('image/png');
+      previewTitle.textContent = lang.icon + ' ' + lang.name + ' Certificate';
+      previewDlBtn.onclick = function() { doDownload(canvas, lang.name); };
+
+      document.getElementById('cert-body').style.display = 'none';
+      document.querySelector('.cert-header').style.display = 'none';
+      previewArea.style.display = '';
+    }
+
+    function doDownload(canvas, langName) {
+      const link = document.createElement('a');
+      link.download = 'CodeMentor-' + langName + '-Certificate.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
     function downloadCertificate(langKey) {
+      const lang = C[langKey];
+      const canvas = buildCertCanvas(langKey);
+      doDownload(canvas, lang.name);
+    }
+
+    function buildCertCanvas(langKey) {
       const lang = C[langKey];
       const studentName = (CM_USER && CM_USER.name) || 'Student';
       const doneSet = state.progress[langKey] || new Set();
@@ -5018,7 +5063,7 @@ Try modifying the values, adding new variables, or writing a custom function to 
       // Details
       ctx.fillStyle = '#6b6558';
       ctx.font = '15px "Georgia", serif';
-      ctx.fillText(`${done} of ${total} topics completed`, 400, 395);
+      ctx.fillText(done + ' of ' + total + ' topics completed', 400, 395);
 
       if (completed) {
         ctx.fillStyle = '#2d7d46';
@@ -5037,11 +5082,7 @@ Try modifying the values, adding new variables, or writing a custom function to 
       ctx.fillText('CodeMentor AI — Learn Programming with an AI Tutor', 400, 540);
       ctx.fillText('codementor.app', 400, 558);
 
-      // Download
-      const link = document.createElement('a');
-      link.download = `CodeMentor-${lang.name}-Certificate.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+      return canvas;
     }
 
 
